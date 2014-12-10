@@ -1,0 +1,18 @@
+#!/bin/bash
+
+cd
+case "$2" in
+  gnome)
+    exec gnome-session ;;
+  steam)
+    openbox &
+    nitrogen --restore
+    exec steam ;;
+  xbmc)
+    exec "$2" ;;
+  xmonad)
+    exec "$2" ;;
+  *)
+    nitrogen --restore
+    exec "${2:-xmonad}" ;;
+esac

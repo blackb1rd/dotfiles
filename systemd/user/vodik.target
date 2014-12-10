@@ -1,0 +1,6 @@
+[Unit]
+Description=Stuff for blackb1rd
+After=xorg.target
+
+[Install]
+Alias=default.target

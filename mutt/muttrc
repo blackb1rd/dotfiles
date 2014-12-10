@@ -1,0 +1,68 @@
+set realname = "Simon Gomizelj"
+set from     = "simongmzlj@gmail.com"
+
+set imap_check_subscribed
+set sort     = threads
+set sort_aux = last-date-received
+
+unset imap_passive
+set imap_keepalive = 300
+set mail_check     = 30
+
+set header_cache     = ~/.mutt/cache/headers
+set message_cachedir = ~/.mutt/cache/bodies
+set certificate_file = ~/.mutt/certificates
+set alias_file       = ~/.mutt/aliases
+set mailcap_path     = ~/.mutt/mailcap
+
+source ~/.mutt/gmail
+source ~/.mutt/colours
+source $alias_file
+
+set index_format = "%3N %4C %Z %{%b %d} %-15.15F (%4c) %?M?%M> ?%s"
+set quote_regexp = "^([ \t]*[>])+"
+
+set smart_wrap
+set pager_index_lines = 8
+
+set abort_nosubject  = no
+set abort_unmodified = yes
+set quit             = yes
+set postpone         = ask-no
+set delete           = yes
+set move             = no
+unset collapse_unread
+
+bind pager j  next-line
+bind pager k  previous-line
+bind pager gg top
+bind pager G  bottom
+bind pager J  next-undeleted
+bind pager K  previous-undeleted
+bind pager R  group-reply
+
+bind index gg first-entry
+bind index G  last-entry
+bind index R  group-reply
+bind index -  collapse-thread
+bind index _  collapse-all
+
+macro index,pager y  "<enter-command>unset trash\n <delete-message>" "Gmail archive message"
+macro index,pager ^Y "<enter-command>unset trash\n <delete-thread>"  "Gmail archive thread"
+macro index,pager d  "<enter-command>set trash=\"imaps://imap.googlemail.com/[Gmail]/Trash\"\n <delete-message>" "Gmail delete message"
+macro index,pager ^D "<enter-command>set trash=\"imaps://imap.googlemail.com/[Gmail]/Trash\"\n <delete-thread>"  "Gmail delete thread"
+
+bind editor <space> noop
+macro index,pager gi "<change-folder>=INBOX<enter>" "Go to inbox"
+macro index,pager ga "<change-folder>=Arch<enter>" "Go to archlinux mail"
+macro index,pager gA "<change-folder>=[Gmail]/All Mail<enter>" "Go to all mail"
+macro index,pager gs "<change-folder>=[Gmail]/Starred<enter>" "Go to starred messages"
+macro index,pager gd "<change-folder>=[Gmail]/Drafts<enter>" "Go to drafts"
+
+macro index M "T~N<enter>;WNT~O<enter>;WO\CT~A<enter>" "Mark all messages read"
+
+set allow_ansi
+auto_view text/x-diff
+auto_view text/x-patch
+auto_view text/html
+alternative_order text/plain text/html *

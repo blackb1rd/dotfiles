@@ -1,0 +1,217 @@
+" file:     ~/.vimrc files
+" author:   s4m3l0
+" ----------------------------------------------------------------------------
+
+set nocompatible
+
+filetype off
+runtime bundle/pathogen/autoload/pathogen.vim
+call pathogen#incubate()
+
+syntax on
+filetype plugin indent on
+colorscheme molokai
+
+" GENERAL {{{1
+" -----------------------------
+
+" Genaral formatting
+set tabstop=4
+set shiftwidth=4
+set softtabstop=2
+set cinoptions=(0
+set linebreak
+set nowrap
+set textwidth=80
+set wrapmargin=0
+set whichwrap+=<,>,[,],h,l
+set formatoptions=qn1
+
+" Highligh unwanted whitespace
+highlight ExtraWhitespace ctermbg=red guibg=red
+match ExtraWhitespace /\s\+$\| \+ze\t/
+
+" Column width 80
+set cc=80
+hi ColorColumn ctermbg=lightblue guibg=lightblue
+
+" searching
+set ic
+set hlsearch
+set smartcase
+set incsearch
+
+" editing
+scriptencoding utf-8
+if has("multi_byte")
+    if &termencoding == ""
+        let &termencoding = &encoding
+    endif
+    set encoding=utf-8
+    set fileencodings=ucs-bom,utf-8,latin1
+    let &listchars="tab:\u25B8 ,eol:\u00AC,trail:\u00b7,nbsp:\u2423"
+endif
+set nrformats+=alpha
+
+" folding
+set foldenable
+set foldcolumn=1
+set backspace=indent,eol,start
+
+" spelling
+set spelllang=en_ca
+set spellfile=~/.vim/dict.add
+
+" vim ui
+set autoread
+set autowrite
+set showcmd
+set title
+set ruler
+set number
+set cursorline
+set shortmess=at
+set hidden
+set laststatus=2
+set scrolloff=3
+set wildmenu wildmode=list:longest,full
+set completeopt=longest,menuone
+set history=50
+set confirm
+set equalalways
+set lazyredraw
+set statusline=%<%F%m%r%h%w%y\ %{&ff}\ %{strftime(\"%c\",getftime(expand(\"%:p\")))}%=\ %l\,%c\ Ascii:%b\ Hex:%B\ %{\"[\".(&fenc==\"\"?&enc:&fenc).((exists(\"+bomb\")\ &&\ &bomb)?\",B\":\"\").\"]\"}\ %P
+
+if has('mouse')
+  set mouse=a
+endif
+
+set wildignore+=.hg,.git,.svn                  " version control
+set wildignore+=*.aux,*.out,*.toc              " LaTeX intermediate files
+set wildignore+=*.jpg,*.bmp,*.gif,*.png,*.jpeg " images files
+set wildignore+=*.a,*.o,*.obj,*.so,*.hi        " compiled object files
+set wildignore+=*.pyc                          " python byte code
+set wildignore+=*.spl                          " compiled spell lists
+
+" backup
+if has("win32") || has("win16")
+    set dir=C:\tmp,C:\temp
+    set backupdir=$VIMRUNTIME\backups
+    set undodir=$VIMRUNTIME\undofiles
+else
+    set dir=~/.vim/tmp
+    set backupdir=~/.vim/backups
+    set undodir=~/.vim/undofiles
+endif
+set backup
+set undofile
+
+" AUTOCMDS {{{1
+" ----------------------------
+au VimResized   * exe "normal! \<c-w>="
+au BufWritePost * if getline(1) =~ "^#!" | silent :!chmod +x <afile>
+
+" MAPPINGS {{{1
+" ----------------------------
+
+" window movements
+nnoremap <silent> <UP>    <C-w>-
+nnoremap <silent> <DOWN>  <C-w>+
+nnoremap <silent> <LEFT>  <C-w><
+nnoremap <silent> <RIGHT> <C-w>>
+
+" NERDTree
+nnoremap <silent> <C-e> :NERDTreeToggle<CR>
+
+" tabular config
+noremap <silent> <leader>a= :Tabular /=<CR>
+noremap <silent> <leader>a: :Tabular /[^:]\+:<CR>
+noremap <silent> <leader>a, :Tabular /[^,]\+,<CR>
+
+" fugative config
+nnoremap <leader>gg :copen<CR>:Ggrep
+nnoremap <silent> <leader>gs :Gstatus<CR>
+nnoremap <silent> <leader>gd :Gdiff<CR>
+nnoremap <silent> <leader>ge :Gedit<CR>
+nnoremap <silent> <leader>gb :Gblame<CR>
+
+" ghc-mod config
+nnoremap <silent> <leader>c :call toggle#ToggleList("Quickfix List", 'c')<CR>
+nnoremap <silent> <leader>d :diffupdate<CR>
+nnoremap <silent> <leader>hc :GhcModCheck<CR>
+nnoremap <silent> <leader>hl :GhcModLint<CR>
+nnoremap <silent> <leader>h :nohl<CR>
+nnoremap <silent> <leader>l :ls<CR>:b<space>
+
+" Airline
+nnoremap <silent> <leader>s :call AirToggle()<CR>
+
+" tagbar config
+nnoremap <silent> <leader>tb :TagbarToggle<CR>
+
+" taglist
+nnoremap <silent> <leader>tl :TlistToggle<CR>
+
+" untree config
+nnoremap <silent> <leader>u :UndotreeToggle<CR>
+
+" youcompleteme config
+nnoremap <silent> <leader>y :YcmDiag<CR>
+
+" strip trailing spaces
+nnoremap <silent> <leader>x :silent! call spaces#StripTrailing()<CR>
+noremap <silent> <leader>w :call spaces#StripTrailing()<CR>
+
+" map space to create/open/close fold
+nnoremap <silent> <Space> @=(foldlevel('.')?'za':'l')<CR>
+vnoremap <Space> zf
+
+" bindings for building code
+nnoremap <F5>   :make<CR>
+nnoremap <S-F6> :!./"%"<CR>
+
+" PLUGINS CONFIG {{{1
+" ----------------------------
+
+" set vim to download files with curl
+let g:netrw_http_cmd  = "curl"
+let g:netrw_http_xcmd = "-so"
+
+" NERDTree config
+let g:NERDTreeChDirMode     = 2
+let g:NERDTreeIgnore        = ['\~$', '\.swp$', '\.o$', '\.hi$']
+let g:NERDTreeSortOrder     = ['c$', 'cpp$', 'h$', '^__\.py$', '\/$', '*', '\~$']
+let g:NERDTreeShowBookmarks = 1
+let g:NERDTreeMinimalUI     = 1
+let g:NERDTreeDirArrows     = 1
+let g:NERDTreeWinPos        = "right"
+
+" Airline
+let g:airline_power_line_fonts = 1
+let s:airline_toggle_with_noshowmode = 0
+function! AirToggle()
+    if s:airline_toggle_with_noshowmode == 0
+        let s:airline_toggle_with_noshowmode = 1
+        AirlineToggle
+        set showmode
+    else
+        let s:airline_toggle_with_noshowmode = 0
+        AirlineToggle
+        set noshowmode
+    endif
+endfunction
+set noshowmode
+
+" youcompleteme config
+let g:ycm_global_ycm_extra_conf = '~/.vim/ycm/c_conf.py'
+
+" pandoc config
+let g:pandoc_no_empty_implicits = 1
+let g:pandoc_no_folding         = 1
+let g:pandoc_use_hard_wraps     = 1
+
+" utilsnips config
+let g:UltiSnipsSnippetsDir         = "~/.vim/snippets"
+let g:UltiSnipsExpandTrigger       = "<c-j>"
+let g:UltiSnipsJumpForwardTrigger  = "<c-j>"
+let g:UltiSnipsJumpBackwardTrigger = "<c-k>"

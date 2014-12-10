@@ -1,0 +1,45 @@
+[user]
+	name = blackb1rd
+	email = blackb1rd@riseup.net
+[code]
+	editor = vim
+[color]
+	ui = on
+[merge]
+	tool = vimdiff
+	log = true
+[push]
+	default = simple
+[help]
+	autocorrect = 1
+[log]
+	decorate = full
+[diff]
+	rename = copies
+[web]
+	browser = aurora
+[browser "aurora"]
+	cmd = aurora
+[alias]
+	co = checkout
+	br = branch
+	purr = pull --rebase
+	stat = status -sb
+	ignored = ls-files --others -i --exclude-standard
+	wipe = reset --hard HEAD
+[branch "master"]
+	remote = origin
+	merge = master
+[branch "upstream"]
+	remote = upstream
+	merge = master
+[remote "origin"]
+	fetch = +refs/pull/*/head:refs/remotes/origin/pull/*
+[sendemail]
+	smtpserver = /usr/bin/msmtp
+	smtpserverport = 587
+	smtpencryption = tls
+	smtpuser = blackb1rd@riseup.net
+	confirm = auto
+
+# vim: set ft=gitconfig noet:
