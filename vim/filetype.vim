@@ -1,5 +1,5 @@
 " file:     ~/.vim/filetype.vim
-" author:   S4m3l0
+" author:   blackb1rd
 " ----------------------------------------------------------------------------
 
 " DETECTION {{{1
