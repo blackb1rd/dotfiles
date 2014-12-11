@@ -18,8 +18,8 @@ else
 fi
 
 # Install bundle
-mkdir -p "$HOME/.vim/bundle"
-cd ~/.vim/bundle && \
+cp -r bundle "$HOME/.vim/bundle"
+cd "$HOME/.vim/bundle" && \
 
 #Taglist
 wget http://www.vim.org/scripts/download_script.php?src_id=19574  -O taglist_46.zip
