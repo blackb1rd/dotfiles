@@ -21,7 +21,6 @@ Some details on the more highly customized programs:
 | **termite**     | Terminal emulator of choice                       |
 | **tmux**        | Terminal multiplexer config                       |
 | **vim**         | My vim and gvim config and all the bundles I use. |
-| **weechat**     | My weechat settings, theme, and plugins I use.    |
 | **xmonad**      | My window manager, see [README][xmonad]           |
 | **zsh**         | My zsh config                                     |
 
