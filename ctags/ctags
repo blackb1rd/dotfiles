@@ -1,0 +1,27 @@
+--langdef=Css
+--langmap=Css:.css
+--langmap=Css:+.less
+--langmap=Css:+.sass
+--langmap=Css:+.scss
+--regex-css=/^[ t]*.([A-Za-z0-9_-]+)/\1/c,class,classes/
+--regex-css=/^[ t]*#([A-Za-z0-9_-]+)/\1/i,id,ids/
+--regex-css=/^[ t]*(([A-Za-z0-9_-]+[ tn,]+)+)\{/\1/t,tag,tags/
+--regex-css=/^[ t]*@medias+([A-Za-z0-9_-]+)/\1/m,media,medias/
+
+--langdef=js
+--langmap=js:.js
+--regex-js=/([A-Za-z0-9._$]+)[ t]*[:=][ t]*\{/\1/,object/
+--regex-js=/([A-Za-z0-9._$()]+)[ t]*[:=][ t]*function[ t]*\(/\1/,function/
+--regex-js=/function[ t]+([A-Za-z0-9._$]+)[ t]*(([^)]))/\1/,function/
+--regex-js=/([A-Za-z0-9._$]+)[ t]*[:=][ t]*\[/\1/,array/
+--regex-js=/([^= ]+)[ t]*=[ t]*[^"]'[^']*/\1/,string/
+--regex-js=/([^= ]+)[ t]*=[ t]*[^']"[^"]*/\1/,string/
+
+--langdef=Markdown
+--langmap=Markdown:.md
+--langmap=Markdown:+.markdown
+--langmap=Markdown:+.mdown
+--langmap=Markdown:+.mkd
+--langmap=Markdown:+.mkdown
+--langmap=Markdown:+.ron
+--regex-Markdown=/^#+[ \t]*([^#]+)/\1/f,function/
