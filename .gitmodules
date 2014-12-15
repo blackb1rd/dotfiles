@@ -76,6 +76,6 @@
 [submodule "vim/bundle/bundle/vim-less"]
 	path = vim/bundle/bundle/vim-less
 	url = https://github.com/groenewege/vim-less.git
-[submodule "vim/bundle/vim-less"]
-	path = vim/bundle/vim-less
+[submodule "vim/bundle/less"]
+	path = vim/bundle/less
 	url = https://github.com/groenewege/vim-less
