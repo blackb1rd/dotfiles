@@ -27,6 +27,7 @@ The important plugins I rely on:
 - [fugitive][]
 - [ghcmod][]
 - [html5-syntax][]
+- [less][]
 - [mw-utils][]
 - [nerdtree][]
 - [repeat][]
@@ -50,6 +51,7 @@ The important plugins I rely on:
   [fugitive]: https://github.com/tpope/vim-fugitive.git
   [ghcmod]: https://github.com/eagletmt/ghcmod-vim.git
   [html5-syntax]: https://github.com/othree/html5-syntax.vim.git
+  [less]: https://github.com/groenewege/vim-less
   [mw-utils]: https://github.com/MarcWeber/vim-addon-mw-utils.git
   [nerdtree]: https://github.com/scrooloose/nerdtree.git
   [pathogen]: https://github.com/tpope/vim-pathogen.git
