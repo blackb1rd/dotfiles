@@ -73,9 +73,6 @@
 [submodule "vim/bundle/undotree"]
 	path = vim/bundle/undotree
 	url = https://github.com/mbbill/undotree.git
-[submodule "vim/bundle/bundle/vim-less"]
-	path = vim/bundle/bundle/vim-less
-	url = https://github.com/groenewege/vim-less.git
 [submodule "vim/bundle/less"]
 	path = vim/bundle/less
 	url = https://github.com/groenewege/vim-less
