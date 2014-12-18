@@ -96,7 +96,7 @@ set wildignore+=*.pyc                          " python byte code
 set wildignore+=*.spl                          " compiled spell lists
 
 " backup
-if has("win32") || has("win16")
+if has("win64") || has("win32") || has("win16")
     set dir=C:\tmp,C:\temp
     set backupdir=$VIMRUNTIME\backups
     set undodir=$VIMRUNTIME\undofiles
@@ -216,7 +216,8 @@ let g:pandoc_no_folding         = 1
 let g:pandoc_use_hard_wraps     = 1
 
 " utilsnips config
-let g:UltiSnipsSnippetsDir         = "~/.vim/snippets"
-let g:UltiSnipsExpandTrigger       = "<c-j>"
-let g:UltiSnipsJumpForwardTrigger  = "<c-j>"
-let g:UltiSnipsJumpBackwardTrigger = "<c-k>"
+if has ("win64") || has("win32") || has("win16")
+    let g:UltiSnipsSnippetsDir         = "bundle/snippets/UltiSnips"
+else
+    let g:UltiSnipsSnippetsDir         = "~/.vim/bundle/snippets/UltiSnips"
+endif
