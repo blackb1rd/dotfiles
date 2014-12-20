@@ -1,6 +1,6 @@
 [user]
 	name = blackb1rd
-	email = blackb1rd@riseup.net
+	email = blackb1rd.mov@gmail.com
 [code]
 	editor = vim
 [color]
@@ -16,10 +16,6 @@
 	decorate = full
 [diff]
 	rename = copies
-[web]
-	browser = aurora
-[browser "aurora"]
-	cmd = aurora
 [alias]
 	co = checkout
 	br = branch
