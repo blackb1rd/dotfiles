@@ -14,7 +14,11 @@ fi
 
 # Install bundle
 cp -r bundle "$HOME/.vim/"
-cd "$HOME/.vim/bundle" && \
+cd "$HOME/.vim/bundle"
+
+# Install YouCompleteMe
+cd YouCompleteMea && ./install.sh
+cd ..
 
 #Taglist
 wget http://www.vim.org/scripts/download_script.php?src_id=19574  -O taglist_46.zip
