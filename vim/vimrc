@@ -218,7 +218,8 @@ let g:pandoc_use_hard_wraps     = 1
 
 " utilsnips config
 if has ("win64") || has("win32") || has("win16")
-    let g:UltiSnipsSnippetsDir         = "bundle/snippets/UltiSnips"
+    let g:UltiSnipsSnippetsDir  = "bundle/snippets/UltiSnips"
 else
-    let g:UltiSnipsSnippetsDir         = "~/.vim/bundle/snippets/UltiSnips"
+    let g:UltiSnipsSnippetsDir  = "~/.vim/bundle/snippets/UltiSnips"
 endif
+let g:UltiSnipsExpandTrigger    = "<c-j>"
