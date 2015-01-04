@@ -9,6 +9,11 @@ Vim bundles are included through submodules. Make sure to:
 git submodule update --init --recursive
 ```
 
+For the update git submodules:
+```
+git submodule -q foreach git pull -q origin master
+```
+
 Some details on the more highly customized programs:
 
 |                 | Description                                       |
