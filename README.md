@@ -6,8 +6,7 @@ should Just Work™ with both ``startx`` and [lxdm][].
 Vim bundles are included through submodules. Make sure to:
 
 ```
-git submodules init
-git submodules update
+git submodule update --init --recursive
 ```
 
 Some details on the more highly customized programs:
