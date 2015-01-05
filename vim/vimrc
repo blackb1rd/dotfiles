@@ -11,6 +11,7 @@ call pathogen#infect('bundle/{}')
 syntax on
 filetype plugin indent on
 colorscheme molokai
+let g:rehash256 = 1
 
 " GENERAL {{{1
 " -----------------------------
