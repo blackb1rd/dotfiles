@@ -85,3 +85,12 @@
 [submodule "vim/bundle/YouCompleteMe"]
 	path = vim/bundle/YouCompleteMe
 	url = https://github.com/Valloric/YouCompleteMe.git
+[submodule "vim/bundle/ag"]
+	path = vim/bundle/ag
+	url = https://github.com/rking/ag.vim.git
+[submodule "vim/bundle/css3-syntax"]
+	path = vim/bundle/css3-syntax
+	url = https://github.com/hail2u/vim-css3-syntax.git
+[submodule "vim/bundle/json"]
+	path = vim/bundle/json
+	url = https://github.com/helino/vim-json.git
