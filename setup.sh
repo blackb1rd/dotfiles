@@ -9,6 +9,15 @@ then
   apt-get install ncurses-term
 fi
 
+###############################################################################
+#                            ____  _          _ _                             #
+#                           / ___|| |__   ___| | |                            #
+#                           \___ \| '_ \ / _ \ | |                            #
+#                            ___) | | | |  __/ | |                            #
+#                           |____/|_| |_|\___|_|_|                            #
+#                                                                             #
+###############################################################################
+
 if [[ ! -a ~/.zshrc ]]
 then
   ln -s $current_dir/shell/zshrc $HOME/.zshrc
@@ -19,15 +28,25 @@ then
   ln -s $current_dir/shell/bashrc $HOME/.bashrc
 fi
 
+###############################################################################
+#                ____       _                                                 #
+#               |  _ \  ___| |__  _   _  __ _  __ _  ___ _ __                 #
+#               | | | |/ _ \ '_ \| | | |/ _` |/ _` |/ _ \ '__|                #
+#               | |_| |  __/ |_) | |_| | (_| | (_| |  __/ |                   #
+#               |____/ \___|_.__/ \__,_|\__, |\__, |\___|_|                   #
+#                                       |___/ |___/                           #
+#                                                                             #
+###############################################################################
+
 if [[ ! -a ~/.gdbrc ]]
 then
-  ln -s $script_dir/debugger/gdbrc $HOME/.gdbrc
+  ln -s $current_dir/debugger/gdbrc $HOME/.gdbrc
 fi
 
 if [[ ! -a ~/.cgdb/cgdbrc ]]
 then
 mkdir $HOME/.cgdb
-  ln -s $script_dir/debugger/cgdbrc $HOME/.cgdb/cgdbrc
+  ln -s $current_dir/debugger/cgdbrc $HOME/.cgdb/cgdbrc
 fi
 
 ###############################################################################
@@ -41,7 +60,7 @@ fi
 
 if [[ ! -a ~/.vimrc ]]
 then
-  ln -s $script_dir/vim/vimrc $HOME/.vimrc
+  ln -s $current_dir/vim/vimrc $HOME/.vimrc
 fi
 
 if [[ ! -d "$HOME/.vim" ]]
@@ -65,7 +84,7 @@ then
 fi
 
 # Install bundle
-cp -r $script_dir/vim/bundle "$HOME/.vim/"
+cp -r $current_dir/vim/bundle "$HOME/.vim/"
 
 # Install YouCompleteMe
 cd "$HOME/.vim/bundle"
