@@ -1,13 +1,44 @@
 #!/bin/bash
 
+usage() {
+  echo "Usage: $0 [options]"
+  echo ""
+  echo "Options:"
+  echo "  --os OStype   Type OS to install dotfiles(Linux, Android, OSX, iOS)"
+  echo "  -h, --help    Show basic help message and exit"
+}
+
+# Check argument
+case $1 in
+  --os )                  shift
+                          OStype=$1
+                          ;;
+  -h | --help )           usage
+                          exit
+                          ;;
+  * )                     usage
+                          exit 1
+esac
+
+# Check the input of OStype
+if ! [[ "${OStype,,}" =~ ^(linux|android|osx|ios)$ ]]
+then
+  echo "Invalid input --os $OStype"
+  echo ""
+  echo "To see more details $0 -h"
+  exit 1
+fi
+
+# Install program
+if [[ "${OStype,,}" =~ ^(linux)$ ]]
+then
+  sudo apt-get update
+  sudo apt-get install -y ncurses-term silversearcher-ag vim tmux
+fi
+
 # Get the current directory
 current_dir="$( cd "$( dirname "$0" )" && pwd )"
 
-ncolors=$(tput colors)
-if [[ $ncolors != 256 ]]
-then
-  apt-get install ncurses-term
-fi
 
 ###############################################################################
 #                            ____  _          _ _                             #
