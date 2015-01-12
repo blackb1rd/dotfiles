@@ -32,8 +32,13 @@ fi
 # Install program
 if [[ "${OStype,,}" =~ ^(linux)$ ]]
 then
-  sudo apt-get update
-  sudo apt-get install -y ncurses-term silversearcher-ag vim tmux
+  # Find the OS
+  OS=$(lsb_release -si)
+  if [[ "${OS,,}" =~ ^(ubuntu|dabian)$ ]]
+  then
+    sudo apt-get update
+    sudo apt-get install -y ncurses-term silversearcher-ag vim tmux
+  fi
 fi
 
 # Get the current directory
