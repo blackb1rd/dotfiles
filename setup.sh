@@ -53,15 +53,17 @@ current_dir="$( cd "$( dirname "$0" )" && pwd )"
 #                           |____/|_| |_|\___|_|_|                            #
 #                                                                             #
 ###############################################################################
-
-if [[ ! -a ~/.zshrc ]]
+if [[ "${OStype,,}" =~ ^(linux)$ ]]
 then
-  ln -s $current_dir/shell/zshrc $HOME/.zshrc
-fi
+  if [[ ! -a ~/.zshrc ]]
+  then
+    ln -s $current_dir/shell/zshrc $HOME/.zshrc
+  fi
 
-if [[ ! -a ~/.bashrc ]]
-then
-  ln -s $current_dir/shell/bashrc $HOME/.bashrc
+  if [[ ! -a ~/.bashrc ]]
+  then
+    ln -s $current_dir/shell/bashrc $HOME/.bashrc
+  fi
 fi
 
 ###############################################################################
@@ -73,16 +75,18 @@ fi
 #                                       |___/ |___/                           #
 #                                                                             #
 ###############################################################################
-
-if [[ ! -a ~/.gdbrc ]]
+if [[ "${OStype,,}" =~ ^(linux)$ ]]
 then
-  ln -s $current_dir/debugger/gdbrc $HOME/.gdbrc
-fi
+  if [[ ! -a ~/.gdbrc ]]
+  then
+    ln -s $current_dir/debugger/gdbrc $HOME/.gdbrc
+  fi
 
-if [[ ! -a ~/.cgdb/cgdbrc ]]
-then
-mkdir $HOME/.cgdb
-  ln -s $current_dir/debugger/cgdbrc $HOME/.cgdb/cgdbrc
+  if [[ ! -a ~/.cgdb/cgdbrc ]]
+  then
+    mkdir $HOME/.cgdb
+    ln -s $current_dir/debugger/cgdbrc $HOME/.cgdb/cgdbrc
+  fi
 fi
 
 ###############################################################################
@@ -93,48 +97,50 @@ fi
 #                              \_/ |_|_| |_| |_|                              #
 #                                                                             #
 ###############################################################################
-
-if [[ ! -a ~/.vimrc ]]
+if [[ "${OStype,,}" =~ ^(linux)$ ]]
 then
-  ln -s $current_dir/vim/vimrc $HOME/.vimrc
+  if [[ ! -a ~/.vimrc ]]
+  then
+    ln -s $current_dir/vim/vimrc $HOME/.vimrc
+  fi
+
+  if [[ ! -d "$HOME/.vim" ]]
+  then
+    mkdir "$HOME/.vim"
+  fi
+
+  if [[ ! -d "$HOME/.vim/tmp" ]]
+  then
+    mkdir "$HOME/.vim/tmp"
+  fi
+
+  if [[ ! -d "$HOME/.vim/backups" ]]
+  then
+    mkdir "$HOME/.vim/backups"
+  fi
+
+  if [[ ! -d "$HOME/.vim/undo" ]]
+  then
+    mkdir "$HOME/.vim/undo"
+  fi
+
+  # Install bundle
+  cp -r $current_dir/vim/bundle "$HOME/.vim/"
+
+  # Install YouCompleteMe
+  cd "$HOME/.vim/bundle"
+  cd YouCompleteMea && ./install.sh
+
+  # Install Taglist
+  cd ..
+  wget http://www.vim.org/scripts/download_script.php?src_id=19574  -O taglist_46.zip
+  unzip -o taglist_46.zip -d "$HOME/.vim/bundle/taglist/"
+  rm taglist_46.zip
+
+  # Install fonts power line
+  git clone https://github.com/powerline/fonts.git
+  cd fonts && ./install.sh
+  cd .. && rm -r fonts
 fi
-
-if [[ ! -d "$HOME/.vim" ]]
-then
-  mkdir "$HOME/.vim"
-fi
-
-if [[ ! -d "$HOME/.vim/tmp" ]]
-then
-  mkdir "$HOME/.vim/tmp"
-fi
-
-if [[ ! -d "$HOME/.vim/backups" ]]
-then
-  mkdir "$HOME/.vim/backups"
-fi
-
-if [[ ! -d "$HOME/.vim/undo" ]]
-then
-  mkdir "$HOME/.vim/undo"
-fi
-
-# Install bundle
-cp -r $current_dir/vim/bundle "$HOME/.vim/"
-
-# Install YouCompleteMe
-cd "$HOME/.vim/bundle"
-cd YouCompleteMea && ./install.sh
-
-# Install Taglist
-cd ..
-wget http://www.vim.org/scripts/download_script.php?src_id=19574  -O taglist_46.zip
-unzip -o taglist_46.zip -d "$HOME/.vim/bundle/taglist/"
-rm taglist_46.zip
-
-# Install fonts power line
-git clone https://github.com/powerline/fonts.git
-cd fonts && ./install.sh
-cd .. && rm -r fonts
 
 #TODO create symbolic link for folder
