@@ -34,7 +34,7 @@ if [[ "${OStype,,}" =~ ^(linux)$ ]]
 then
   # Find the OS
   OS=$(lsb_release -si)
-  if [[ "${OS,,}" =~ ^(ubuntu|dabian)$ ]]
+  if [[ "${OS,,}" =~ ^(ubuntu|debian)$ ]]
   then
     sudo apt-get update
     sudo apt-get install -y ncurses-term silversearcher-ag vim tmux
@@ -129,13 +129,7 @@ then
 
   # Install YouCompleteMe
   cd "$HOME/.vim/bundle"
-  cd YouCompleteMea && ./install.sh
-
-  # Install Taglist
-  cd ..
-  wget http://www.vim.org/scripts/download_script.php?src_id=19574  -O taglist_46.zip
-  unzip -o taglist_46.zip -d "$HOME/.vim/bundle/taglist/"
-  rm taglist_46.zip
+  cd YouCompleteMe && ./install.sh
 
   # Install fonts power line
   git clone https://github.com/powerline/fonts.git
