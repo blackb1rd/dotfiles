@@ -12,6 +12,8 @@
 	default = simple
 [help]
 	autocorrect = 1
+[http]
+	sslverify = false
 [log]
 	decorate = full
 [diff]
