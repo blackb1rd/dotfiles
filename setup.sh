@@ -99,10 +99,6 @@ fi
 ###############################################################################
 if [[ "${OStype,,}" =~ ^(linux)$ ]]
 then
-  if [[ ! -a ~/.vimrc ]]
-  then
-    ln -s $current_dir/vim/vimrc $HOME/.vimrc
-  fi
 
   if [[ ! -d "$HOME/.vim" ]]
   then
@@ -125,16 +121,53 @@ then
   fi
 
   # Install bundle
-  cp -r $current_dir/vim/bundle "$HOME/.vim/"
+  if [[ ! -d "$HOME/.vim/bundle" ]]
+  then
+    ln -rs $current_dir/vim/bundle "$HOME/.vim/bundle"
+  fi
+
+  # Install bundle
+  if [[ ! -d "$HOME/.vim/colors" ]]
+  then
+    ln -rs $current_dir/vim/colors "$HOME/.vim/colors"
+  fi
 
   # Install YouCompleteMe
-  cd "$HOME/.vim/bundle"
+  cd "$current_dir/vim/bundle"
   cd YouCompleteMe && ./install.sh
 
   # Install fonts power line
   git clone https://github.com/powerline/fonts.git
   cd fonts && ./install.sh
   cd .. && rm -r fonts
-fi
 
-#TODO create symbolic link for folder
+  # Install dict.add
+  if [[ ! -a ~/.vim/dict.add ]]
+  then
+    ln -s $current_dir/vim/dict.add $HOME/.vim/dict.add
+  fi
+
+  # Install filetype.vim
+  if [[ ! -a ~/.vim/filetype.vim ]]
+  then
+    ln -s $current_dir/vim/filetype.vim $HOME/.vim/filetype.vim
+  fi
+
+  # Install spell
+  if [[ ! -d ~/.vim/spell ]]
+  then
+    ln -rs $current_dir/vim/spell $HOME/.vim/spell
+  fi
+
+  # Install .vimrc
+  if [[ ! -a ~/.vimrc ]]
+  then
+    ln -s $current_dir/vim/vimrc $HOME/.vimrc
+  fi
+
+  # Install ycm
+  if [[ ! -d ~/.vim/ycm ]]
+  then
+    ln -rs $current_dir/vim/ycm $HOME/.vim/ycm
+  fi
+fi

@@ -94,3 +94,9 @@
 [submodule "vim/bundle/json"]
 	path = vim/bundle/json
 	url = https://github.com/helino/vim-json.git
+[submodule "vim/bundle/switch"]
+	path = vim/bundle/switch
+	url = https://github.com/AndrewRadev/switch.vim
+[submodule "vim/bundle/nginx"]
+	path = vim/bundle/nginx
+	url = https://github.com/evanmiller/nginx-vim-syntax.git
