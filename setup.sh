@@ -123,13 +123,13 @@ then
   # Install bundle
   if [[ ! -d "$HOME/.vim/bundle" ]]
   then
-    ln -rs $current_dir/vim/bundle "$HOME/.vim/bundle"
+    ln -s $current_dir/vim/bundle "$HOME/.vim/bundle"
   fi
 
   # Install bundle
   if [[ ! -d "$HOME/.vim/colors" ]]
   then
-    ln -rs $current_dir/vim/colors "$HOME/.vim/colors"
+    ln -s $current_dir/vim/colors "$HOME/.vim/colors"
   fi
 
   # Install YouCompleteMe
@@ -156,7 +156,7 @@ then
   # Install spell
   if [[ ! -d ~/.vim/spell ]]
   then
-    ln -rs $current_dir/vim/spell $HOME/.vim/spell
+    ln -s $current_dir/vim/spell $HOME/.vim/spell
   fi
 
   # Install .vimrc
@@ -168,6 +168,6 @@ then
   # Install ycm
   if [[ ! -d ~/.vim/ycm ]]
   then
-    ln -rs $current_dir/vim/ycm $HOME/.vim/ycm
+    ln -s $current_dir/vim/ycm $HOME/.vim/ycm
   fi
 fi
