@@ -189,6 +189,10 @@ statusbar = {
 settings = {
   core = { real_name = ""; user_name = "b0at"; nick = "b0at"; };
   "fe-text" = { actlist_sort = "refnum"; };
-  "fe-common/core" = { theme = "xchat"; };
+  "fe-common/core" = {
+    theme = "xchat";
+    autolog = "yes";
+    autolog_path = "~/irclogs/%Y/$tag/$0.%m-%d.log";
+  };
   "perl/core/scripts" = { nicklist_automode = "SCREEN"; };
 };
