@@ -3,8 +3,15 @@
 	email = blackb1rd.mov@gmail.com
 [code]
 	editor = vim
+[core]
+	autocrlf = input
 [color]
-	ui = on
+	ui = true
+[diff]
+	rename = copies
+	tool = vimdiff
+[difftool]
+	prompt = false
 [merge]
 	tool = vimdiff
 	log = true
@@ -16,15 +23,18 @@
 	sslverify = false
 [log]
 	decorate = full
-[diff]
-	rename = copies
 [alias]
-	co = checkout
 	br = branch
+	ci = commit
+	co = checkout
+	d  = difftool
+	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
 	purr = pull --rebase
-	stat = status -sb
+	st = status -sb
+	sub = submodule
+	subpull = submodule -q foreach git pull -q origin master --verbose
 	ignored = ls-files --others -i --exclude-standard
-	wipe = reset --hard HEAD
+	re = reset --hard HEAD
 [branch "master"]
 	remote = origin
 	merge = master
@@ -33,11 +43,5 @@
 	merge = master
 [remote "origin"]
 	fetch = +refs/pull/*/head:refs/remotes/origin/pull/*
-[sendemail]
-	smtpserver = /usr/bin/msmtp
-	smtpserverport = 587
-	smtpencryption = tls
-	smtpuser = blackb1rd@riseup.net
-	confirm = auto
 
 # vim: set ft=gitconfig noet:
