@@ -32,9 +32,9 @@ fi
 # Install program
 if [[ "${OStype,,}" =~ ^(linux)$ ]]
 then
-  # Find the OS
-  OS=$(lsb_release -si)
-  if [[ "${OS,,}" =~ ^(ubuntu|debian)$ ]]
+  # Find the DISTRIB
+  DISTRIB=$(lsb_release -si)
+  if [[ "${DISTRIB,,}" =~ ^(ubuntu|debian)$ ]]
   then
     sudo apt-get update
     sudo apt-get install -y ncurses-term silversearcher-ag vim tmux
