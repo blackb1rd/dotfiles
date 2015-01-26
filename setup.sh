@@ -37,7 +37,7 @@ then
   if [[ "${DISTRIB,,}" =~ ^(ubuntu|debian)$ ]]
   then
     sudo apt-get update
-    sudo apt-get install -y ncurses-term silversearcher-ag vim tmux
+    sudo apt-get install -y irssi lynx ncurses-term silversearcher-ag vim tmux
   fi
 fi
 
@@ -82,6 +82,23 @@ then
     ln -s $current_dir/git/gitconfig $HOME/.gitconfig
   fi
 fi
+
+###############################################################################
+#                              ___              _                             #
+#                             |_ _|_ __ ___ ___(_)                            #
+#                              | || '__/ __/ __| |                            #
+#                              | || |  \__ \__ \ |                            #
+#                             |___|_|  |___/___/_|                            #
+#                                                                             #
+###############################################################################
+if [[ "${OStype,,}" =~ ^(linux)$ ]]
+then
+  if [[ ! -d $HOME/.irssi ]]
+  then
+    ln -s $current_dir/irssi $HOME/.irssi
+  fi
+fi
+
 
 ###############################################################################
 #                             ____  _          _ _                            #
