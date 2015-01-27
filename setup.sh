@@ -37,7 +37,7 @@ then
   if [[ "${DISTRIB,,}" =~ ^(ubuntu|debian)$ ]]
   then
     sudo apt-get update
-    sudo apt-get install -y irssi lynx ncurses-term silversearcher-ag vim tmux
+    sudo apt-get install -y htop irssi lynx ncurses-term silversearcher-ag vim tmux
   fi
 fi
 
@@ -99,6 +99,22 @@ then
   fi
 fi
 
+###############################################################################
+#                             _   _ _                                         #
+#                            | | | | |_ ___  _ __                             #
+#                            | |_| | __/ _ \| '_ \                            #
+#                            |  _  | || (_) | |_) |                           #
+#                            |_| |_|\__\___/| .__/                            #
+#                                           |_|                               #
+#                                                                             #
+###############################################################################
+if [[ "${OStype,,}" =~ ^(linux)$ ]]
+then
+  if [[ ! -a $HOME/.htoprc ]]
+  then
+    ln -s $current_dir/htop/htoprc $HOME/.htoprc
+  fi
+fi
 
 ###############################################################################
 #                             ____  _          _ _                            #
@@ -118,6 +134,22 @@ then
   if [[ ! -a ~/.bashrc ]]
   then
     ln -s $current_dir/shell/bashrc $HOME/.bashrc
+  fi
+fi
+
+###############################################################################
+#                          _____                                              #
+#                         |_   _| __ ___  _   ___  __                         #
+#                           | || '_ ` _ \| | | \ \/ /                         #
+#                           | || | | | | | |_| |>  <                          #
+#                           |_||_| |_| |_|\__,_/_/\_\                         #
+#                                                                             #
+###############################################################################
+if [[ "${OStype,,}" =~ ^(linux)$ ]]
+then
+  if [[ ! -a ~/.tmux.conf ]]
+  then
+    ln -s $current_dir/tmux/tmux.conf $HOME/.tmux.conf
   fi
 fi
 

@@ -1,4 +1,0 @@
-bellStyle: NoBell
-maxHistorySize: Just 500
-editMode: Vi
-historyDuplicates: IgnoreAll
