@@ -205,7 +205,7 @@ then
   then
     git clone https://github.com/powerline/fonts.git "$current_dir/fonts"
     cd "$current_dir/fonts" && ./install.sh
-    cd .. && rm -r fonts
+    cd .. && rm -rf fonts
   fi
 
   # Install dict.add
