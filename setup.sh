@@ -201,9 +201,12 @@ then
   cd YouCompleteMe && ./install.sh
 
   # Install fonts power line
-  git clone https://github.com/powerline/fonts.git
-  cd fonts && ./install.sh
-  cd .. && rm -r fonts
+  if [[ ! -d "$HOME/.vim/fonts" ]]
+  then
+    git clone https://github.com/powerline/fonts.git "$current_dir/fonts"
+    cd "$current_dir/fonts" && ./install.sh
+    cd .. && rm -r fonts
+  fi
 
   # Install dict.add
   if [[ ! -a ~/.vim/dict.add ]]
