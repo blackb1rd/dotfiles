@@ -201,7 +201,7 @@ then
   cd YouCompleteMe && ./install.sh
 
   # Install fonts power line
-  if [[ ! -d "$HOME/.vim/fonts" ]]
+  if [[ ! -d "$HOME/.fonts" ]]
   then
     git clone https://github.com/powerline/fonts.git "$current_dir/fonts"
     cd "$current_dir/fonts" && ./install.sh
