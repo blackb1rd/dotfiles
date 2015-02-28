@@ -100,3 +100,6 @@
 [submodule "vim/bundle/nginx"]
 	path = vim/bundle/nginx
 	url = https://github.com/evanmiller/nginx-vim-syntax.git
+[submodule "vim/bundle/tlib"]
+	path = vim/bundle/tlib
+	url = https://github.com/tomtom/tlib_vim
