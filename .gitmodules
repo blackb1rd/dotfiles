@@ -103,3 +103,6 @@
 [submodule "vim/bundle/tlib"]
 	path = vim/bundle/tlib
 	url = https://github.com/tomtom/tlib_vim
+[submodule "vim/bundle/vinarise"]
+	path = vim/bundle/vinarise
+	url = https://github.com/Shougo/vinarise.vim.git
