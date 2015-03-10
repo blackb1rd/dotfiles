@@ -36,8 +36,11 @@ then
   DISTRIB=$(lsb_release -si)
   if [[ "${DISTRIB,,}" =~ ^(ubuntu|debian)$ ]]
   then
+    echo "${txtbld}$(tput setaf 1)[-] Install the basic tool$(tput sgr0)"
     sudo apt-get update
-    sudo apt-get install -y htop irssi lynx ncurses-term silversearcher-ag vim tmux
+    sudo apt-get install -y htop irssi lynx ncurses-term silversearcher-ag vim \
+                            tmux
+    echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
   fi
 fi
 
