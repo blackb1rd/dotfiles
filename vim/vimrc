@@ -193,7 +193,11 @@ let g:NERDTreeQuitOnOpen    = 1
 
 " Airline
 if has("gui_running")
-    set guifont=DejaVu\ Sans\ Mono\ for\ Powerline\ 10
+    if has ("win64") || has("win32") || has("win16")
+        set guifont=DejaVu\ Sans\ Mono\ for\ Powerline:h10
+    else
+        set guifont=DejaVu\ Sans\ Mono\ for\ Powerline\ 10
+    endif
 endif
 let g:airline_powerline_fonts = 1
 let s:airline_toggle_with_noshowmode = 0
