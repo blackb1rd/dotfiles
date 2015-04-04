@@ -53,6 +53,7 @@ if has("multi_byte")
     set fileencodings=ucs-bom,utf-8,latin1
     let &listchars="tab:\u25B8 ,eol:\u00AC,trail:\u00b7,nbsp:\u2423"
 endif
+set list
 set nrformats+=alpha
 
 " folding
@@ -101,11 +102,11 @@ set wildignore+=*.spl                          " compiled spell lists
 if has("win64") || has("win32") || has("win16")
     set dir=C:\tmp,C:\temp
     set backupdir=$VIMRUNTIME\backups
-    set undodir=$VIMRUNTIME\undofiles
+    set undodir=$VIMRUNTIME\undo
 else
     set dir=~/.vim/tmp
     set backupdir=~/.vim/backups
-    set undodir=~/.vim/undofiles
+    set undodir=~/.vim/undo
 endif
 set backup
 set undofile
