@@ -140,13 +140,18 @@ nnoremap <silent> <leader>gd :Gdiff<CR>
 nnoremap <silent> <leader>ge :Gedit<CR>
 nnoremap <silent> <leader>gb :Gblame<CR>
 
+" set no hightlight search
+nnoremap <silent> <leader>h :nohl<CR>
+
 " ghc-mod config
 nnoremap <silent> <leader>c :call toggle#ToggleList("Quickfix List", 'c')<CR>
 nnoremap <silent> <leader>d :diffupdate<CR>
 nnoremap <silent> <leader>hc :GhcModCheck<CR>
 nnoremap <silent> <leader>hl :GhcModLint<CR>
-nnoremap <silent> <leader>h :nohl<CR>
 nnoremap <silent> <leader>l :ls<CR>:b<space>
+
+" pathogen
+nnoremap <silent> <leader>ht :call pathogen#helptags()<CR>
 
 " Airline
 nnoremap <silent> <leader>s :call AirToggle()<CR>
