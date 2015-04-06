@@ -19,8 +19,6 @@ let g:rehash256 = 1
 " Genaral formatting
 set tabstop=4
 set shiftwidth=4
-set softtabstop=2
-set cinoptions=(0
 set linebreak
 set nowrap
 set textwidth=80
