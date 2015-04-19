@@ -154,6 +154,9 @@ nnoremap <silent> <leader>ht :call pathogen#helptags()<CR>
 " Airline
 nnoremap <silent> <leader>s :call AirToggle()<CR>
 
+" Signify
+nnoremap <silent> <leader>sr :SignifyRefresh<CR>
+
 " tagbar config
 nnoremap <silent> <leader>tb :TagbarToggle<CR>
 

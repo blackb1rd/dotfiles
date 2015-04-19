@@ -8,8 +8,6 @@ Feel free use, tweak, or modify.
 This configuration makes heavy use of [pathogen][] to manage plugins.
 The important plugins I rely on:
 
-
-- [YouCompleteMe][]
 - [a][]
 - [abolish][]
 - [ag][]
@@ -19,8 +17,10 @@ The important plugins I rely on:
 - [eunuch][]
 - [fugitive][]
 - [ghcmod][]
-- [html-template-syntax][]
 - [html5-syntax][]
+- [html-template-syntax][]
+- [indent-guides][]
+- [instant-markdown][]
 - [json][]
 - [less][]
 - [lightline][]
@@ -29,6 +29,7 @@ The important plugins I rely on:
 - [nerdtree][]
 - [nginx][]
 - [pandoc][]
+- [pathogen][]
 - [repeat][]
 - [signify][]
 - [snippets][]
@@ -44,8 +45,9 @@ The important plugins I rely on:
 - [undotree][]
 - [unimpaired][]
 - [vimproc][]
+- [vinarise][]
+- [YouCompleteMe][]
 
-  [YouCompleteMe]: https://github.com/Valloric/YouCompleteMe.git
   [a]: https://github.com/vim-scripts/a.vim.git
   [abolish]: https://github.com/vim-scripts/abolish.vim.git
   [ag]: https://github.com/rking/ag.vim.git
@@ -55,8 +57,10 @@ The important plugins I rely on:
   [eunuch]: https://github.com/tpope/vim-eunuch.git
   [fugitive]: https://github.com/tpope/vim-fugitive.git
   [ghcmod]: https://github.com/eagletmt/ghcmod-vim.git
-  [html-template-syntax]: https://github.com/pbrisbin/html-template-syntax.git
   [html5-syntax]: https://github.com/othree/html5-syntax.vim.git
+  [html-template-syntax]: https://github.com/pbrisbin/html-template-syntax.git
+  [indent-guides]: https://github.com/nathanaelkane/vim-indent-guides.git
+  [instant-markdown]: https://github.com/suan/vim-instant-markdown.git
   [json]: https://github.com/helino/vim-json.git
   [less]: https://github.com/groenewege/vim-less.git
   [lightline]: https://github.com/itchyny/lightline.vim.git
@@ -69,7 +73,6 @@ The important plugins I rely on:
   [repeat]: https://github.com/tpope/vim-repeat.git
   [signify]: https://github.com/mhinz/vim-signify.git
   [snippets]: https://github.com/honza/vim-snippets.git
-  [snipmate]: https://github.com/garbas/vim-snipmate.git
   [surround]: https://github.com/tpope/vim-surround.git
   [switch]: https://github.com/AndrewRadev/switch.vim.git
   [syntastic]: https://github.com/scrooloose/syntastic.git
@@ -82,3 +85,5 @@ The important plugins I rely on:
   [undotree]: https://github.com/mbbill/undotree.git
   [unimpaired]: https://github.com/tpope/vim-unimpaired.git
   [vimproc]: https://github.com/Shougo/vimproc.git
+  [vinarise]: https://github.com/Shougo/vinarise.vim.git
+  [YouCompleteMe]: https://github.com/Valloric/YouCompleteMe.git
