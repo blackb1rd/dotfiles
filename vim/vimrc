@@ -98,9 +98,9 @@ set wildignore+=*.spl                          " compiled spell lists
 
 " backup
 if has("win64") || has("win32") || has("win16")
-    set dir=C:\tmp\\,C:\temp\\
-    set backupdir=$VIMRUNTIME\backups\\
-    set undodir=$VIMRUNTIME\undo\\
+    set dir=%TMP%\\
+    set backupdir=%TMP%\backups\\
+    set undodir=%TMP%\undo\\
 else
     set dir=~/.vim/tmp//
     set backupdir=~/.vim/backups//
