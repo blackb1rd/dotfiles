@@ -46,6 +46,9 @@ fi
 # Get the current directory
 current_dir="$( cd "$( dirname "$0" )" && pwd )"
 
+# Update submodule
+git submodule update --init --recursive
+
 ###############################################################################
 #                 ____       _                                                #
 #                |  _ \  ___| |__  _   _  __ _  __ _  ___ _ __                #
