@@ -205,7 +205,7 @@ then
   cd "$current_dir/vim/bundle"
   cd YouCompleteMe
   git submodule update --init --recursive
-  ./install.sh
+  bash install.sh
 
   # Install fonts power line
   if [[ ! -d "$HOME/.fonts" ]]
