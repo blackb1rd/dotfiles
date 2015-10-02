@@ -11,7 +11,7 @@ git submodule update --init --recursive
 
 Do the setup dotfiles.
 ```shell
-./setup.sh --os type
+./setup.sh --os linux
 ```
 
 For the update git all submodules after do the setup:

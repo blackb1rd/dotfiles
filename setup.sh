@@ -8,6 +8,27 @@ usage() {
   echo "  -h, --help    Show basic help message and exit"
 }
 
+mkdirfolder () {
+  if [[ ! -d "$HOME/$1" ]]
+  then
+    mkdir "$HOME/$1"
+  fi
+}
+
+installfile () {
+  if [[ ! -a "$HOME/$1" ]]
+  then
+    ln -s "$current_dir/$2" "$HOME/$1"
+  fi
+}
+
+installfolder () {
+  if [[ ! -d "$HOME/.$1" ]]
+  then
+    ln -s "$current_dir/$1" "$HOME/.$1"
+  fi
+}
+
 # Check argument
 case $1 in
   --os )                  shift
@@ -60,16 +81,10 @@ git submodule update --init --recursive
 ###############################################################################
 if [[ "${OStype,,}" =~ ^(linux)$ ]]
 then
-  if [[ ! -a ~/.gdbrc ]]
-  then
-    ln -s $current_dir/debugger/gdbrc $HOME/.gdbrc
-  fi
+  installfile .gdbrc debugger/gdbrc
 
-  if [[ ! -a ~/.cgdb/cgdbrc ]]
-  then
-    mkdir $HOME/.cgdb
-    ln -s $current_dir/debugger/cgdbrc $HOME/.cgdb/cgdbrc
-  fi
+  mkdirfolder .cgdb
+  installfile .cgdb/cgdbrc debugger/cgdbrc
 fi
 
 ###############################################################################
@@ -82,10 +97,7 @@ fi
 ###############################################################################
 if [[ "${OStype,,}" =~ ^(linux)$ ]]
 then
-  if [[ ! -a ~/.gitconfig ]]
-  then
-    ln -s $current_dir/git/gitconfig $HOME/.gitconfig
-  fi
+  installfile .gitconfig git/gitconfig
 fi
 
 ###############################################################################
@@ -98,10 +110,7 @@ fi
 ###############################################################################
 if [[ "${OStype,,}" =~ ^(linux)$ ]]
 then
-  if [[ ! -d $HOME/.irssi ]]
-  then
-    ln -s $current_dir/irssi $HOME/.irssi
-  fi
+  installfolder irssi
 fi
 
 ###############################################################################
@@ -115,10 +124,7 @@ fi
 ###############################################################################
 if [[ "${OStype,,}" =~ ^(linux)$ ]]
 then
-  if [[ ! -a $HOME/.htoprc ]]
-  then
-    ln -s $current_dir/htop/htoprc $HOME/.htoprc
-  fi
+  installfile .htoprc htop/htoprc
 fi
 
 ###############################################################################
@@ -131,15 +137,8 @@ fi
 ###############################################################################
 if [[ "${OStype,,}" =~ ^(linux)$ ]]
 then
-  if [[ ! -a ~/.zshrc ]]
-  then
-    ln -s $current_dir/shell/zshrc $HOME/.zshrc
-  fi
-
-  if [[ ! -a ~/.bashrc ]]
-  then
-    ln -s $current_dir/shell/bashrc $HOME/.bashrc
-  fi
+  installfile .zshrc shell/zshrc
+  installfile .bashrc shell/bashrc
 fi
 
 ###############################################################################
@@ -152,10 +151,7 @@ fi
 ###############################################################################
 if [[ "${OStype,,}" =~ ^(linux)$ ]]
 then
-  if [[ ! -a ~/.tmux.conf ]]
-  then
-    ln -s $current_dir/tmux/tmux.conf $HOME/.tmux.conf
-  fi
+  installfile .tmux.conf tmux/tmux.conf
 fi
 
 ###############################################################################
@@ -168,38 +164,14 @@ fi
 ###############################################################################
 if [[ "${OStype,,}" =~ ^(linux)$ ]]
 then
+  mkdirfolder .vim
+  mkdirfolder .vim/tmp
+  mkdirfolder .vim/backups
+  mkdirfolder .vim/undo
+  mkdirfolder .vim/
 
-  if [[ ! -d "$HOME/.vim" ]]
-  then
-    mkdir "$HOME/.vim"
-  fi
-
-  if [[ ! -d "$HOME/.vim/tmp" ]]
-  then
-    mkdir "$HOME/.vim/tmp"
-  fi
-
-  if [[ ! -d "$HOME/.vim/backups" ]]
-  then
-    mkdir "$HOME/.vim/backups"
-  fi
-
-  if [[ ! -d "$HOME/.vim/undo" ]]
-  then
-    mkdir "$HOME/.vim/undo"
-  fi
-
-  # Install bundle
-  if [[ ! -d "$HOME/.vim/bundle" ]]
-  then
-    ln -s $current_dir/vim/bundle "$HOME/.vim/bundle"
-  fi
-
-  # Install bundle
-  if [[ ! -d "$HOME/.vim/colors" ]]
-  then
-    ln -s $current_dir/vim/colors "$HOME/.vim/colors"
-  fi
+  installfolder vim/bundle
+  installfolder vim/colors
 
   # Install YouCompleteMe
   cd "$current_dir/vim/bundle"
@@ -215,33 +187,9 @@ then
     cd .. && rm -rf fonts
   fi
 
-  # Install dict.add
-  if [[ ! -a ~/.vim/dict.add ]]
-  then
-    ln -s $current_dir/vim/dict.add $HOME/.vim/dict.add
-  fi
-
-  # Install filetype.vim
-  if [[ ! -a ~/.vim/filetype.vim ]]
-  then
-    ln -s $current_dir/vim/filetype.vim $HOME/.vim/filetype.vim
-  fi
-
-  # Install spell
-  if [[ ! -d ~/.vim/spell ]]
-  then
-    ln -s $current_dir/vim/spell $HOME/.vim/spell
-  fi
-
-  # Install .vimrc
-  if [[ ! -a ~/.vimrc ]]
-  then
-    ln -s $current_dir/vim/vimrc $HOME/.vimrc
-  fi
-
-  # Install ycm
-  if [[ ! -d ~/.vim/ycm ]]
-  then
-    ln -s $current_dir/vim/ycm $HOME/.vim/ycm
-  fi
+  installfile .vim/dict.add vim/dict.add
+  installfile .vim/filetype.vim vim/filetype.vim
+  installfolder vim/spell
+  installfile .vimrc vim/vimrc
+  installfolder vim/ycm
 fi
