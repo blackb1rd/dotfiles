@@ -58,9 +58,6 @@
 [submodule "vim/bundle/ultisnips"]
 	path = vim/bundle/ultisnips
 	url = git://github.com/SirVer/ultisnips.git
-[submodule "vim/bundle/lightline"]
-	path = vim/bundle/lightline
-	url = git://github.com/itchyny/lightline.vim.git
 [submodule "vim/bundle/airline"]
 	path = vim/bundle/airline
 	url = git://github.com/bling/vim-airline.git
