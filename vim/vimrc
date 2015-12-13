@@ -40,7 +40,7 @@ set ic
 set hlsearch
 set smartcase
 set incsearch
-let g:agprg="ag --vimgrep"
+let g:ag_prg="ag --vimgrep"
 
 " editing
 scriptencoding utf-8
