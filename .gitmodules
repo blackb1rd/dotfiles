@@ -115,3 +115,9 @@
 [submodule "vim/bundle/searchindex"]
 	path = vim/bundle/searchindex
 	url = git://github.com/google/vim-searchindex.git
+[submodule "vim/bundle/browserlink"]
+	path = vim/bundle/browserlink
+	url = https://github.com/jaxbot/browserlink.vim
+[submodule "vim/bundle/vc"]
+	path = vim/bundle/vc
+	url = https://github.com/juneedahamed/vc.vim.git
