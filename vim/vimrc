@@ -72,7 +72,6 @@ set autowrite
 set showcmd
 set title
 set ruler
-set number
 set cursorline
 set shortmess=at
 set hidden
@@ -85,6 +84,11 @@ set confirm
 set equalalways
 set lazyredraw
 set statusline=%<%F%m%r%h%w%y\ %{&ff}\ %{strftime(\"%c\",getftime(expand(\"%:p\")))}%=\ %l\,%c\ Ascii:%b\ Hex:%B\ %{\"[\".(&fenc==\"\"?&enc:&fenc).((exists(\"+bomb\")\ &&\ &bomb)?\",B\":\"\").\"]\"}\ %P
+
+" number
+set number
+autocmd InsertEnter * set relativenumber    " Insert mode : change number to relativenumber
+autocmd InsertLeave * set norelativenumber  " Leaving Insert mode : change relativenumber to norelativenumber
 
 if has('mouse')
   set mouse=a
