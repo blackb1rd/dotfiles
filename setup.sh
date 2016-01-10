@@ -59,7 +59,7 @@ then
   then
     echo "${txtbld}$(tput setaf 1)[-] Install the basic tool$(tput sgr0)"
     sudo apt-get update
-    sudo apt-get install -y htop irssi lynx ncurses-term vim tmux
+    sudo apt-get install -y htop irssi lynx ncurses-term vim tmux python-dev build-essential cmake
     echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
   fi
 fi
@@ -177,7 +177,7 @@ then
   cd "$current_dir/vim/bundle"
   cd YouCompleteMe
   git submodule update --init --recursive
-  bash install.sh
+  bash install.sh --tern-completer --clang-completer --gocode-completer
 
   # Install fonts power line
   if [[ ! -d "$HOME/.fonts" ]]
