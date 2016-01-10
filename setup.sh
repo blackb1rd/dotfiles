@@ -59,7 +59,8 @@ then
   then
     echo "${txtbld}$(tput setaf 1)[-] Install the basic tool$(tput sgr0)"
     sudo apt-get update
-    sudo apt-get install -y htop irssi lynx ncurses-term vim tmux python-dev build-essential cmake
+    sudo apt-get install -y htop irssi lynx ncurses-term vim tmux python-dev \
+                            build-essential cmake gocode npm node
     echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
   fi
 fi
@@ -174,10 +175,12 @@ then
   installfolder vim/colors
 
   # Install YouCompleteMe
-  cd "$current_dir/vim/bundle"
-  cd YouCompleteMe
+  cd "$current_dir/vim/bundle/YouCompleteMe"
   git submodule update --init --recursive
-  bash install.sh --tern-completer --clang-completer --gocode-completer
+  cd "$current_dir/vim/bundle/YouCompleteMe/third_party/ycmd/third_party/tern"
+  sudo npm install --production
+  cd "$current_dir/vim/bundle/YouCompleteMe"
+  ./install.py --clang-completer --tern-completer --gocode-completer
 
   # Install fonts power line
   if [[ ! -d "$HOME/.fonts" ]]
