@@ -121,3 +121,6 @@
 [submodule "vim/bundle/vc"]
 	path = vim/bundle/vc
 	url = https://github.com/juneedahamed/vc.vim.git
+[submodule "vim/bundle/nerdcommenter"]
+	path = vim/bundle/nerdcommenter
+	url = https://github.com/scrooloose/nerdcommenter.git
