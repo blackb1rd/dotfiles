@@ -180,7 +180,7 @@ then
   cd "$current_dir/vim/bundle/YouCompleteMe/third_party/ycmd/third_party/tern"
   sudo npm install --production
   cd "$current_dir/vim/bundle/YouCompleteMe"
-  ./install.py --clang-completer --tern-completer --gocode-completer
+  ./install.py --tern-completer
 
   # Install fonts power line
   if [[ ! -d "$HOME/.fonts" ]]
