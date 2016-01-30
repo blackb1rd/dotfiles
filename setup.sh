@@ -4,8 +4,9 @@ usage() {
   echo "Usage: $0 [options]"
   echo ""
   echo "Options:"
-  echo "  --os OStype   Type OS to install dotfiles(Linux, Android, OSX, iOS)"
-  echo "  -h, --help    Show basic help message and exit"
+  echo "  --os OStype       Type OS to install dotfiles(Linux, Android, OSX, iOS)"
+  echo "  -b, --basictool   Installing basic tool"
+  echo "  -h, --help        Show basic help message and exit"
 }
 
 mkdirfolder () {
@@ -34,6 +35,8 @@ case $1 in
   --os )                  shift
                           OStype=$1
                           ;;
+  -b | --basictool )      basictool=true
+                          ;;
   -h | --help )           usage
                           exit
                           ;;
@@ -51,7 +54,7 @@ then
 fi
 
 # Install program
-if [[ "${OStype,,}" =~ ^(linux)$ ]]
+if [[ ("${OStype,,}" =~ ^(linux)$) && ($basictool) ]]
 then
   # Find the DISTRIB
   DISTRIB=$(lsb_release -si)
