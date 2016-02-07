@@ -31,18 +31,22 @@ installfolder () {
 }
 
 # Check argument
-case $1 in
-  --os )                  shift
-                          OStype=$1
-                          ;;
-  -b | --basictool )      basictool=true
-                          ;;
-  -h | --help )           usage
-                          exit
-                          ;;
-  * )                     usage
-                          exit 1
-esac
+while [[ $# > 1 ]]
+do
+  case $1 in
+    --os )                  shift
+                            OStype=$1
+                            ;;
+    -b | --basictool )      basictool=true
+                            ;;
+    -h | --help )           usage
+                            exit
+                            ;;
+    * )                     usage
+                            exit 1
+  esac
+shift
+done
 
 # Check the input of OStype
 if ! [[ "${OStype,,}" =~ ^(linux|android|osx|ios)$ ]]
