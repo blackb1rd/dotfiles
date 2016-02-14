@@ -1,37 +1,46 @@
-#!/bin/bash
+#!/bin/sh
 
 usage() {
   echo "Usage: $0 [options]"
   echo ""
   echo "Options:"
-  echo "  --os OStype       Type OS to install dotfiles(Linux, Android, OSX, iOS)"
+  echo "  --os OStype       Type OS to install dotfiles(Linux, Android, OSX, iOS, Yun, Openwrt)"
   echo "  -b, --basictool   Installing basic tool"
   echo "  -h, --help        Show basic help message and exit"
 }
 
 mkdirfolder () {
-  if [[ ! -d "$HOME/$1" ]]
-  then
+  if [ ! -d "$HOME/$1" ] ; then
     mkdir "$HOME/$1"
   fi
 }
 
 installfile () {
-  if [[ ! -a "$HOME/$1" ]]
-  then
+  if [ ! -f "$HOME/$1" ] ; then
     ln -s "$current_dir/$2" "$HOME/$1"
   fi
 }
 
 installfolder () {
-  if [[ ! -d "$HOME/.$1" ]]
-  then
+  if [ ! -d "$HOME/.$1" ] ; then
     ln -s "$current_dir/$1" "$HOME/.$1"
   fi
 }
 
+checkOStype () {
+  case $1 in
+      linux ) return 1 ;;
+    android ) return 1 ;;
+    openwrt ) return 1 ;;
+        yun ) return 1 ;;
+        osx ) return 1 ;;
+        ios ) return 1 ;;
+          * ) return 0 ;;
+  esac
+}
+
 # Check argument
-while [[ $# > 1 ]]
+while [ $# != 0 ]
 do
   case $1 in
     --os )                  shift
@@ -45,12 +54,14 @@ do
     * )                     usage
                             exit 1
   esac
-shift
+  shift
 done
 
+# Make string as lower case
+OStype=$(echo $OStype | awk '{print tolower($0)}')
+
 # Check the input of OStype
-if ! [[ "${OStype,,}" =~ ^(linux|android|osx|ios)$ ]]
-then
+if checkOStype $OStype ; then
   echo "Invalid input --os $OStype"
   echo ""
   echo "To see more details $0 -h"
@@ -58,12 +69,12 @@ then
 fi
 
 # Install program
-if [[ ("${OStype,,}" =~ ^(linux)$) && ($basictool) ]]
-then
+if [ $OStype = "linux" ] && [ -n "${basictool}" ] ; then
+
   # Find the DISTRIB
-  DISTRIB=$(lsb_release -si)
-  if [[ "${DISTRIB,,}" =~ ^(ubuntu|debian)$ ]]
-  then
+  DISTRIB=$(lsb_release -si | awk '{print tolower($0)}')
+
+  if [ $DISTRIB = "ubuntu" ] || [ $DISTRIB = "debian" ] ; then
     echo "${txtbld}$(tput setaf 1)[-] Install the basic tool$(tput sgr0)"
     sudo apt-get update
     sudo apt-get install -y htop irssi lynx ncurses-term vim tmux python-dev \
@@ -87,8 +98,7 @@ git submodule update --init --recursive
 #                                        |___/ |___/                          #
 #                                                                             #
 ###############################################################################
-if [[ "${OStype,,}" =~ ^(linux)$ ]]
-then
+if [ $OStype = "linux" ] ; then
   installfile .gdbrc debugger/gdbrc
 
   mkdirfolder .cgdb
@@ -103,8 +113,7 @@ fi
 #                                 \____|_|\__|                                #
 #                                                                             #
 ###############################################################################
-if [[ "${OStype,,}" =~ ^(linux)$ ]]
-then
+if [ $OStype = "linux" ] ; then
   installfile .gitconfig git/gitconfig
 fi
 
@@ -116,8 +125,7 @@ fi
 #                             |___|_|  |___/___/_|                            #
 #                                                                             #
 ###############################################################################
-if [[ "${OStype,,}" =~ ^(linux)$ ]]
-then
+if [ $OStype = "linux" ] ; then
   installfolder irssi
 fi
 
@@ -130,8 +138,7 @@ fi
 #                                           |_|                               #
 #                                                                             #
 ###############################################################################
-if [[ "${OStype,,}" =~ ^(linux)$ ]]
-then
+if [ $OStype = "linux" ] ; then
   installfile .htoprc htop/htoprc
 fi
 
@@ -143,8 +150,7 @@ fi
 #                            |____/|_| |_|\___|_|_|                           #
 #                                                                             #
 ###############################################################################
-if [[ "${OStype,,}" =~ ^(linux)$ ]]
-then
+if [ $OStype = "linux" ] ; then
   installfile .zshrc shell/zshrc
   installfile .bashrc shell/bashrc
 fi
@@ -157,8 +163,7 @@ fi
 #                           |_||_| |_| |_|\__,_/_/\_\                         #
 #                                                                             #
 ###############################################################################
-if [[ "${OStype,,}" =~ ^(linux)$ ]]
-then
+if [ $OStype = "linux" ] ; then
   installfile .tmux.conf tmux/tmux.conf
 fi
 
@@ -170,8 +175,7 @@ fi
 #                               \_/  |_|_| |_| |_|                            #
 #                                                                             #
 ###############################################################################
-if [[ "${OStype,,}" =~ ^(linux)$ ]]
-then
+if [ $OStype = "linux" ] ; then
   mkdirfolder .vim
   mkdirfolder .vim/tmp
   mkdirfolder .vim/backups
@@ -190,7 +194,7 @@ then
   ./install.py --tern-completer
 
   # Install fonts power line
-  if [[ ! -d "$HOME/.fonts" ]]
+  if [ ! -d "$HOME/.fonts" ]
   then
     git clone https://github.com/powerline/fonts.git "$current_dir/fonts"
     cd "$current_dir/fonts" && ./install.sh
