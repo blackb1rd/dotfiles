@@ -201,7 +201,7 @@ if [ $OStype = "linux" ] ; then
   # Install YouCompleteMe
   cd "$current_dir/vim/bundle/YouCompleteMe"
   git submodule update --init --recursive
-  cd "$current_dir/vim/bundle/YouCompleteMe/third_party/ycmd/third_party/tern"
+  cd "$current_dir/vim/bundle/YouCompleteMe/third_party/ycmd/third_party/tern_runtime"
   sudo npm install --production
   cd "$current_dir/vim/bundle/YouCompleteMe"
   ./install.py --tern-completer
