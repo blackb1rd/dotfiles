@@ -11,7 +11,11 @@ call pathogen#infect('bundle/{}')
 syntax on
 filetype plugin indent on
 set t_Co=256
-colorscheme molokai
+if &diff
+    colorscheme railscasts
+else
+    colorscheme molokai
+endif
 let g:rehash256 = 1
 
 " GENERAL {{{1
