@@ -58,6 +58,7 @@ if has("multi_byte")
 endif
 set list
 set nrformats+=alpha
+set pastetoggle=<leader>p
 
 " folding
 set foldenable
