@@ -127,3 +127,6 @@
 [submodule "vim/bundle/railscasts-theme"]
 	path = vim/bundle/railscasts-theme
 	url = https://github.com/dhruvasagar/vim-railscasts-theme
+[submodule "vim/bundle/airline-themes"]
+	path = vim/bundle/airline-themes
+	url = https://github.com/vim-airline/vim-airline-themes
