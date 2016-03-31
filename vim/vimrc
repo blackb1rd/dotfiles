@@ -1,5 +1,5 @@
 " file:     ~/.vimrc files
-" author:   blackb1rd
+" author:   Prachya Saechua
 " ----------------------------------------------------------------------------
 
 set nocompatible
@@ -67,9 +67,15 @@ set foldmarker={{{,}}}
 set foldcolumn=1
 set backspace=indent,eol,start
 
-" spelling
-set spelllang=en_ca
-set spellfile=~/.vim/dict.add
+if has("unix")
+    " spelling
+    set spelllang=en
+    set spellfile=~/.vim/dict.add
+    nnoremap <silent> <leader>sp :set spell!<CR>
+
+    " dictionary
+    set dictionary=~/.vim/dict.add
+endif
 
 " vim ui
 set autoread
