@@ -19,6 +19,9 @@ shopt -s histappend
 HISTSIZE=5000
 HISTFILESIZE=5000
 
+# erase duplicates in history
+export HISTCONTROL=ignoreboth:erasedups
+
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
 shopt -s checkwinsize
