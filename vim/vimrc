@@ -236,8 +236,10 @@ function! AirToggle()
 endfunction
 set noshowmode
 
-" youcompleteme config
-let g:ycm_global_ycm_extra_conf = '~/.vim/ycm/c_conf.py'
+" syntastic
+let g:syntastic_error_symbol = "\u2717"
+let g:syntastic_warning_symbol = "\u26A0"
+let g:syntastic_check_on_open = 1
 
 " pandoc config
 let g:pandoc_no_empty_implicits = 1
@@ -251,3 +253,6 @@ else
     let g:UltiSnipsSnippetsDir  = "~/.vim/bundle/snippets/UltiSnips"
 endif
 let g:UltiSnipsExpandTrigger    = "<c-j>"
+
+" youcompleteme config
+let g:ycm_global_ycm_extra_conf = '~/.vim/ycm/c_conf.py'
