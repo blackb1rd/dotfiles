@@ -130,3 +130,6 @@
 [submodule "vim/bundle/airline-themes"]
 	path = vim/bundle/airline-themes
 	url = https://github.com/vim-airline/vim-airline-themes
+[submodule "vim/bundle/opencl"]
+	path = vim/bundle/opencl
+	url = https://github.com/petRUShka/vim-opencl
