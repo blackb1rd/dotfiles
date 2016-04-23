@@ -11,26 +11,32 @@ The important plugins I rely on:
 - [a]
 - [abolish]
 - [ag]
+- [airline-themes]
 - [airline]
+- [browserlink]
 - [commentary]
 - [css3-syntax]
 - [eunuch]
 - [fugitive]
 - [ghcmod]
-- [html5-syntax]
 - [html-template-syntax]
+- [html5-syntax]
 - [indent-guides]
 - [instant-markdown]
 - [json]
 - [less]
-- [lightline]
+- [misc]
 - [molokai]
 - [multiple-cursors]
+- [nerdcommenter]
 - [nerdtree]
 - [nginx]
+- [opencl]
 - [pandoc]
 - [pathogen]
+- [railscasts-theme]
 - [repeat]
+- [searchindex]
 - [signify]
 - [snippets]
 - [surround]
@@ -44,6 +50,7 @@ The important plugins I rely on:
 - [ultisnips]
 - [undotree]
 - [unimpaired]
+- [vc]
 - [vimproc]
 - [vinarise]
 - [YouCompleteMe]
@@ -51,27 +58,33 @@ The important plugins I rely on:
   [a]: https://github.com/vim-scripts/a.vim.git
   [abolish]: https://github.com/vim-scripts/abolish.vim.git
   [ag]: https://github.com/rking/ag.vim.git
+  [airline-themes]: https://github.com/vim-airline/vim-airline-themes.git
   [airline]: https://github.com/bling/vim-airline.git
+  [browserlink]: https://github.com/jaxbot/browserlink.vim.git
   [commentary]: https://github.com/tpope/vim-commentary.git
   [css3-syntax]: https://github.com/hail2u/vim-css3-syntax.git
   [eunuch]: https://github.com/tpope/vim-eunuch.git
   [fugitive]: https://github.com/tpope/vim-fugitive.git
   [ghcmod]: https://github.com/eagletmt/ghcmod-vim.git
-  [html5-syntax]: https://github.com/othree/html5-syntax.vim.git
   [html-template-syntax]: https://github.com/pbrisbin/html-template-syntax.git
+  [html5-syntax]: https://github.com/othree/html5-syntax.vim.git
   [indent-guides]: https://github.com/nathanaelkane/vim-indent-guides.git
   [instant-markdown]: https://github.com/suan/vim-instant-markdown.git
   [json]: https://github.com/helino/vim-json.git
   [less]: https://github.com/groenewege/vim-less.git
-  [lightline]: https://github.com/itchyny/lightline.vim.git
+  [misc]: https://github.com/xolox/vim-misc.git
   [molokai]: https://github.com/tomasr/molokai.git
   [multiple-cursors]: https://github.com/terryma/vim-multiple-cursors.git
+  [nerdcommenter]: https://github.com/scrooloose/nerdcommenter.git
   [nerdtree]: https://github.com/scrooloose/nerdtree.git
   [nginx]: https://github.com/evanmiller/nginx-vim-syntax.git
+  [opencl]: https://github.com/petRUShka/vim-opencl.git
   [pandoc]: https://github.com/vim-pandoc/vim-pandoc.git
   [pathogen]: https://github.com/tpope/vim-pathogen.git
+  [railscasts-theme]: https://github.com/dhruvasagar/vim-railscasts-theme.git
   [repeat]: https://github.com/tpope/vim-repeat.git
   [signify]: https://github.com/mhinz/vim-signify.git
+  [searchindex]: https://github.com/google/vim-searchindex.git
   [snippets]: https://github.com/honza/vim-snippets.git
   [surround]: https://github.com/tpope/vim-surround.git
   [switch]: https://github.com/AndrewRadev/switch.vim.git
@@ -84,6 +97,7 @@ The important plugins I rely on:
   [ultisnips]: https://github.com/SirVer/ultisnips.git
   [undotree]: https://github.com/mbbill/undotree.git
   [unimpaired]: https://github.com/tpope/vim-unimpaired.git
+  [vc]: https://github.com/juneedahamed/vc.vim.git
   [vimproc]: https://github.com/Shougo/vimproc.git
   [vinarise]: https://github.com/Shougo/vinarise.vim.git
   [YouCompleteMe]: https://github.com/Valloric/YouCompleteMe.git
