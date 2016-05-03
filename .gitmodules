@@ -133,3 +133,6 @@
 [submodule "vim/bundle/opencl"]
 	path = vim/bundle/opencl
 	url = git://github.com/petRUShka/vim-opencl.git
+[submodule "vim/bundle/ctrlpvim"]
+	path = vim/bundle/ctrlpvim
+	url = git://github.com/ctrlpvim/ctrlp.vim.git
