@@ -60,7 +60,10 @@
 	url = git://github.com/SirVer/ultisnips.git
 [submodule "vim/bundle/airline"]
 	path = vim/bundle/airline
-	url = git://github.com/bling/vim-airline.git
+	url = git://github.com/vim-airline/vim-airline.git
+[submodule "vim/bundle/airline-themes"]
+	path = vim/bundle/airline-themes
+	url = git://github.com/vim-airline/vim-airline-themes.git
 [submodule "vim/bundle/signify"]
 	path = vim/bundle/signify
 	url = git://github.com/mhinz/vim-signify.git
@@ -117,19 +120,16 @@
 	url = git://github.com/google/vim-searchindex.git
 [submodule "vim/bundle/browserlink"]
 	path = vim/bundle/browserlink
-	url = https://github.com/jaxbot/browserlink.vim
+	url = git://github.com/jaxbot/browserlink.vim.git
 [submodule "vim/bundle/vc"]
 	path = vim/bundle/vc
-	url = https://github.com/juneedahamed/vc.vim.git
+	url = git://github.com/juneedahamed/vc.vim.git
 [submodule "vim/bundle/nerdcommenter"]
 	path = vim/bundle/nerdcommenter
-	url = https://github.com/scrooloose/nerdcommenter.git
+	url = git://github.com/scrooloose/nerdcommenter.git
 [submodule "vim/bundle/railscasts-theme"]
 	path = vim/bundle/railscasts-theme
-	url = https://github.com/dhruvasagar/vim-railscasts-theme
-[submodule "vim/bundle/airline-themes"]
-	path = vim/bundle/airline-themes
-	url = https://github.com/vim-airline/vim-airline-themes
+	url = git://github.com/dhruvasagar/vim-railscasts-theme.git
 [submodule "vim/bundle/opencl"]
 	path = vim/bundle/opencl
-	url = https://github.com/petRUShka/vim-opencl
+	url = git://github.com/petRUShka/vim-opencl.git
