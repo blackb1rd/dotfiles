@@ -48,6 +48,8 @@ do
                             ;;
     -b | --basictool )      basictool=true
                             ;;
+    -l | --latest )         latest=true
+                            ;;
     -h | --help )           usage
                             exit
                             ;;
@@ -77,8 +79,13 @@ if [ $OStype = "linux" ] && [ -n "${basictool}" ] ; then
   if [ $DISTRIB = "ubuntu" ] || [ $DISTRIB = "debian" ] ; then
     echo "${txtbld}$(tput setaf 1)[-] Install the basic tool$(tput sgr0)"
     sudo apt-get update
-    sudo apt-get install -y htop irssi lynx ncurses-term vim tmux python-dev \
+    sudo apt-get install -y htop irssi lynx ncurses-term tmux python-dev \
                             build-essential cmake gocode npm node
+    # if did not want to install latest vim version
+    if [ ! -n "${latest}" ] ; then
+      sudo apt-get install -y vim
+    if
+
     echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
   fi
 fi
@@ -189,6 +196,24 @@ fi
 #                                                                             #
 ###############################################################################
 if [ $OStype = "linux" ] ; then
+  # Install latest vim version
+  if [ -n "${latest}" ] ; then
+    sudo apt-get remove -y vim
+
+    if [ ! -d "$HOME/github/vim/" ] ; then
+      # download latest vim version
+      git clone 'https://github.com/vim/vim'
+    else
+      cd "$HOME/github/vim/"
+
+      # make sure this is the latest version
+      git pull
+
+      ./configure
+      make
+      sudo make install
+    fi
+  if
   mkdirfolder .vim
   mkdirfolder .vim/tmp
   mkdirfolder .vim/backups
