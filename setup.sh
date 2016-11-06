@@ -209,7 +209,11 @@ if [ $OStype = "linux" ] ; then
       # make sure this is the latest version
       git pull
 
-      ./configure
+      ./configure --with-features=huge --enable-gui --enable-luainterp \
+                  --enable-perlinterp --enable-pythoninterp \
+                  --enable-tclinterp --enable-python3interp \
+                  --enable-rubyinterp --enable-cscope  --enable-multibyte \
+                  --enable-fontset
       make
       sudo make install
     fi
