@@ -84,7 +84,7 @@ if [ $OStype = "linux" ] && [ -n "${basictool}" ] ; then
     # if did not want to install latest vim version
     if [ ! -n "${latest}" ] ; then
       sudo apt-get install -y vim
-    if
+    fi
 
     echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
   fi
@@ -217,7 +217,7 @@ if [ $OStype = "linux" ] ; then
       make
       sudo make install
     fi
-  if
+  fi
   mkdirfolder .vim
   mkdirfolder .vim/tmp
   mkdirfolder .vim/backups
@@ -237,8 +237,7 @@ if [ $OStype = "linux" ] ; then
   ./install.py --tern-completer
 
   # Install fonts power line
-  if [ ! -d "$HOME/.fonts" ]
-  then
+  if [ ! -d "$HOME/.fonts" ] ; then
     git clone https://github.com/powerline/fonts.git "$current_dir/fonts"
     cd "$current_dir/fonts" && ./install.sh
     cd .. && rm -rf fonts
