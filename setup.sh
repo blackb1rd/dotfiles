@@ -82,7 +82,7 @@ if [ $OStype = "linux" ] && [ -n "${basictool}" ] ; then
     sudo apt-get install -y htop irssi lynx ncurses-term tmux python-dev \
                             build-essential cmake gocode npm node
     # if did not want to install latest vim version
-    if [ ! -n "${latest}" ] ; then
+    if [ -n "${latest}" ] ; then
       sudo apt-get install -y vim
     fi
 
