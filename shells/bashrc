@@ -119,7 +119,7 @@ fi
 PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
 
 export TERM=xterm-256color
-export PYTHONSTARTUP=~/.pythonrc
+export PYTHONSTARTUP=$HOME/.pythonrc
 
 alias tmux="TERM=screen-256color-bce tmux -2"
 
