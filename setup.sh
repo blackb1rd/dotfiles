@@ -6,6 +6,7 @@ usage() {
   echo "Options:"
   echo "  --os OStype       Type OS to install dotfiles(Linux, Android, OSX, iOS, Yun, Openwrt)"
   echo "  -b, --basictool   Installing basic tool"
+  echo "  -l, --latest      Compiling the latest VIM version"
   echo "  -h, --help        Show basic help message and exit"
 }
 
