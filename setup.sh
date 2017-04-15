@@ -72,6 +72,10 @@ if checkOStype $OStype ; then
   exit 1
 fi
 
+if [ $OStype = "window" ] ; then
+  export MSYS=winsymlinks:nativestrict
+fi
+
 # Install program
 if [ $OStype = "linux" ] && [ -n "${basictool}" ] ; then
 
@@ -97,6 +101,7 @@ current_dir="$( cd "$( dirname "$0" )" && pwd )"
 
 # Update submodule
 git submodule update --init --recursive || exit "$?"
+git pull --recurse-submodules || exit "$?"
 
 ###############################################################################
 #                 ____       _                                                #
@@ -272,7 +277,8 @@ elif [ $OStype = "window" ] ; then
   # Install fonts power line
   if [ ! -d "$HOME/.fonts" ] ; then
     git clone https://github.com/powerline/fonts.git "$current_dir/fonts"
-    cd "$current_dir/fonts" && ./install.sh
+    cd "$current_dir/fonts" && chmod a+x install.sh
+    ./install.sh
     cd .. && rm -rf fonts
   fi
 
