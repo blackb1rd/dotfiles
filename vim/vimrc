@@ -5,6 +5,10 @@
 set nocompatible
 
 filetype off
+if has("win64") || has("win32")
+    " Window need to set runtimepath
+    set runtimepath+=$HOME/.vim
+endif
 runtime bundle/pathogen/autoload/pathogen.vim
 call pathogen#infect('bundle/{}')
 
