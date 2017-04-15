@@ -95,7 +95,7 @@ fi
 current_dir="$( cd "$( dirname "$0" )" && pwd )"
 
 # Update submodule
-git submodule update --init --recursive
+git submodule update --init --recursive || exit "$?"
 
 ###############################################################################
 #                 ____       _                                                #
