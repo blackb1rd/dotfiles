@@ -4,7 +4,7 @@ usage() {
   echo "Usage: $0 [options]"
   echo ""
   echo "Options:"
-  echo "  --os OStype       Type OS to install dotfiles(Linux, Android, OSX, iOS, Yun, Openwrt)"
+  echo "  --os OStype       Type OS to install dotfiles(Window, Linux, Android, OSX, iOS, Yun, Openwrt)"
   echo "  -b, --basictool   Installing basic tool"
   echo "  -l, --latest      Compiling the latest VIM version"
   echo "  -h, --help        Show basic help message and exit"
@@ -36,6 +36,7 @@ checkOStype () {
         yun ) return 1 ;;
         osx ) return 1 ;;
         ios ) return 1 ;;
+     window ) return 1 ;;
           * ) return 0 ;;
   esac
 }
@@ -236,6 +237,37 @@ if [ $OStype = "linux" ] ; then
   sudo npm install --production
   cd "$current_dir/vim/bundle/YouCompleteMe"
   ./install.py --tern-completer
+
+  # Install fonts power line
+  if [ ! -d "$HOME/.fonts" ] ; then
+    git clone https://github.com/powerline/fonts.git "$current_dir/fonts"
+    cd "$current_dir/fonts" && ./install.sh
+    cd .. && rm -rf fonts
+  fi
+
+  installfile .vim/dict.add vim/dict.add
+  installfile .vim/filetype.vim vim/filetype.vim
+  installfolder vim/spell
+  installfile .vimrc vim/vimrc
+  installfolder vim/ycm
+elif [ $OStype = "window" ] ; then
+  mkdirfolder .vim
+  mkdirfolder .vim/tmp
+  mkdirfolder .vim/backups
+  mkdirfolder .vim/undo
+  mkdirfolder .vim/
+
+  installfolder vim/bundle
+  installfolder vim/colors
+
+  # Install YouCompleteMe
+  cd "$current_dir/vim/bundle/YouCompleteMe"
+  git submodule update --init --recursive
+  git submodule -q foreach git pull -q origin master --verbose
+  #cd "$current_dir/vim/bundle/YouCompleteMe/third_party/ycmd/third_party/tern_runtime"
+  #sudo npm install --production
+  #cd "$current_dir/vim/bundle/YouCompleteMe"
+  #./install.py --tern-completer
 
   # Install fonts power line
   if [ ! -d "$HOME/.fonts" ] ; then
