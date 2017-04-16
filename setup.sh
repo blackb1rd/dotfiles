@@ -94,6 +94,22 @@ if [ $OStype = "linux" ] && [ -n "${basictool}" ] ; then
 
     echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
   fi
+elif [ $OStype = "window" ] && [ -n "${basictool}" ] ; then
+  # clone ctags
+  git clone https://github.com/universal-ctags/ctags $TEMP/ctags
+  cd $TEMP/ctags
+
+  # apply patch for compiling x64
+  git apply $HOME/github/ctags/01_SUPPORT_WIN_X64.diff
+
+  # compiling code
+  cmd <<< "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat &
+           nmake -f mk_mvc.mak &
+           mkdir -p C:\Program Files\ctags &
+           copy ctags.exe C:\Program Files\ctags\ &
+           copy readtags.ee C:\Program Files\ctags\ &
+           setx "%path%;C:\Program Files\ctags\"
+
 fi
 
 # Get the current directory
