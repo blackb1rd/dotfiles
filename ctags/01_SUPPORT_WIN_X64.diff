@@ -1,0 +1,154 @@
+diff --git a/gnu_regex/regex_internal.h b/gnu_regex/regex_internal.h
+index 71c4a38a..8e6e9f2e 100644
+--- a/gnu_regex/regex_internal.h
++++ b/gnu_regex/regex_internal.h
+@@ -418,7 +418,7 @@ static unsigned int re_string_context_at (const re_string_t *input, int idx,
+ #define re_string_skip_bytes(pstr,idx) ((pstr)->cur_idx += (idx))
+ #define re_string_set_index(pstr,idx) ((pstr)->cur_idx = (idx))
+ 
+-#ifdef WIN32
++#if _WIN32 || _WIN64
+ # include <malloc.h>
+ #else
+ # include <alloca.h>
+diff --git a/main/entry.c b/main/entry.c
+index ed285cb7..9686271f 100644
+--- a/main/entry.c
++++ b/main/entry.c
+@@ -64,7 +64,7 @@
+ 
+ /*  Hack for ridiculous practice of Microsoft Visual C++.
+  */
+-#if defined (WIN32) && defined (_MSC_VER)
++#if (_WIN32 || _WIN64) && defined (_MSC_VER)
+ # define chsize         _chsize
+ # define open           _open
+ # define close          _close
+diff --git a/main/general.h b/main/general.h
+index c938b02b..3ac0d27d 100644
+--- a/main/general.h
++++ b/main/general.h
+@@ -17,7 +17,7 @@
+ #if (defined (HAVE_FORK) && defined (HAVE_WAITPID) && defined (HAVE_EXECV) && defined (HAVE_PIPE))
+ #define HAVE_COPROC
+ #endif
+-#elif defined (WIN32)
++#elif _WIN32 || _WIN64
+ # include "e_msoft.h"
+ #endif
+ 
+diff --git a/main/options.c b/main/options.c
+index b8c1d520..91ad4086 100644
+--- a/main/options.c
++++ b/main/options.c
+@@ -463,7 +463,7 @@ static const char* const License2 =
+  *  the code.
+  */
+ static const char *const Features [] = {
+-#ifdef WIN32
++#if _WIN32 || _WIN64
+ 	"win32",
+ #endif
+ 	"wildcards",		/* Always available on universal ctags */
+@@ -474,7 +474,7 @@ static const char *const Features [] = {
+ #ifdef CUSTOM_CONFIGURATION_FILE
+ 	"custom-conf",
+ #endif
+-#if defined (WIN32) && defined (UNIX_PATH_SEPARATOR)
++#if (_WIN32 || _WIN64) && defined (UNIX_PATH_SEPARATOR)
+ 	"unix-path-separator",
+ #endif
+ #ifdef HAVE_ICONV
+@@ -558,7 +558,7 @@ static vString* getHome (void)
+ 	}
+ }
+ 
+-#if defined(_WIN32) && !(defined(__USE_MINGW_ANSI_STDIO) && defined(__MINGW64_VERSION_MAJOR))
++#if (_WIN32 || _WIN64) && !(defined(__USE_MINGW_ANSI_STDIO) && defined(__MINGW64_VERSION_MAJOR))
+ 
+ /* Some versions of MinGW are missing _vscprintf's declaration, although they
+  * still provide the symbol in the import library.
+@@ -582,7 +582,7 @@ int asprintf(char **strp, const char *fmt, ...)
+ 
+ 	va_copy(args_copy, args);
+ 
+-#ifdef _WIN32
++#if _WIN32 || _WIN64
+ 	/* We need to use _vscprintf to calculate the length as vsnprintf returns -1
+ 	 * if the number of characters to write is greater than count.
+ 	 */
+@@ -2329,7 +2329,7 @@ static void processIgnoreOption (const char *const list, int IgnoreOrDefine)
+ 		const char* fileName = (*list == '@') ? list + 1 : list;
+ 		addIgnoreListFromFile (fileName);
+ 	}
+-#if defined (WIN32)
++#if _WIN32 || _WIN64
+ 	else if (isalpha (list [0])  &&  list [1] == ':')
+ 		addIgnoreListFromFile (list);
+ #endif
+diff --git a/main/routines.c b/main/routines.c
+index 49fb7d7b..8c2e87fd 100644
+--- a/main/routines.c
++++ b/main/routines.c
+@@ -132,7 +132,7 @@
+ 
+ /*  Hack for ridiculous practice of Microsoft Visual C++.
+  */
+-#if defined (WIN32)
++#if _WIN32 || _WIN64
+ # if defined (_MSC_VER)
+ #  define stat    _stat
+ #  define getcwd  _getcwd
+@@ -173,7 +173,7 @@ extern int stat (const char *, struct stat *);
+ #ifdef NEED_PROTO_LSTAT
+ extern int lstat (const char *, struct stat *);
+ #endif
+-#if defined (WIN32)
++#if _WIN32 || _WIN64
+ # define lstat(fn,buf) stat(fn,buf)
+ #endif
+ 
+@@ -883,7 +883,7 @@ extern MIO *tempFile (const char *const mode, char **const pName)
+ 	const char *const pattern = "tags.XXXXXX";
+ 	const char *tmpdir = NULL;
+ 	fileStatus *file = eStat (ExecutableProgram);
+-# ifdef WIN32
++# if _WIN32 || _WIN64
+ 	tmpdir = getenv ("TMP");
+ # else
+ 	if (! file->isSetuid)
+@@ -897,7 +897,7 @@ extern MIO *tempFile (const char *const mode, char **const pName)
+ 	eStatFree (file);
+ #elif defined(HAVE_TEMPNAM)
+ 	const char *tmpdir = NULL;
+-# ifdef WIN32
++# if _WIN32 || _WIN64
+ 	tmpdir = getenv ("TMP");
+ # endif
+ 	if (tmpdir == NULL)
+diff --git a/main/sort.c b/main/sort.c
+index ff506f43..7402db12 100644
+--- a/main/sort.c
++++ b/main/sort.c
+@@ -71,7 +71,7 @@ static void appendCstringWithQuotes (vString *dest, const char* cstr)
+ {
+ 	const char* o;
+ 
+-#ifdef WIN32
++#ifdef _WIN32 || _WIN64
+ 	vStringCatS (dest, cstr);
+ #else
+ 	vStringPut (dest, '\'');
+diff --git a/mk_mvc.mak b/mk_mvc.mak
+index 0272fe5a..af05bac0 100644
+--- a/mk_mvc.mak
++++ b/mk_mvc.mak
+@@ -11,7 +11,7 @@ include source.mak
+ 
+ OBJEXT = obj
+ REGEX_DEFINES = -DHAVE_REGCOMP -D__USE_GNU -Dbool=int -Dfalse=0 -Dtrue=1 -Dstrcasecmp=stricmp
+-DEFINES = -DWIN32 $(REGEX_DEFINES)
++DEFINES = -DWIN64 $(REGEX_DEFINES)
+ INCLUDES = -I. -Imain -Ignu_regex -Ifnmatch -Iparsers
+ OPT = /O2
+ REGEX_OBJS = $(REGEX_SRCS:.c=.obj)
