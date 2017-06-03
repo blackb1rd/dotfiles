@@ -86,9 +86,9 @@ if [ $OStype = "linux" ] && [ -n "${basictool}" ] ; then
     echo "${txtbld}$(tput setaf 1)[-] Install the basic tool$(tput sgr0)"
     sudo apt-get update
     sudo apt-get install -y htop irssi lynx ncurses-term tmux python-dev \
-                            build-essential cmake gocode npm node
+                            build-essential cmake gocode npm || { echo 'Failed to install program' ; exit 1; }
     # if did not want to install latest vim version
-    if [ -n "${latest}" ] ; then
+    if [ ! "${latest}" ] ; then
       sudo apt-get install -y vim
     fi
 
@@ -103,12 +103,13 @@ elif [ $OStype = "window" ] && [ -n "${basictool}" ] ; then
   git apply $HOME/github/ctags/01_SUPPORT_WIN_X64.diff
 
   # compiling code
-  cmd <<< "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat &
-           nmake -f mk_mvc.mak &
-           mkdir -p C:\Program Files\ctags &
-           copy ctags.exe C:\Program Files\ctags\ &
-           copy readtags.ee C:\Program Files\ctags\ &
-           setx "%path%;C:\Program Files\ctags\"
+
+  #cmd <<< "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat &
+  #         nmake -f mk_mvc.mak &
+  #         mkdir -p C:\Program Files\ctags &
+  #         copy ctags.exe C:\Program Files\ctags\ &
+  #         copy readtags.ee C:\Program Files\ctags\ &
+  #         setx "%path%;C:\Program Files\ctags\"
 
 fi
 
@@ -224,6 +225,7 @@ if [ $OStype = "linux" ] ; then
     sudo apt-get remove -y vim
 
     if [ ! -d "$HOME/github/vim/" ] ; then
+      echo "${txtbld}$(tput setaf 1)[-] Install the latest VIM$(tput sgr0)"
       # download latest vim version
       git clone 'https://github.com/vim/vim'
     else
