@@ -74,6 +74,7 @@ fi
 
 if [ $OStype = "window" ] ; then
   export MSYS=winsymlinks:nativestrict
+  export HOME=$USERPROFILE
 fi
 
 # Install program
@@ -95,22 +96,31 @@ if [ $OStype = "linux" ] && [ -n "${basictool}" ] ; then
     echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
   fi
 elif [ $OStype = "window" ] && [ -n "${basictool}" ] ; then
+
+  if [ ! -f "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\msbuild.exe" ]; then
+    echo "msbuild.exe not found, please install MS2017"
+    exit 
+  fi
+
   # clone ctags
   git clone https://github.com/universal-ctags/ctags $TEMP/ctags
-  cd $TEMP/ctags
+  # cd $TEMP/ctags
 
-  # apply patch for compiling x64
-  git apply $HOME/github/ctags/01_SUPPORT_WIN_X64.diff
-
+  # cd win32
   # compiling code
-
-  #cmd <<< "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat &
-  #         nmake -f mk_mvc.mak &
-  #         mkdir -p C:\Program Files\ctags &
-  #         copy ctags.exe C:\Program Files\ctags\ &
-  #         copy readtags.ee C:\Program Files\ctags\ &
-  #         setx "%path%;C:\Program Files\ctags\"
-
+  # need to change x64 and install new platform tool set
+  # C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\msbuild.exe
+  # echo "msbuild ctags_vs2013.sln /t:clean /t:Build /p:Configuration=Release;Platform=x64 /p:PlatformToolset=v141"> build_ctags.cmd
+  # echo "setx /M PATH \"%path%;C:\Program Files\ctags\\\"" >> build_ctags.cmd
+  # echo "cd x64/Release" >> build_ctags.cmd
+  # need permission to create folder
+  # echo "mkdir \"C:\Program Files\ctags\\\"" >> build_ctags.cmd
+  # echo "cp ctags.exe \"C:\Program Files\ctags\\\"" >> build_ctags.cmd
+  # echo "setx /M PATH \"%PATH%;C:\Program Files\ctags\\\"" >> build_ctags.cmd
+  # echo "exit" >> build_ctags.cmd
+  # start build_ctags.cmd
+  # sleep 20
+  # rm build_ctags.cmd
 fi
 
 # Get the current directory
