@@ -261,5 +261,5 @@ let g:UltiSnipsExpandTrigger    = "<c-j>"
 " youcompleteme config
 let g:ycm_global_ycm_extra_conf = '~/.vim/ycm/c_conf.py'
 if has ("win64") || has("win32")
-    let g:ycm_server_python_interpreter = $HOME . "/AppData/Local/Programs/Python/Python36/python.exe"
+    let g:ycm_server_python_interpreter = $HOME . "/AppData/Local/Programs/Python/Python35/python.exe"
 endif
