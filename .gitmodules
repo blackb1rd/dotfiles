@@ -136,3 +136,6 @@
 [submodule "vim/bundle/json"]
 	path = vim/bundle/json
 	url = git://github.com/elzr/vim-json.git
+[submodule "vim/bundle/conque"]
+	path = vim/bundle/conque
+	url = https://github.com/nicoraffo/conque
