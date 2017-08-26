@@ -58,11 +58,13 @@ The important plugins I rely on:
   [a]: https://github.com/vim-scripts/a.vim.git
   [abolish]: https://github.com/vim-scripts/abolish.vim.git
   [ag]: https://github.com/rking/ag.vim.git
-  [airline-themes]: https://github.com/vim-airline/vim-airline-themes.git
   [airline]: https://github.com/bling/vim-airline.git
+  [airline-themes]: https://github.com/vim-airline/vim-airline-themes.git
   [browserlink]: https://github.com/jaxbot/browserlink.vim.git
   [commentary]: https://github.com/tpope/vim-commentary.git
+  [conque]: https://github.com/nicoraffo/conque.get
   [css3-syntax]: https://github.com/hail2u/vim-css3-syntax.git
+  [ctrlpvim]: https://github.com/ctrlpvim/ctrlp.vim.git
   [eunuch]: https://github.com/tpope/vim-eunuch.git
   [fugitive]: https://github.com/tpope/vim-fugitive.git
   [ghcmod]: https://github.com/eagletmt/ghcmod-vim.git
@@ -83,8 +85,8 @@ The important plugins I rely on:
   [pathogen]: https://github.com/tpope/vim-pathogen.git
   [railscasts-theme]: https://github.com/dhruvasagar/vim-railscasts-theme.git
   [repeat]: https://github.com/tpope/vim-repeat.git
-  [signify]: https://github.com/mhinz/vim-signify.git
   [searchindex]: https://github.com/google/vim-searchindex.git
+  [signify]: https://github.com/mhinz/vim-signify.git
   [snippets]: https://github.com/honza/vim-snippets.git
   [surround]: https://github.com/tpope/vim-surround.git
   [switch]: https://github.com/AndrewRadev/switch.vim.git
