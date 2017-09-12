@@ -266,10 +266,10 @@ if [ $OStype = "linux" ] ; then
   cd "$current_dir/vim/bundle/YouCompleteMe"
   git submodule update --init --recursive
   git submodule -q foreach git pull -q origin master --verbose
-  cd "$current_dir/vim/bundle/YouCompleteMe/third_party/ycmd/third_party/tern_runtime"
-  sudo npm install --production
+  #cd "$current_dir/vim/bundle/YouCompleteMe/third_party/ycmd/third_party/tern_runtime"
+  #sudo npm install --production
   cd "$current_dir/vim/bundle/YouCompleteMe"
-  ./install.py --tern-completer
+  ./install.py
 
   # Install fonts power line
   if [ ! -d "$HOME/.fonts" ] ; then
