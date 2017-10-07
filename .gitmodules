@@ -136,3 +136,6 @@
 [submodule "vim/bundle/conque"]
 	path = vim/bundle/conque
 	url = https://github.com/nicoraffo/conque
+[submodule "vim/bundle/nginx-syntax"]
+	path = vim/bundle/nginx-syntax
+	url = https://github.com/chr4/nginx.vim
