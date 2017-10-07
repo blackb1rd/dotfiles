@@ -91,9 +91,6 @@
 [submodule "vim/bundle/switch"]
 	path = vim/bundle/switch
 	url = git://github.com/AndrewRadev/switch.vim
-[submodule "vim/bundle/nginx"]
-	path = vim/bundle/nginx
-	url = git://github.com/evanmiller/nginx-vim-syntax.git
 [submodule "vim/bundle/tlib"]
 	path = vim/bundle/tlib
 	url = git://github.com/tomtom/tlib_vim
