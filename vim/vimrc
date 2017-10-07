@@ -227,6 +227,7 @@ if has("gui_running")
 endif
 let g:airline_powerline_fonts = 1
 let s:airline_toggle_with_noshowmode = 0
+let g:airline#extensions#tabline#enabled = 1
 function! AirToggle()
     if s:airline_toggle_with_noshowmode == 0
         let s:airline_toggle_with_noshowmode = 1
