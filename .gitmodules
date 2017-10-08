@@ -139,3 +139,6 @@
 [submodule "vim/bundle/nginx-syntax"]
 	path = vim/bundle/nginx-syntax
 	url = https://github.com/chr4/nginx.vim
+[submodule "vim/bundle/easytags"]
+	path = vim/bundle/easytags
+	url = https://github.com/blackb1rd/vim-easytags
