@@ -1,0 +1,7 @@
+tsm-start()      { sudo service transmission-daemon start;}
+tsm-stop()       { sudo service transmission-daemon stop;}
+tsm-reload()     { sudo service transmission-daemon reload;}
+tsm-list()       { transmission-remote -n 'transmission:transmission' -l;}
+tsm-basicstats() { transmission-remote -n 'transmission:transmission' -st;}
+tsm-fullstats()  { transmission-remote -n 'transmission:transmission' -si;}
+tsm-add()        { transmission-remote -n 'transmission:transmission' -a "$1";}
