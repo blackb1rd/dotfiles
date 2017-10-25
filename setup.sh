@@ -207,6 +207,10 @@ fi
 if [ $OStype = "linux" ] ; then
   installfile .zshrc shell/zshrc
   installfile .bashrc shell/bashrc
+
+  # external programs
+  mkdirfolder .shells
+  installfile .shells/transmission shells/transmission
 fi
 
 ###############################################################################
