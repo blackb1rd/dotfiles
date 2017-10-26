@@ -8,6 +8,12 @@ case $- in
       *) return;;
 esac
 
+# sources external in folder .shells
+for file in $HOME/.shells/*
+do
+  source $file
+done
+
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
 HISTCONTROL=ignoreboth
@@ -40,7 +46,7 @@ fi
 
 # set a fancy prompt (non-color, unless we know we "want" color)
 case "$TERM" in
-    xterm-color) color_prompt=yes;;
+    xterm-color|*-256color) color_prompt=yes;;
 esac
 
 # uncomment for a colored prompt, if the terminal has the capability; turned
@@ -124,8 +130,6 @@ export PYTHONSTARTUP=$HOME/.pythonrc
 alias tmux="TERM=screen-256color-bce tmux -2"
 
 # Custom bash prompt
-PS1="\[\e[01;32m\][\[\e[m\]\[\e[01;31m\]─=≡Σ((( つ•̀ω•́)つ\[\e[m\]\[\e[01;36m\]\h\[\e[m\]\[\e[01;31m\]:\[\e[m\]\[\e[01;36m\]\w\[\e[m\]\[\e[01;32m\]]\\$ \[\e[m\]"
+PS1="\[\e[01;32m\][\[\e[m\]\[\e[01;31m\]─=≡Σ((( つ•̀ω•́)つ\[\e[m\]\[\e[01;36m\]\h\[\e[m\]\[\e[01;31m\]:\[\e[m\]\[\e[01;36m\]\w\[\e[m\]\[\e[01;32m\]]\$(__git_ps1)\\$ \[\e[m\]"
 EDITOR="vim"
 
-# sources external
-. $HOME/.shells/transmission

@@ -1,5 +1,7 @@
 #!/bin/sh
 
+GITraw="https://raw.githubusercontent.com/"
+
 usage() {
   echo "Usage: $0 [options]"
   echo ""
@@ -99,7 +101,7 @@ elif [ $OStype = "window" ] && [ -n "${basictool}" ] ; then
 
   if [ ! -f "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\msbuild.exe" ]; then
     echo "msbuild.exe not found, please install MS2017"
-    exit 
+    exit
   fi
 
   # clone ctags
@@ -208,9 +210,14 @@ if [ $OStype = "linux" ] ; then
   installfile .zshrc shell/zshrc
   installfile .bashrc shell/bashrc
 
-  # external programs
+  # source external programs
   mkdirfolder .shells
-  installfile .shells/transmission shells/transmission
+
+  wget "$GITraw/git/git/master/contrib/completion/git-completion.bash" \
+       -O "$HOME/.shells/git-completion.bash"
+  wget "$GITraw/git/git/master/contrib/completion/git-prompt.sh" \
+       -O "$HOME/.shells/git-prompt.sh"
+  installfile .shells/transmission shells/source/transmission
 fi
 
 ###############################################################################
