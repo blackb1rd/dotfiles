@@ -207,6 +207,9 @@ fi
 #                                                                             #
 ###############################################################################
 if [ $OStype = "linux" ] ; then
+  # install oh my zsh
+  sh -c "$(wget https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
+
   installfile .zshrc shell/zshrc
   installfile .bashrc shell/bashrc
 
