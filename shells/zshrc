@@ -2,6 +2,12 @@
 
 fpath=($fpath /usr/share/doc/task/scripts/zsh)
 
+ZSH_THEME=agnoster
+
+DEFAULT_USER=blackb1rd
+
+plugins=(git pip)
+
 autoload -U colors && colors
 autoload -U compinit && compinit
 
