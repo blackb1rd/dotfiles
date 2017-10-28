@@ -89,7 +89,8 @@ if [ $OStype = "linux" ] && [ -n "${basictool}" ] ; then
     echo "${txtbld}$(tput setaf 1)[-] Install the basic tool$(tput sgr0)"
     sudo apt-get update
     sudo apt-get install -y htop irssi lynx ncurses-term tmux python-dev \
-                            build-essential cmake gocode npm || { echo 'Failed to install program' ; exit 1; }
+                            build-essential cmake gocode npm zsh \
+                            || { echo 'Failed to install program' ; exit 1; }
     # if did not want to install latest vim version
     if [ ! "${latest}" ] ; then
       sudo apt-get install -y vim
@@ -207,8 +208,11 @@ fi
 #                                                                             #
 ###############################################################################
 if [ $OStype = "linux" ] ; then
-  # install oh my zsh
-  sh -c "$(wget https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
+  isOhMyZsh=${grep "oh-my-zsh" "$HOME/.zshrc"}
+  if [ ! "$isOhMyZsh" ] ; then
+    # install oh my zsh
+    sh -c "$(wget https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
+  fi
 
   installfile .zshrc shell/zshrc
   installfile .bashrc shell/bashrc
