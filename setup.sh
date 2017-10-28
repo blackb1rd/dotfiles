@@ -208,7 +208,7 @@ fi
 #                                                                             #
 ###############################################################################
 if [ $OStype = "linux" ] ; then
-  isOhMyZsh=${grep "oh-my-zsh" "$HOME/.zshrc"}
+  isOhMyZsh=$(grep "oh-my-zsh" "$HOME/.zshrc")
   if [ ! "$isOhMyZsh" ] ; then
     # install oh my zsh
     sh -c "$(wget https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
