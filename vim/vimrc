@@ -9,6 +9,12 @@ if has("win64") || has("win32")
     " Window need to set runtimepath
     set runtimepath+=$HOME/.vim
 endif
+
+let g:pathogen_disabled = []
+
+" Disable easytags for now
+call add(g:pathogen_disabled, 'easytags')
+
 runtime bundle/pathogen/autoload/pathogen.vim
 call pathogen#infect('bundle/{}')
 
