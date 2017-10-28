@@ -214,8 +214,8 @@ if [ $OStype = "linux" ] ; then
     sh -c "$(wget https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
   fi
 
-  installfile .zshrc shell/zshrc
-  installfile .bashrc shell/bashrc
+  installfile .zshrc shells/zshrc
+  installfile .bashrc shells/bashrc
 
   # source external programs
   mkdirfolder .shells
