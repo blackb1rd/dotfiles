@@ -1,6 +1,6 @@
 #!/bin/sh
 
-GITraw="https://raw.githubusercontent.com/"
+GITraw="https://raw.githubusercontent.com"
 
 usage() {
   echo "Usage: $0 [options]"
