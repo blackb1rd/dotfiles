@@ -6,7 +6,7 @@ ZSH_THEME=agnoster
 
 DEFAULT_USER=`whoami`
 
-plugins=(git pip)
+plugins=(git pip shrink-path)
 
 autoload -U colors && colors
 autoload -U compinit && compinit
@@ -62,3 +62,9 @@ unsetopt beep
 
 for snippets ($HOME/etc/shell/zsh/*.zsh(N))
   source $snippets
+
+source $ZSH/oh-my-zsh.sh
+
+prompt_dir() {
+    prompt_segment green black $(shrink_path -f)
+}
