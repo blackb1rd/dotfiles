@@ -253,23 +253,24 @@ if [ $OStype = "linux" ] ; then
     sudo apt-get remove -y vim
 
     if [ ! -d "$HOME/github/vim/" ] ; then
-      echo "${txtbld}$(tput setaf 1)[-] Install the latest VIM$(tput sgr0)"
       # download latest vim version
-      git clone 'https://github.com/vim/vim'
-    else
-      cd "$HOME/github/vim/"
-
-      # make sure this is the latest version
-      git pull
-
-      ./configure --with-features=huge --enable-gui --enable-luainterp \
-                  --enable-perlinterp --enable-pythoninterp \
-                  --enable-tclinterp --enable-python3interp \
-                  --enable-rubyinterp --enable-cscope  --enable-multibyte \
-                  --enable-fontset
-      make
-      sudo make install
+      git clone 'https://github.com/vim/vim' "$HOME/github/vim/"
     fi
+
+    echo "${txtbld}$(tput setaf 1)[-] Install the latest VIM$(tput sgr0)"
+
+    cd "$HOME/github/vim/"
+
+    # make sure this is the latest version
+    git pull
+
+    ./configure --with-features=huge --enable-gui --enable-luainterp \
+                --enable-perlinterp --enable-pythoninterp \
+                --enable-tclinterp --enable-python3interp \
+                --enable-rubyinterp --enable-cscope  --enable-multibyte \
+                --enable-fontset
+    make
+    sudo make install
   fi
   mkdirfolder .vim
   mkdirfolder .vim/tmp
