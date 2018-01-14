@@ -88,42 +88,17 @@ if [ $OStype = "linux" ] && [ -n "${basictool}" ] ; then
   if [ $DISTRIB = "ubuntu" ] || [ $DISTRIB = "debian" ] ; then
     echo "${txtbld}$(tput setaf 1)[-] Install the basic tool$(tput sgr0)"
     sudo apt-get update
-    sudo apt-get install -y htop irssi lynx ncurses-term tmux python-dev \
+    sudo apt-get install -y git htop irssi lynx ncurses-term tmux \
+                            python3-dev ruby-dev lua5.1 lua5.1-dev python-dev \
                             build-essential cmake gocode npm zsh \
                             || { echo 'Failed to install program' ; exit 1; }
-    # if did not want to install latest vim version
+    # if did not want to install latest version
     if [ ! "${latest}" ] ; then
-      sudo apt-get install -y vim
+      sudo apt-get install -y vim ctags
     fi
 
     echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
   fi
-elif [ $OStype = "window" ] && [ -n "${basictool}" ] ; then
-
-  if [ ! -f "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\msbuild.exe" ]; then
-    echo "msbuild.exe not found, please install MS2017"
-    exit
-  fi
-
-  # clone ctags
-  git clone https://github.com/universal-ctags/ctags $TEMP/ctags
-  # cd $TEMP/ctags
-
-  # cd win32
-  # compiling code
-  # need to change x64 and install new platform tool set
-  # C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\msbuild.exe
-  # echo "msbuild ctags_vs2013.sln /t:clean /t:Build /p:Configuration=Release;Platform=x64 /p:PlatformToolset=v141"> build_ctags.cmd
-  # echo "setx /M PATH \"%path%;C:\Program Files\ctags\\\"" >> build_ctags.cmd
-  # echo "cd x64/Release" >> build_ctags.cmd
-  # need permission to create folder
-  # echo "mkdir \"C:\Program Files\ctags\\\"" >> build_ctags.cmd
-  # echo "cp ctags.exe \"C:\Program Files\ctags\\\"" >> build_ctags.cmd
-  # echo "setx /M PATH \"%PATH%;C:\Program Files\ctags\\\"" >> build_ctags.cmd
-  # echo "exit" >> build_ctags.cmd
-  # start build_ctags.cmd
-  # sleep 20
-  # rm build_ctags.cmd
 fi
 
 # Get the current directory
@@ -132,6 +107,56 @@ current_dir="$( cd "$( dirname "$0" )" && pwd )"
 # Update submodule
 git submodule update --init --recursive || exit "$?"
 git pull --recurse-submodules || exit "$?"
+
+###############################################################################
+#                            ____ _                                           #
+#                           / ___| |_ __ _  __ _ ___                          #
+#                          | |   | __/ _` |/ _` / __|                         #
+#                          | |___| || (_| | (_| \__ \                         #
+#                           \____|\__\__,_|\__, |___/                         #
+#                                          |___/                              #
+#                                                                             #
+###############################################################################
+if [ $OStype = "linux" ] ; then
+  if [ -n "${latest}" ] ; then
+    sudo apt-get remove -y ctags
+
+    # clone ctags
+    git clone https://github.com/universal-ctags/ctags $TEMP/ctags
+    cd $TEMP/ctags
+    ./autogen.sh
+    ./configure
+    make
+    sudo make install
+  fi
+elif [ $OStype = "window" ] ; then
+  if [ -n "${latest}" ] ; then
+    if [ ! -f "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\msbuild.exe" ]; then
+      echo "msbuild.exe not found, please install MS2017"
+      exit
+    fi
+
+    # clone ctags
+    git clone https://github.com/universal-ctags/ctags $TEMP/ctags
+    cd $TEMP/ctags
+
+    # cd win32
+    # compiling code
+    # need to change x64 and install new platform tool set
+    # C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\msbuild.exe
+    # echo "msbuild ctags_vs2013.sln /t:clean /t:Build /p:Configuration=Release;Platform=x64 /p:PlatformToolset=v141"> build_ctags.cmd
+    # echo "setx /M PATH \"%path%;C:\Program Files\ctags\\\"" >> build_ctags.cmd
+    # echo "cd x64/Release" >> build_ctags.cmd
+    # need permission to create folder
+    # echo "mkdir \"C:\Program Files\ctags\\\"" >> build_ctags.cmd
+    # echo "cp ctags.exe \"C:\Program Files\ctags\\\"" >> build_ctags.cmd
+    # echo "setx /M PATH \"%PATH%;C:\Program Files\ctags\\\"" >> build_ctags.cmd
+    # echo "exit" >> build_ctags.cmd
+    # start build_ctags.cmd
+    # sleep 20
+    # rm build_ctags.cmd
+  fi
+fi
 
 ###############################################################################
 #                 ____       _                                                #
