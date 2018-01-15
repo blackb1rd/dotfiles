@@ -125,7 +125,7 @@ if [ $OStype = "linux" ] ; then
     git clone https://github.com/universal-ctags/ctags $TEMP/ctags
     cd $TEMP/ctags
     ./autogen.sh
-    ./configure
+    ./configure --enable-iconv
     make
     sudo make install
   fi
