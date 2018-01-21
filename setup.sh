@@ -320,6 +320,9 @@ if [ $OStype = "linux" ] ; then
     git clone https://github.com/powerline/fonts.git "$current_dir/fonts"
     cd "$current_dir/fonts" && ./install.sh
     cd .. && rm -rf fonts
+    git clone https://github.com/ryanoasis/nerd-fonts "$current_dir/fonts"
+    cd "$current_dir/fonts" && ./install.sh
+    cd .. && rm -rf fonts
   fi
 
   installfile .vim/dict.add vim/dict.add

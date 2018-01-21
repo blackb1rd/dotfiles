@@ -142,3 +142,15 @@
 [submodule "vim/bundle/easytags"]
 	path = vim/bundle/easytags
 	url = https://github.com/blackb1rd/vim-easytags
+[submodule "vim/bundle/dispatch"]
+	path = vim/bundle/dispatch
+	url = https://github.com/tpope/vim-dispatch
+[submodule "vim/bundle/nerdtree-git-plugin"]
+	path = vim/bundle/nerdtree-git-plugin
+	url = https://github.com/Xuyuanp/nerdtree-git-plugin
+[submodule "vim/bundle/devicons"]
+	path = vim/bundle/devicons
+	url = https://github.com/ryanoasis/vim-devicons
+[submodule "vim/bundle/nerdtree-syntax-highlight"]
+	path = vim/bundle/nerdtree-syntax-highlight
+	url = https://github.com/tiagofumo/vim-nerdtree-syntax-highlight
