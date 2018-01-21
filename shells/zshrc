@@ -1,12 +1,14 @@
 #!/bin/zsh
 
 fpath=($fpath /usr/share/doc/task/scripts/zsh)
+export ZSH=$HOME/.oh-my-zsh
+alias tmux="TERM=screen-256color tmux"
 
 ZSH_THEME=agnoster
 
 DEFAULT_USER=`whoami`
 
-plugins=(git pip shrink-path)
+plugins=(git pip screen shrink-path tmux wd)
 
 autoload -U colors && colors
 autoload -U compinit && compinit
