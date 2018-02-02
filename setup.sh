@@ -8,6 +8,7 @@ usage() {
   echo "Options:"
   echo "  --os OStype       Type OS to install dotfiles(Window, Linux, Android, OSX, iOS, Yun, Openwrt)"
   echo "  -b, --basictool   Installing basic tool"
+  echo "  -f, --fonts       Installing fonts"
   echo "  -l, --latest      Compiling the latest VIM version"
   echo "  -h, --help        Show basic help message and exit"
 }
@@ -51,6 +52,8 @@ do
                             OStype=$1
                             ;;
     -b | --basictool )      basictool=true
+                            ;;
+    -f | --fonts )          fonts=true
                             ;;
     -l | --latest )         latest=true
                             ;;
@@ -316,13 +319,15 @@ if [ $OStype = "linux" ] ; then
   ./install.py
 
   # Install fonts power line
-  if [ ! -d "$HOME/.fonts" ] ; then
-    git clone https://github.com/powerline/fonts.git "$current_dir/fonts"
-    cd "$current_dir/fonts" && ./install.sh
-    cd .. && rm -rf fonts
-    git clone https://github.com/ryanoasis/nerd-fonts "$current_dir/fonts"
-    cd "$current_dir/fonts" && ./install.sh
-    cd .. && rm -rf fonts
+  if [ "${fonts}" ] ; then
+    if [ ! -d "$HOME/.fonts" ] ; then
+      git clone https://github.com/powerline/fonts.git "$current_dir/fonts"
+      cd "$current_dir/fonts" && ./install.sh
+      cd .. && rm -rf fonts
+      git clone https://github.com/ryanoasis/nerd-fonts "$current_dir/fonts"
+      cd "$current_dir/fonts" && ./install.sh
+      cd .. && rm -rf fonts
+    fi
   fi
 
   installfile .vim/dict.add vim/dict.add
@@ -350,11 +355,13 @@ elif [ $OStype = "window" ] ; then
   #./install.py --tern-completer
 
   # Install fonts power line
-  if [ ! -d "$HOME/.fonts" ] ; then
-    git clone https://github.com/powerline/fonts.git "$current_dir/fonts"
-    cd "$current_dir/fonts" && chmod a+x install.sh
-    ./install.sh
-    cd .. && rm -rf fonts
+  if [ "${fonts}" ] ; then
+    if [ ! -d "$HOME/.fonts" ] ; then
+      git clone https://github.com/powerline/fonts.git "$current_dir/fonts"
+      cd "$current_dir/fonts" && chmod a+x install.sh
+      ./install.sh
+      cd .. && rm -rf fonts
+    fi
   fi
 
   installfile .vim/dict.add vim/dict.add
