@@ -7,10 +7,12 @@ usage() {
   echo ""
   echo "Options:"
   echo "  --os OStype       Type OS to install dotfiles(Window, Linux, Android, OSX, iOS, Yun, Openwrt)"
-  echo "  -b, --basictool   Installing basic tool"
-  echo "  -f, --fonts       Installing fonts"
-  echo "  -l, --latest      Compiling the latest VIM version"
-  echo "  -h, --help        Show basic help message and exit"
+  echo "  -b,  --basictool  Installing basic tool"
+  echo "  -f,  --fonts      Installing fonts"
+  echo "  -pl, --perl       Installing perl package"
+  echo "  -py, --python     Installing python package"
+  echo "  -l,  --latest     Compiling the latest VIM version"
+  echo "  -h,  --help       Show basic help message and exit"
 }
 
 mkdirfolder () {
@@ -51,13 +53,17 @@ do
     --os )                  shift
                             OStype=$1
                             ;;
-    -b | --basictool )      basictool=true
+    -b  | --basictool )     basictool=true
                             ;;
-    -f | --fonts )          fonts=true
+    -f  | --fonts )         fonts=true
                             ;;
-    -l | --latest )         latest=true
+    -pl | --perl )          perl=true
                             ;;
-    -h | --help )           usage
+    -py | --python )        python=true
+                            ;;
+    -l  | --latest )        latest=true
+                            ;;
+    -h  | --help )          usage
                             exit
                             ;;
     * )                     usage
@@ -225,6 +231,9 @@ fi
 ###############################################################################
 if [ $OStype = "linux" ] ; then
   installfile .pythonrc python/pythonrc
+  if [ -n "${python}" ] ; then
+    pip install --user --upgrade numpy pandas tensorflow
+  fi
 fi
 
 ###############################################################################
