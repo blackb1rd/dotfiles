@@ -7,11 +7,13 @@ usage() {
   echo ""
   echo "Options:"
   echo "  --os OStype       Type OS to install dotfiles(Window, Linux, Android, OSX, iOS, Yun, Openwrt)"
+  echo "  -a,  --all        Installing all setup"
+  echo "  -d,  --dot        Installing dotfiles"
   echo "  -b,  --basictool  Installing basic tool"
   echo "  -f,  --fonts      Installing fonts"
   echo "  -pl, --perl       Installing perl package"
   echo "  -py, --python     Installing python package"
-  echo "  -l,  --latest     Compiling the latest VIM version"
+  echo "  -l,  --latest     Compiling the latest ctags and VIM version"
   echo "  -h,  --help       Show basic help message and exit"
 }
 
@@ -53,6 +55,10 @@ do
     --os )                  shift
                             OStype=$1
                             ;;
+    -a  | --all )           all=true
+                            ;;
+    -d  | --dot )           dot=true
+                            ;;
     -b  | --basictool )     basictool=true
                             ;;
     -f  | --fonts )         fonts=true
@@ -89,7 +95,7 @@ if [ $OStype = "window" ] ; then
 fi
 
 # Install program
-if [ $OStype = "linux" ] && [ -n "${basictool}" ] ; then
+if [ $OStype = "linux" ] && { [ -n "${all}" ] || [ -n "${basictool}" ]; } ; then
 
   # Find the DISTRIB
   DISTRIB=$(lsb_release -si | awk '{print tolower($0)}')
@@ -113,9 +119,11 @@ fi
 # Get the current directory
 current_dir="$( cd "$( dirname "$0" )" && pwd )"
 
-# Update submodule
-git submodule update --init --recursive || exit "$?"
-git pull --recurse-submodules || exit "$?"
+if [ -n "${all}" ] || [ -n "${dot}" ] ; then
+  # Update submodule
+  git submodule update --init --recursive || exit "$?"
+  git pull --recurse-submodules || exit "$?"
+fi
 
 ###############################################################################
 #                            ____ _                                           #
@@ -127,7 +135,7 @@ git pull --recurse-submodules || exit "$?"
 #                                                                             #
 ###############################################################################
 if [ $OStype = "linux" ] ; then
-  if [ -n "${latest}" ] ; then
+  if [ -n "${all}" ] || [ -n "${latest}" ] ; then
     sudo apt-get remove -y ctags
 
     # clone ctags
@@ -139,7 +147,7 @@ if [ $OStype = "linux" ] ; then
     sudo make install
   fi
 elif [ $OStype = "window" ] ; then
-  if [ -n "${latest}" ] ; then
+  if [ -n "${all}" ] || [ -n "${latest}" ] ; then
     if [ ! -f "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\msbuild.exe" ]; then
       echo "msbuild.exe not found, please install MS2017"
       exit
@@ -176,7 +184,7 @@ fi
 #                                        |___/ |___/                          #
 #                                                                             #
 ###############################################################################
-if [ $OStype = "linux" ] ; then
+if [ $OStype = "linux" ] && { [ -n "${all}" ] || [ -n "${dot}" ]; } ; then
   installfile .gdbrc debugger/gdbrc
 
   mkdirfolder .cgdb
@@ -191,7 +199,7 @@ fi
 #                                 \____|_|\__|                                #
 #                                                                             #
 ###############################################################################
-if [ $OStype = "linux" ] ; then
+if [ $OStype = "linux" ] && { [ -n "${all}" ] || [ -n "${dot}" ]; } ; then
   installfile .gitconfig git/gitconfig
 fi
 
@@ -203,7 +211,7 @@ fi
 #                             |___|_|  |___/___/_|                            #
 #                                                                             #
 ###############################################################################
-if [ $OStype = "linux" ] ; then
+if [ $OStype = "linux" ] && { [ -n "${all}" ] || [ -n "${dot}" ]; } ; then
   installfolder irssi
 fi
 
@@ -216,7 +224,7 @@ fi
 #                                           |_|                               #
 #                                                                             #
 ###############################################################################
-if [ $OStype = "linux" ] ; then
+if [ $OStype = "linux" ] && { [ -n "${all}" ] || [ -n "${dot}" ]; } ; then
   installfile .htoprc htop/htoprc
 fi
 
@@ -230,9 +238,22 @@ fi
 #                                                                             #
 ###############################################################################
 if [ $OStype = "linux" ] ; then
-  installfile .pythonrc python/pythonrc
-  if [ -n "${python}" ] ; then
-    pip install --user --upgrade numpy pandas tensorflow
+  if [ -n "${all}" ] || [ -n "${dot}" ] ; then
+    installfile .pythonrc python/pythonrc
+  fi
+  if [ -n "${all}" ] || [ -n "${python}" ] ; then
+    PIPoption="install --user --upgrade"
+    PIPmodule="numexpr bottleneck Cython SciPy numpy pandas tensorflow"
+
+    # try to install pip module from python3 only
+    PythonVer=$(pip -V | awk -F '[()]' '{ print $2 }' | awk '{print $2}' | cut -d '.' -f 1)
+    PythonVer3=$(pip3 -V | awk -F '[()]' '{ print $2 }' | awk '{print $2}' | cut -d '.' -f 1)
+
+    if [ $PythonVer = "3" ] ; then
+      pip $PIPoption $PIPmodule
+    elif [ $PythonVer3 = "3" ] ; then
+      pip3 $PIPoption $PIPmodule
+    fi
   fi
 fi
 
@@ -244,7 +265,7 @@ fi
 #                            |____/|_| |_|\___|_|_|                           #
 #                                                                             #
 ###############################################################################
-if [ $OStype = "linux" ] ; then
+if [ $OStype = "linux" ] && { [ -n "${all}" ] || [ -n "${dot}" ]; } ; then
   isOhMyZsh=$(grep "oh-my-zsh" "$HOME/.zshrc")
   if [ ! "$isOhMyZsh" ] ; then
     # install oh my zsh
@@ -272,7 +293,7 @@ fi
 #                           |_||_| |_| |_|\__,_/_/\_\                         #
 #                                                                             #
 ###############################################################################
-if [ $OStype = "linux" ] ; then
+if [ $OStype = "linux" ] && { [ -n "${all}" ] || [ -n "${dot}" ]; } ; then
   installfile .tmux.conf tmux/tmux.conf
 fi
 
@@ -286,7 +307,7 @@ fi
 ###############################################################################
 if [ $OStype = "linux" ] ; then
   # Install latest vim version
-  if [ -n "${latest}" ] ; then
+  if [ -n "${latest}" ] || [ -n "${all}" ] ; then
     sudo apt-get remove -y vim
 
     if [ ! -d "$HOME/github/vim/" ] ; then
@@ -309,26 +330,34 @@ if [ $OStype = "linux" ] ; then
     make
     sudo make install
   fi
-  mkdirfolder .vim
-  mkdirfolder .vim/tmp
-  mkdirfolder .vim/backups
-  mkdirfolder .vim/undo
-  mkdirfolder .vim/
+  if [ -n "${all}" ] || [ -n "${dot}" ] ; then
+    mkdirfolder .vim
+    mkdirfolder .vim/tmp
+    mkdirfolder .vim/backups
+    mkdirfolder .vim/undo
+    mkdirfolder .vim/
 
-  installfolder vim/bundle
-  installfolder vim/colors
+    installfolder vim/bundle
+    installfolder vim/colors
 
-  # Install YouCompleteMe
-  cd "$current_dir/vim/bundle/YouCompleteMe"
-  git submodule update --init --recursive
-  git submodule -q foreach git pull -q origin master --verbose
-  #cd "$current_dir/vim/bundle/YouCompleteMe/third_party/ycmd/third_party/tern_runtime"
-  #sudo npm install --production
-  cd "$current_dir/vim/bundle/YouCompleteMe"
-  ./install.py
+    # Install YouCompleteMe
+    cd "$current_dir/vim/bundle/YouCompleteMe"
+    git submodule update --init --recursive
+    git submodule -q foreach git pull -q origin master --verbose
+    #cd "$current_dir/vim/bundle/YouCompleteMe/third_party/ycmd/third_party/tern_runtime"
+    #sudo npm install --production
+    cd "$current_dir/vim/bundle/YouCompleteMe"
+    ./install.py
+
+    installfile .vim/dict.add vim/dict.add
+    installfile .vim/filetype.vim vim/filetype.vim
+    installfolder vim/spell
+    installfile .vimrc vim/vimrc
+    installfolder vim/ycm
+  fi
 
   # Install fonts power line
-  if [ "${fonts}" ] ; then
+  if [ -n "${all}" ] || [ "${fonts}" ] ; then
     if [ ! -d "$HOME/.fonts" ] ; then
       git clone https://github.com/powerline/fonts.git "$current_dir/fonts"
       cd "$current_dir/fonts" && ./install.sh
@@ -338,33 +367,34 @@ if [ $OStype = "linux" ] ; then
       cd .. && rm -rf fonts
     fi
   fi
-
-  installfile .vim/dict.add vim/dict.add
-  installfile .vim/filetype.vim vim/filetype.vim
-  installfolder vim/spell
-  installfile .vimrc vim/vimrc
-  installfolder vim/ycm
 elif [ $OStype = "window" ] ; then
-  mkdirfolder .vim
-  mkdirfolder .vim/tmp
-  mkdirfolder .vim/backups
-  mkdirfolder .vim/undo
-  mkdirfolder .vim/
+  if [ -n "${all}" ] || [ -n "${dot}" ] ; then
+    mkdirfolder .vim
+    mkdirfolder .vim/tmp
+    mkdirfolder .vim/backups
+    mkdirfolder .vim/undo
+    mkdirfolder .vim/
 
-  installfolder vim/bundle
-  installfolder vim/colors
+    installfolder vim/bundle
+    installfolder vim/colors
 
-  # Install YouCompleteMe
-  cd "$current_dir/vim/bundle/YouCompleteMe"
-  git submodule update --init --recursive
-  git submodule -q foreach git pull -q origin master --verbose
-  #cd "$current_dir/vim/bundle/YouCompleteMe/third_party/ycmd/third_party/tern_runtime"
-  #sudo npm install --production
-  #cd "$current_dir/vim/bundle/YouCompleteMe"
-  #./install.py --tern-completer
+    # Install YouCompleteMe
+    cd "$current_dir/vim/bundle/YouCompleteMe"
+    git submodule update --init --recursive
+    git submodule -q foreach git pull -q origin master --verbose
+    #cd "$current_dir/vim/bundle/YouCompleteMe/third_party/ycmd/third_party/tern_runtime"
+    #sudo npm install --production
+    #cd "$current_dir/vim/bundle/YouCompleteMe"
+    #./install.py --tern-completer
 
+    installfile .vim/dict.add vim/dict.add
+    installfile .vim/filetype.vim vim/filetype.vim
+    installfolder vim/spell
+    installfile .vimrc vim/vimrc
+    installfolder vim/ycm
+  fi
   # Install fonts power line
-  if [ "${fonts}" ] ; then
+  if [ -n "${all}" ] || [ "${fonts}" ] ; then
     if [ ! -d "$HOME/.fonts" ] ; then
       git clone https://github.com/powerline/fonts.git "$current_dir/fonts"
       cd "$current_dir/fonts" && chmod a+x install.sh
@@ -372,10 +402,4 @@ elif [ $OStype = "window" ] ; then
       cd .. && rm -rf fonts
     fi
   fi
-
-  installfile .vim/dict.add vim/dict.add
-  installfile .vim/filetype.vim vim/filetype.vim
-  installfolder vim/spell
-  installfile .vimrc vim/vimrc
-  installfolder vim/ycm
 fi
