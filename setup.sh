@@ -85,8 +85,23 @@ OStype=$(echo $OStype | awk '{print tolower($0)}')
 if checkOStype $OStype ; then
   echo "Invalid input --os $OStype"
   echo ""
-  echo "To see more details $0 -h"
+  usage
   exit 1
+fi
+
+if [ -z "${all}" ] \
+   && [ -z "${dot}" ] \
+   && [ -z "${basictool}" ] \
+   && [ -z "${fonts}" ] \
+   && [ -z "${perl}"] \
+   && [ -z "${python}"] \
+   && [ -z "${latest}"] ; then
+
+  echo "Need more option(installing or compiling) to be set"
+  echo ""
+  usage
+  exit 1
+
 fi
 
 if [ $OStype = "window" ] ; then
