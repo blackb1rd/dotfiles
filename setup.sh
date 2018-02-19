@@ -347,7 +347,8 @@ if [ $OStype = "linux" ] ; then
     mkdirfolder .vim/
 
     if [ ! -d "$HOME/github/dotfiles/vim/bundle/Vundle.vim" ] ; then
-      # download latest vim version
+      # download latest Vundle version
+      mkdir -p "$HOME/github/dotfiles/vim/bundle/"
       git clone https://github.com/VundleVim/Vundle.vim.git "$HOME/github/dotfiles/vim/bundle/Vundle.vim"
     fi
 
