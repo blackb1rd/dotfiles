@@ -2,21 +2,85 @@
 " author:   Prachya Saechua
 " ----------------------------------------------------------------------------
 
-set nocompatible
 
-filetype off
-if has("win64") || has("win32")
-    " Window need to set runtimepath
-    set runtimepath+=$HOME/.vim
+if has("unix")
+    set shell=/bin/bash
 endif
 
-let g:pathogen_disabled = []
+if has("win64") || has("win32")
+    " Window need to set runtimepath
+    set rtp+=$HOME/.vim
+endif
 
-" Disable easytags for now
-call add(g:pathogen_disabled, 'easytags')
+" VUNDLE {{{1
+" -----------------------------
+set nocompatible              " be iMproved, required
+filetype off                  " required
 
-runtime bundle/pathogen/autoload/pathogen.vim
-call pathogen#infect('bundle/{}')
+" set the runtime path to include Vundle and initialize
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+
+" let Vundle manage Vundle, required
+Plugin 'VundleVim/Vundle.vim'
+
+Plugin 'AndrewRadev/switch.vim'
+Plugin 'Shougo/vimproc'
+Plugin 'Shougo/vinarise.vim'
+Plugin 'SirVer/ultisnips'
+Plugin 'Valloric/YouCompleteMe'
+Plugin 'Xuyuanp/nerdtree-git-plugin'
+Plugin 'blackb1rd/taglist.vim'
+"Plugin 'blackb1rd/vim-easytags'
+Plugin 'chr4/nginx.vim'
+Plugin 'ctrlpvim/ctrlp.vim'
+Plugin 'dhruvasagar/vim-railscasts-theme'
+Plugin 'eagletmt/ghcmod-vim'
+Plugin 'elzr/vim-json'
+Plugin 'fatih/vim-go'
+Plugin 'godlygeek/tabular'
+Plugin 'google/vim-colorscheme-primary'
+Plugin 'google/vim-searchindex'
+Plugin 'groenewege/vim-less'
+Plugin 'hail2u/vim-css3-syntax'
+Plugin 'honza/vim-snippets'
+Plugin 'jaxbot/browserlink.vim'
+Plugin 'juneedahamed/vc.vim'
+Plugin 'majutsushi/tagbar'
+Plugin 'mbbill/undotree'
+Plugin 'mhinz/vim-signify'
+Plugin 'nathanaelkane/vim-indent-guides'
+Plugin 'nicoraffo/conque'
+Plugin 'othree/html5-syntax.vim'
+Plugin 'pbrisbin/html-template-syntax'
+Plugin 'petRUShka/vim-opencl'
+Plugin 'rking/ag.vim'
+Plugin 'ryanoasis/vim-devicons'
+Plugin 'scrooloose/nerdcommenter'
+Plugin 'scrooloose/nerdtree'
+Plugin 'suan/vim-instant-markdown'
+Plugin 'terryma/vim-multiple-cursors'
+Plugin 'tiagofumo/vim-nerdtree-syntax-highlight'
+Plugin 'tomasr/molokai'
+Plugin 'tomtom/tlib_vim'
+Plugin 'tpope/vim-commentary'
+Plugin 'tpope/vim-dispatch'
+Plugin 'tpope/vim-eunuch'
+Plugin 'tpope/vim-fugitive'
+Plugin 'tpope/vim-pathogen'
+Plugin 'tpope/vim-repeat'
+Plugin 'tpope/vim-surround'
+Plugin 'tpope/vim-unimpaired'
+Plugin 'tsaleh/vim-tmux'
+Plugin 'vim-airline/vim-airline'
+Plugin 'vim-airline/vim-airline-themes'
+Plugin 'vim-pandoc/vim-pandoc'
+Plugin 'vim-scripts/a.vim'
+Plugin 'vim-scripts/abolish.vim'
+Plugin 'vim-syntastic/syntastic'
+Plugin 'xolox/vim-misc'
+
+call vundle#end()            " required
 
 syntax on
 filetype plugin indent on
@@ -24,7 +88,11 @@ set t_Co=256
 if &diff
     colorscheme railscasts
 else
-    colorscheme molokai
+    try
+        colorscheme molokai
+    catch /^Vim\%((\a\+)\)\=:E185/
+        colorscheme desert
+    endtry
 endif
 let g:rehash256 = 1
 

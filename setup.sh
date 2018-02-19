@@ -134,12 +134,6 @@ fi
 # Get the current directory
 current_dir="$( cd "$( dirname "$0" )" && pwd )"
 
-if [ -n "${all}" ] || [ -n "${dot}" ] ; then
-  # Update submodule
-  git submodule update --init --recursive || exit "$?"
-  git pull --recurse-submodules || exit "$?"
-fi
-
 ###############################################################################
 #                            ____ _                                           #
 #                           / ___| |_ __ _  __ _ ___                          #
@@ -352,8 +346,16 @@ if [ $OStype = "linux" ] ; then
     mkdirfolder .vim/undo
     mkdirfolder .vim/
 
+    if [ ! -d "$HOME/github/dotfiles/vim/bundle/Vundle.vim" ] ; then
+      # download latest vim version
+      git clone https://github.com/VundleVim/Vundle.vim.git "$HOME/github/dotfiles/vim/bundle/Vundle.vim"
+    fi
+
     installfolder vim/bundle
     installfolder vim/colors
+
+    # download all plugin
+    vim +PluginInstall +qall
 
     # Install YouCompleteMe
     cd "$current_dir/vim/bundle/YouCompleteMe"
