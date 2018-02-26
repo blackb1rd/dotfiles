@@ -1,9 +1,24 @@
 #!/bin/zsh
 
+zsh_custom_ip(){
+  local ip=$(ifconfig "<Your Network interface>" | grep inet | awk '{print $2}' | cut -f2 -d ':')
+  local color="%F{black}"
+  echo -n "%{$color%}$ip"
+}
+
 export GOPATH=$HOME/.go
 POWERLEVEL9K_INSTALLATION_PATH=$ANTIGEN_BUNDLES/bhilburn/powerlevel9k
 POWERLEVEL9K_MODE='nerdfont-complete'
 POWERLEVEL9K_DIR_HOME_SUBFOLDER_BACKGROUND='green'
+POWERLEVEL9K_SHORTEN_DIR_LENGTH=2
+POWERLEVEL9K_SHORTEN_STRATEGY="truncate_middle"
+POWERLEVEL9K_PROMPT_ON_NEWLINE=true
+POWERLEVEL9K_RPROMPT_ON_NEWLINE=true
+POWERLEVEL9K_CUSTOM_IP="zsh_custom_ip"
+POWERLEVEL9K_CUSTOM_IP_BACKGROUND="green"
+POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(os_icon dir vcs)
+POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(custom_ip time background_jobs ram virtualenv rbenv rvm)
+POWERLEVEL9K_TIME_FORMAT="%D{\uf017 %H:%M \uf073 %d.%m.%y}"
 DEFAULT_USER=`whoami`
 source $HOME/.antigen.zsh
 
