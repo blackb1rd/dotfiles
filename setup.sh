@@ -1,6 +1,24 @@
 #!/bin/sh
 
-GITraw="https://raw.githubusercontent.com"
+GITHUB_RAW_URL='https://raw.githubusercontent.com'
+GITHUB_URL='https://github.com'
+PACKAGE="cmake
+         figlet
+         git
+         htop
+         irssi
+         lua
+         lynx
+         nodejs
+         python-dev
+         ruby-dev
+         tmux
+         zsh"
+
+        #python3-dev
+        #gocode
+        #lua-dev
+        #build-essential \
 
 usage() {
   echo "Usage: $0 [options]"
@@ -39,6 +57,7 @@ checkOStype () {
   case $1 in
       linux ) return 1 ;;
     android ) return 1 ;;
+     termux ) return 1 ;;
     openwrt ) return 1 ;;
         yun ) return 1 ;;
         osx ) return 1 ;;
@@ -110,25 +129,26 @@ if [ $OStype = "window" ] ; then
 fi
 
 # Install program
-if [ $OStype = "linux" ] && { [ -n "${all}" ] || [ -n "${basictool}" ]; } ; then
+if [ -n "${all}" ] || [ -n "${basictool}" ] ; then
+  echo "${txtbld}$(tput setaf 1)[-] Install the basic tool$(tput sgr0)"
+  if [ $OStype = "linux" ] ; then
+    # Find the DISTRIB
+    DISTRIB=$(lsb_release -si | awk '{print tolower($0)}')
 
-  # Find the DISTRIB
-  DISTRIB=$(lsb_release -si | awk '{print tolower($0)}')
+    if [ $DISTRIB = "ubuntu" ] || [ $DISTRIB = "debian" ] ; then
+      sudo apt-get update
+      sudo apt-get install -y $PACKAGE \
+                              || { echo 'Failed to install program' ; exit 1; }
+      # if did not want to install latest version
+      if [ ! "${latest}" ] ; then
+        sudo apt-get install -y vim ctags
+      fi
 
-  if [ $DISTRIB = "ubuntu" ] || [ $DISTRIB = "debian" ] ; then
-    echo "${txtbld}$(tput setaf 1)[-] Install the basic tool$(tput sgr0)"
-    sudo apt-get update
-    sudo apt-get install -y git htop irssi lynx ncurses-term tmux \
-                            python3-dev ruby-dev lua5.1 lua5.1-dev python-dev \
-                            build-essential cmake gocode nodejs zsh \
-                            || { echo 'Failed to install program' ; exit 1; }
-    # if did not want to install latest version
-    if [ ! "${latest}" ] ; then
-      sudo apt-get install -y vim ctags
     fi
-
-    echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
+  elif [ $OStype = "termux" ] ; then
+      pkg install -y $PACKAGE || { echo 'Failed to install program' ; exit 1; }
   fi
+  echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
 fi
 
 # Get the current directory
@@ -143,27 +163,25 @@ current_dir="$( cd "$( dirname "$0" )" && pwd )"
 #                                          |___/                              #
 #                                                                             #
 ###############################################################################
-if [ $OStype = "linux" ] ; then
-  if [ -n "${all}" ] || [ -n "${latest}" ] ; then
+if [ -n "${all}" ] || [ -n "${latest}" ] ; then
+  if [ $OStype = "linux" ] ; then
     sudo apt-get remove -y ctags
 
     # clone ctags
-    git clone https://github.com/universal-ctags/ctags $TEMP/ctags
+    git clone $GITHUB_URL/universal-ctags/ctags $TEMP/ctags
     cd $TEMP/ctags
     ./autogen.sh
     ./configure --enable-iconv
     make
     sudo make install
-  fi
-elif [ $OStype = "window" ] ; then
-  if [ -n "${all}" ] || [ -n "${latest}" ] ; then
+  elif [ $OStype = "window" ] ; then
     if [ ! -f "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\msbuild.exe" ]; then
       echo "msbuild.exe not found, please install MS2017"
       exit
     fi
 
     # clone ctags
-    git clone https://github.com/universal-ctags/ctags $TEMP/ctags
+    git clone $GITHUB_URL/universal-ctags/ctags $TEMP/ctags
     cd $TEMP/ctags
 
     # cd win32
@@ -193,11 +211,13 @@ fi
 #                                        |___/ |___/                          #
 #                                                                             #
 ###############################################################################
-if [ $OStype = "linux" ] && { [ -n "${all}" ] || [ -n "${dot}" ]; } ; then
-  installfile .gdbrc debugger/gdbrc
+if [ -n "${all}" ] || [ -n "${dot}" ] ; then
+  if [ $OStype = "linux" ] ; then
+    installfile .gdbrc debugger/gdbrc
 
-  mkdirfolder .cgdb
-  installfile .cgdb/cgdbrc debugger/cgdbrc
+    mkdirfolder .cgdb
+    installfile .cgdb/cgdbrc debugger/cgdbrc
+  fi
 fi
 
 ###############################################################################
@@ -208,8 +228,10 @@ fi
 #                                 \____|_|\__|                                #
 #                                                                             #
 ###############################################################################
-if [ $OStype = "linux" ] && { [ -n "${all}" ] || [ -n "${dot}" ]; } ; then
-  installfile .gitconfig git/gitconfig
+if [ -n "${all}" ] || [ -n "${dot}" ] ; then
+  if [ $OStype = "linux" ] ; then
+    installfile .gitconfig git/gitconfig
+  fi
 fi
 
 ###############################################################################
@@ -220,8 +242,10 @@ fi
 #                             |___|_|  |___/___/_|                            #
 #                                                                             #
 ###############################################################################
-if [ $OStype = "linux" ] && { [ -n "${all}" ] || [ -n "${dot}" ]; } ; then
-  installfolder irssi
+if [ -n "${all}" ] || [ -n "${dot}" ] ; then
+  if [ $OStype = "linux" ] ; then
+    installfolder irssi
+  fi
 fi
 
 ###############################################################################
@@ -233,8 +257,10 @@ fi
 #                                           |_|                               #
 #                                                                             #
 ###############################################################################
-if [ $OStype = "linux" ] && { [ -n "${all}" ] || [ -n "${dot}" ]; } ; then
-  installfile .htoprc htop/htoprc
+if [ -n "${all}" ] || [ -n "${dot}" ] ; then
+  if [ $OStype = "linux" ] ; then
+    installfile .htoprc htop/htoprc
+  fi
 fi
 
 ###############################################################################
@@ -246,11 +272,9 @@ fi
 #                            |___/                                            #
 #                                                                             #
 ###############################################################################
-if [ $OStype = "linux" ] ; then
-  if [ -n "${all}" ] || [ -n "${dot}" ] ; then
+if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${python}" ] ; then
+  if [ $OStype = "linux" ] ; then
     installfile .pythonrc python/pythonrc
-  fi
-  if [ -n "${all}" ] || [ -n "${python}" ] ; then
     PIPoption="install --user --upgrade"
     PIPmodule="numexpr bottleneck Cython SciPy numpy pandas tensorflow"
 
@@ -274,22 +298,39 @@ fi
 #                            |____/|_| |_|\___|_|_|                           #
 #                                                                             #
 ###############################################################################
-if [ $OStype = "linux" ] && { [ -n "${all}" ] || [ -n "${dot}" ]; } ; then
-  if [ ! -f "$HOME/.antigen.zsh" ]; then
-    curl -L git.io/antigen > $HOME/.antigen.zsh
+if [ -n "${all}" ] || [ -n "${dot}" ] ; then
+  if [ $OStype = "linux" ] ; then
+    if [ ! -f "$HOME/.antigen.zsh" ]; then
+      curl -L git.io/antigen > $HOME/.antigen.zsh
+    fi
+
+    installfile .zshrc shells/zshrc
+    installfile .bashrc shells/bashrc
+
+    # source external programs
+    mkdirfolder .shells
+
+    wget "$GITHUB_RAW_URL/git/git/master/contrib/completion/git-completion.bash" \
+         -O "$HOME/.shells/git-completion.bash"
+    wget "$GITHUB_RAW_URL/git/git/master/contrib/completion/git-prompt.sh" \
+         -O "$HOME/.shells/git-prompt.sh"
+    installfile .shells/transmission shells/source/transmission
   fi
+fi
 
-  installfile .zshrc shells/zshrc
-  installfile .bashrc shells/bashrc
-
-  # source external programs
-  mkdirfolder .shells
-
-  wget "$GITraw/git/git/master/contrib/completion/git-completion.bash" \
-       -O "$HOME/.shells/git-completion.bash"
-  wget "$GITraw/git/git/master/contrib/completion/git-prompt.sh" \
-       -O "$HOME/.shells/git-prompt.sh"
-  installfile .shells/transmission shells/source/transmission
+###############################################################################
+#                                          _                                  #
+#                                  ___ ___| |__                               #
+#                                 / __/ __| '_ \                              #
+#                                 \__ \__ \ | | |                             #
+#                                 |___/___/_| |_|                             #
+#                                                                             #
+###############################################################################
+if [ -n "${all}" ] || [ -n "${dot}" ] ; then
+  if [ $OStype = "linux" ] \
+     || [ $OStype = "linux" ] ; then
+    installfile .ssh/config ssh/config
+  fi
 fi
 
 ###############################################################################
@@ -300,15 +341,17 @@ fi
 #                           |_||_| |_| |_|\__,_/_/\_\                         #
 #                                                                             #
 ###############################################################################
-if [ $OStype = "linux" ] && { [ -n "${all}" ] || [ -n "${dot}" ]; } ; then
-  if [ ! -d "$HOME/github/vim/" ] ; then
-    git clone https://github.com/gpakosz/.tmux.git $HOME/.tmux
-  elif
-    git -C "$HOME/.tmux" pull
-  fi
+if [ -n "${all}" ] || [ -n "${dot}" ] ; then
+  if [ $OStype = "linux" ] ; then
+    if [ ! -d "$HOME/github/vim/" ] ; then
+      git clone $GITHUB_URL/gpakosz/.tmux.git $HOME/.tmux
+    else
+      git -C "$HOME/.tmux" pull
+    fi
 
-  installfile .tmux/.tmux.conf $HOME/.tmux.conf
-  installfile .tmux/tmux.conf.local $HOME/.tmux.conf.local
+    installfile .tmux/.tmux.conf $HOME/.tmux.conf
+    installfile .tmux/tmux.conf.local $HOME/.tmux.conf.local
+  fi
 fi
 
 ###############################################################################
@@ -319,110 +362,119 @@ fi
 #                               \_/  |_|_| |_| |_|                            #
 #                                                                             #
 ###############################################################################
-if [ $OStype = "linux" ] ; then
-  # Install latest vim version
-  if [ -n "${latest}" ] || [ -n "${all}" ] ; then
-    sudo apt-get remove -y vim
+if [ -n "${all}" ] || [ -n "${latest}" ] || [ -n "${dot}" ] ; then
+  if [ $OStype = "linux" ] || [ $OStype = "termux" ] ; then
+    if [ -n "${all}" ] || [ -n "${latest}" ] ; then
+      # Install latest vim version
+      sudo apt-get remove -y vim
 
-    echo "${txtbld}$(tput setaf 1)[-] Install the latest VIM$(tput sgr0)"
+      echo "${txtbld}$(tput setaf 1)[-] Install the latest VIM$(tput sgr0)"
 
-    if [ ! -d "$HOME/github/vim/" ] ; then
-      # download latest vim version
-      git clone 'https://github.com/vim/vim' "$HOME/github/vim/"
+      if [ ! -d "$HOME/github/vim/" ] ; then
+        # download latest vim version
+        git clone $GITHUB_URL/vim/vim "$HOME/github/vim/"
+      fi
+
+      cd "$HOME/github/vim/"
+
+      # make sure this is the latest version
+      git pull
+
+      ./configure --with-features=huge --enable-gui --enable-luainterp \
+                  --enable-perlinterp --enable-pythoninterp \
+                  --enable-tclinterp --enable-python3interp \
+                  --enable-rubyinterp --enable-cscope  --enable-multibyte \
+                  --enable-fontset
+      make
+      sudo make install
+    fi
+    if [ -n "${all}" ] || [ -n "${dot}" ] ; then
+      mkdirfolder .vim
+      mkdirfolder .vim/tmp
+      mkdirfolder .vim/backups
+      mkdirfolder .vim/undo
+      mkdirfolder .vim/
+
+      if [ ! -d "$HOME/github/dotfiles/vim/bundle/Vundle.vim" ] ; then
+        # download latest Vundle version
+        mkdir -p "$HOME/github/dotfiles/vim/bundle/"
+        git clone $GITHUB_URL/VundleVim/Vundle.vim.git "$HOME/github/dotfiles/vim/bundle/Vundle.vim"
+      fi
+
+      installfolder vim/bundle
+      installfolder vim/colors
+
+      # download all plugin
+      vim +PluginInstall +qall
+
+      # Install YouCompleteMe
+      if [ $OStype = "termux" ] ; then
+        patch -f $PREFIX/include/c++/v1/cstdio $current_dir/patch/youcompleteme_cstdio.patch
+      fi
+      cd "$current_dir/vim/bundle/YouCompleteMe"
+      git submodule update --init --recursive
+      git submodule -q foreach git pull -q origin master --verbose
+      #cd "$current_dir/vim/bundle/YouCompleteMe/third_party/ycmd/third_party/tern_runtime"
+      #sudo npm install --production
+      cd "$current_dir/vim/bundle/YouCompleteMe"
+      ./install.py
+
+      if [ $OStype = "termux" ] ; then
+        patch -f -N -R $PREFIX/include/c++/v1/cstdio $current_dir/patch/youcompleteme_cstdio.patch
+      fi
+
+      installfile .vim/dict.add vim/dict.add
+      installfile .vim/filetype.vim vim/filetype.vim
+      installfolder vim/spell
+      installfile .vimrc vim/vimrc
+      installfolder vim/ycm
     fi
 
-    cd "$HOME/github/vim/"
-
-    # make sure this is the latest version
-    git pull
-
-    ./configure --with-features=huge --enable-gui --enable-luainterp \
-                --enable-perlinterp --enable-pythoninterp \
-                --enable-tclinterp --enable-python3interp \
-                --enable-rubyinterp --enable-cscope  --enable-multibyte \
-                --enable-fontset
-    make
-    sudo make install
-  fi
-  if [ -n "${all}" ] || [ -n "${dot}" ] ; then
-    mkdirfolder .vim
-    mkdirfolder .vim/tmp
-    mkdirfolder .vim/backups
-    mkdirfolder .vim/undo
-    mkdirfolder .vim/
-
-    if [ ! -d "$HOME/github/dotfiles/vim/bundle/Vundle.vim" ] ; then
-      # download latest Vundle version
-      mkdir -p "$HOME/github/dotfiles/vim/bundle/"
-      git clone https://github.com/VundleVim/Vundle.vim.git "$HOME/github/dotfiles/vim/bundle/Vundle.vim"
+    # Install fonts power line
+    if [ -n "${all}" ] || [ "${fonts}" ] ; then
+      if [ ! -d "$HOME/.fonts" ] ; then
+        git clone $GITHUB_URL/powerline/fonts.git "$current_dir/fonts"
+        cd "$current_dir/fonts" && ./install.sh
+        cd .. && rm -rf fonts
+        git clone $GITHUB_URL/ryanoasis/nerd-fonts "$current_dir/fonts"
+        cd "$current_dir/fonts" && ./install.sh
+        cd .. && rm -rf fonts
+      fi
     fi
+  elif [ $OStype = "window" ] ; then
+    if [ -n "${all}" ] || [ -n "${dot}" ] ; then
+      mkdirfolder .vim
+      mkdirfolder .vim/tmp
+      mkdirfolder .vim/backups
+      mkdirfolder .vim/undo
+      mkdirfolder .vim/
 
-    installfolder vim/bundle
-    installfolder vim/colors
+      installfolder vim/bundle
+      installfolder vim/colors
 
-    # download all plugin
-    vim +PluginInstall +qall
+      # Install YouCompleteMe
+      cd "$current_dir/vim/bundle/YouCompleteMe"
+      git submodule update --init --recursive
+      git submodule -q foreach git pull -q origin master --verbose
+      #cd "$current_dir/vim/bundle/YouCompleteMe/third_party/ycmd/third_party/tern_runtime"
+      #sudo npm install --production
+      #cd "$current_dir/vim/bundle/YouCompleteMe"
+      #./install.py --tern-completer
 
-    # Install YouCompleteMe
-    cd "$current_dir/vim/bundle/YouCompleteMe"
-    git submodule update --init --recursive
-    git submodule -q foreach git pull -q origin master --verbose
-    #cd "$current_dir/vim/bundle/YouCompleteMe/third_party/ycmd/third_party/tern_runtime"
-    #sudo npm install --production
-    cd "$current_dir/vim/bundle/YouCompleteMe"
-    ./install.py
-
-    installfile .vim/dict.add vim/dict.add
-    installfile .vim/filetype.vim vim/filetype.vim
-    installfolder vim/spell
-    installfile .vimrc vim/vimrc
-    installfolder vim/ycm
-  fi
-
-  # Install fonts power line
-  if [ -n "${all}" ] || [ "${fonts}" ] ; then
-    if [ ! -d "$HOME/.fonts" ] ; then
-      git clone https://github.com/powerline/fonts.git "$current_dir/fonts"
-      cd "$current_dir/fonts" && ./install.sh
-      cd .. && rm -rf fonts
-      git clone https://github.com/ryanoasis/nerd-fonts "$current_dir/fonts"
-      cd "$current_dir/fonts" && ./install.sh
-      cd .. && rm -rf fonts
+      installfile .vim/dict.add vim/dict.add
+      installfile .vim/filetype.vim vim/filetype.vim
+      installfolder vim/spell
+      installfile .vimrc vim/vimrc
+      installfolder vim/ycm
     fi
-  fi
-elif [ $OStype = "window" ] ; then
-  if [ -n "${all}" ] || [ -n "${dot}" ] ; then
-    mkdirfolder .vim
-    mkdirfolder .vim/tmp
-    mkdirfolder .vim/backups
-    mkdirfolder .vim/undo
-    mkdirfolder .vim/
-
-    installfolder vim/bundle
-    installfolder vim/colors
-
-    # Install YouCompleteMe
-    cd "$current_dir/vim/bundle/YouCompleteMe"
-    git submodule update --init --recursive
-    git submodule -q foreach git pull -q origin master --verbose
-    #cd "$current_dir/vim/bundle/YouCompleteMe/third_party/ycmd/third_party/tern_runtime"
-    #sudo npm install --production
-    #cd "$current_dir/vim/bundle/YouCompleteMe"
-    #./install.py --tern-completer
-
-    installfile .vim/dict.add vim/dict.add
-    installfile .vim/filetype.vim vim/filetype.vim
-    installfolder vim/spell
-    installfile .vimrc vim/vimrc
-    installfolder vim/ycm
-  fi
-  # Install fonts power line
-  if [ -n "${all}" ] || [ "${fonts}" ] ; then
-    if [ ! -d "$HOME/.fonts" ] ; then
-      git clone https://github.com/powerline/fonts.git "$current_dir/fonts"
-      cd "$current_dir/fonts" && chmod a+x install.sh
-      ./install.sh
-      cd .. && rm -rf fonts
+    # Install fonts power line
+    if [ -n "${all}" ] || [ "${fonts}" ] ; then
+      if [ ! -d "$HOME/.fonts" ] ; then
+        git clone $GITHUB_URL/powerline/fonts.git "$current_dir/fonts"
+        cd "$current_dir/fonts" && chmod a+x install.sh
+        ./install.sh
+        cd .. && rm -rf fonts
+      fi
     fi
   fi
 fi
