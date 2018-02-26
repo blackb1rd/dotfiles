@@ -299,7 +299,8 @@ fi
 #                                                                             #
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${dot}" ] ; then
-  if [ $OStype = "linux" ] ; then
+  if [ $OStype = "linux" ] \
+     || [ $OStype = "termux" ] ; then
     if [ ! -f "$HOME/.antigen.zsh" ]; then
       curl -L git.io/antigen > $HOME/.antigen.zsh
     fi
@@ -342,15 +343,16 @@ fi
 #                                                                             #
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${dot}" ] ; then
-  if [ $OStype = "linux" ] ; then
-    if [ ! -d "$HOME/github/vim/" ] ; then
+  if [ $OStype = "linux" ] \
+     || [ $OStype = "termux" ] ; then
+    if [ ! -d "$HOME/.tmux" ] ; then
       git clone $GITHUB_URL/gpakosz/.tmux.git $HOME/.tmux
     else
       git -C "$HOME/.tmux" pull
     fi
 
-    installfile .tmux/.tmux.conf $HOME/.tmux.conf
-    installfile .tmux/tmux.conf.local $HOME/.tmux.conf.local
+    installfile .tmux.conf tmux/tmux.conf
+    installfile .tmux.conf.local tmux/tmux.conf.local
   fi
 fi
 
