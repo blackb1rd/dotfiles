@@ -120,7 +120,7 @@ if [ $OStype = "linux" ] && { [ -n "${all}" ] || [ -n "${basictool}" ]; } ; then
     sudo apt-get update
     sudo apt-get install -y git htop irssi lynx ncurses-term tmux \
                             python3-dev ruby-dev lua5.1 lua5.1-dev python-dev \
-                            build-essential cmake gocode npm zsh \
+                            build-essential cmake gocode nodejs zsh \
                             || { echo 'Failed to install program' ; exit 1; }
     # if did not want to install latest version
     if [ ! "${latest}" ] ; then
@@ -275,10 +275,8 @@ fi
 #                                                                             #
 ###############################################################################
 if [ $OStype = "linux" ] && { [ -n "${all}" ] || [ -n "${dot}" ]; } ; then
-  isOhMyZsh=$(grep "oh-my-zsh" "$HOME/.zshrc")
-  if [ ! "$isOhMyZsh" ] ; then
-    # install oh my zsh
-    sh -c "$(wget https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
+  if [ ! -f "$HOME/.antigen.zsh" ]; then
+    curl -L git.io/antigen > $HOME/.antigen.zsh
   fi
 
   installfile .zshrc shells/zshrc
@@ -303,7 +301,14 @@ fi
 #                                                                             #
 ###############################################################################
 if [ $OStype = "linux" ] && { [ -n "${all}" ] || [ -n "${dot}" ]; } ; then
-  installfile .tmux.conf tmux/tmux.conf
+  if [ ! -d "$HOME/github/vim/" ] ; then
+    git clone https://github.com/gpakosz/.tmux.git $HOME/.tmux
+  elif
+    git -C "$HOME/.tmux" pull
+  fi
+
+  installfile .tmux/.tmux.conf $HOME/.tmux.conf
+  installfile .tmux/tmux.conf.local $HOME/.tmux.conf.local
 fi
 
 ###############################################################################
@@ -319,12 +324,12 @@ if [ $OStype = "linux" ] ; then
   if [ -n "${latest}" ] || [ -n "${all}" ] ; then
     sudo apt-get remove -y vim
 
+    echo "${txtbld}$(tput setaf 1)[-] Install the latest VIM$(tput sgr0)"
+
     if [ ! -d "$HOME/github/vim/" ] ; then
       # download latest vim version
       git clone 'https://github.com/vim/vim' "$HOME/github/vim/"
     fi
-
-    echo "${txtbld}$(tput setaf 1)[-] Install the latest VIM$(tput sgr0)"
 
     cd "$HOME/github/vim/"
 
