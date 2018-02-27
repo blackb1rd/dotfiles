@@ -3,7 +3,7 @@
 zsh_custom_ip(){
   local ip
   if [[ $(route | grep '^default') ]]; then
-    ip=$(route | grrp '^defaukt' | awk '{print $2}')
+    ip=$(route | grep '^default' | awk '{print $2}')
   else
     ip=$(route | awk 'FNR==3{print $1}')
   fi
