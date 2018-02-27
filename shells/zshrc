@@ -1,7 +1,7 @@
 #!/bin/zsh
 
 zsh_custom_ip(){
-  local ip=$(ifconfig "<Your Network interface>" | grep inet | awk '{print $2}' | cut -f2 -d ':')
+  local ip=$(ifconfig rmnet_data0 | grep inet | awk '{print $2}' | cut -f2 -d ':')
   local color="%F{black}"
   echo -n "%{$color%}$ip"
 }
@@ -11,15 +11,19 @@ POWERLEVEL9K_INSTALLATION_PATH=$ANTIGEN_BUNDLES/bhilburn/powerlevel9k
 POWERLEVEL9K_MODE='nerdfont-complete'
 POWERLEVEL9K_DIR_HOME_SUBFOLDER_BACKGROUND='green'
 POWERLEVEL9K_SHORTEN_DIR_LENGTH=2
-POWERLEVEL9K_SHORTEN_STRATEGY="truncate_middle"
+POWERLEVEL9K_SHORTEN_STRATEGY="truncate_from_right"
 POWERLEVEL9K_PROMPT_ON_NEWLINE=true
 POWERLEVEL9K_RPROMPT_ON_NEWLINE=true
+POWERLEVEL9K_MULTILINE_FIRST_PROMPT_PREFIX="%K{green}%k"
+POWERLEVEL9K_MULTILINE_LAST_PROMPT_PREFIX="%K{028}%F{black} \uf155%f%F{028} %k\ue0b0%f "
 POWERLEVEL9K_CUSTOM_IP="zsh_custom_ip"
-POWERLEVEL9K_CUSTOM_IP_BACKGROUND="green"
-POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(os_icon dir vcs)
-POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(custom_ip time background_jobs ram virtualenv rbenv rvm)
+POWERLEVEL9K_CUSTOM_IP_BACKGROUND=green
 POWERLEVEL9K_TIME_FORMAT="%D{\uf017 %H:%M \uf073 %d.%m.%y}"
+POWERLEVEL9K_TIME_BACKGROUND=cyan
+POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(os_icon dir dir_writable vcs)
+POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(time custom_ip background_jobs ram virtualenv pyenv rbenv rvm)
 DEFAULT_USER=`whoami`
+alias pyenv="echo $(python -V | grep -Eo '[0-9\.]+$')"
 source $HOME/.antigen.zsh
 
 # Load the oh-my-zsh's library
