@@ -124,6 +124,7 @@ if ! shopt -oq posix; then
 fi
 
 # Add PATH for scripting
+pathadd $HOME/.go/bin
 pathadd $HOME/.rvm/bin
 pathadd "/sbin"
 alias tmux="TERM=screen-256color tmux"

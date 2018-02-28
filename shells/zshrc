@@ -9,6 +9,7 @@ done
 zstyle ':completion:*:*:git:*' script $HOME/.shells/git/git-completion.zsh
 
 pathadd "/sbin"
+pathadd "$HOME/.go/bin/"
 pathadd "$HOME/.pyenv/bin"
 eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
