@@ -164,7 +164,8 @@ current_dir="$( cd "$( dirname "$0" )" && pwd )"
 #                                                                             #
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${latest}" ] ; then
-  if [ $OStype = "linux" ] ; then
+  if [ $OStype = "linux" ] \
+     || [ $OStype = "termux" ] ; then
     sudo apt-get remove -y ctags
 
     # clone ctags
@@ -212,7 +213,8 @@ fi
 #                                                                             #
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${dot}" ] ; then
-  if [ $OStype = "linux" ] ; then
+  if [ $OStype = "linux" ] \
+     || [ $OStype = "termux" ] ; then
     installfile .gdbrc debugger/gdbrc
 
     mkdirfolder .cgdb
@@ -229,7 +231,8 @@ fi
 #                                                                             #
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${dot}" ] ; then
-  if [ $OStype = "linux" ] ; then
+  if [ $OStype = "linux" ] \
+     || [ $OStype = "termux" ] ; then
     installfile .gitconfig git/gitconfig
   fi
 fi
@@ -243,7 +246,8 @@ fi
 #                                                                             #
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${dot}" ] ; then
-  if [ $OStype = "linux" ] ; then
+  if [ $OStype = "linux" ] \
+     || [ $OStype = "termux" ] ; then
     installfolder irssi
   fi
 fi
@@ -258,7 +262,8 @@ fi
 #                                                                             #
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${dot}" ] ; then
-  if [ $OStype = "linux" ] ; then
+  if [ $OStype = "linux" ] \
+     || [ $OStype = "termux" ] ; then
     installfile .htoprc htop/htoprc
   fi
 fi
@@ -273,7 +278,8 @@ fi
 #                                                                             #
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${python}" ] ; then
-  if [ $OStype = "linux" ] ; then
+  if [ $OStype = "linux" ] \
+     || [ $OStype = "termux" ] ; then
     installfile .pythonrc python/pythonrc
     PIPoption="install --user --upgrade"
     PIPmodule="numexpr bottleneck Cython SciPy numpy pandas tensorflow"
@@ -342,7 +348,7 @@ fi
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${dot}" ] ; then
   if [ $OStype = "linux" ] \
-     || [ $OStype = "linux" ] ; then
+     || [ $OStype = "termux" ] ; then
     installfile .ssh/config ssh/config
   fi
 fi
