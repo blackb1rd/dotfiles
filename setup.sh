@@ -112,9 +112,9 @@ if [ -z "${all}" ] \
    && [ -z "${dot}" ] \
    && [ -z "${basictool}" ] \
    && [ -z "${fonts}" ] \
-   && [ -z "${perl}"] \
-   && [ -z "${python}"] \
-   && [ -z "${latest}"] ; then
+   && [ -z "${perl}" ] \
+   && [ -z "${python}" ] \
+   && [ -z "${latest}" ] ; then
 
   echo "Need more option(installing or compiling) to be set"
   echo ""
