@@ -12,6 +12,10 @@ zsh_custom_ip(){
   echo -n "%{$color%}$ip"
 }
 
+export PATH="/home/r4v3n/.pyenv/bin:$PATH"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+
 export GOPATH=$HOME/.go
 POWERLEVEL9K_INSTALLATION_PATH=$ANTIGEN_BUNDLES/bhilburn/powerlevel9k
 POWERLEVEL9K_MODE='nerdfont-complete'
@@ -29,7 +33,6 @@ POWERLEVEL9K_TIME_BACKGROUND=cyan
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(os_icon dir dir_writable vcs)
 POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(time custom_ip background_jobs ram virtualenv pyenv rbenv rvm)
 DEFAULT_USER=`whoami`
-alias pyenv="echo $(python -V | grep -Eo '[0-9\.]+$')"
 source $HOME/.antigen.zsh
 
 # Load the oh-my-zsh's library

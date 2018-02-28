@@ -287,6 +287,12 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${python}" ] ; then
     elif [ $PythonVer3 = "3" ] ; then
       pip3 $PIPoption $PIPmodule
     fi
+
+    # install pyenv
+    curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash
+
+    # set pyenv to system
+    pyenv shell system
   fi
 fi
 
