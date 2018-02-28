@@ -1,5 +1,22 @@
 #!/bin/zsh
 
+# sources external in folder .shells
+for file in $HOME/.shells/zsh/*
+do
+  source $file
+done
+
+zstyle ':completion:*:*:git:*' script $HOME/.shells/git/git-completion.zsh
+
+pathadd "/sbin"
+pathadd "/home/r4v3n/.pyenv/bin"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+
+export GOPATH=$HOME/.go
+export PYTHONSTARTUP=$HOME/.pythonrc
+export EDITOR=vim
+
 zsh_custom_ip(){
   local ip
   if [[ $(route | grep '^default') ]]; then
@@ -12,11 +29,6 @@ zsh_custom_ip(){
   echo -n "%{$color%}$ip"
 }
 
-export PATH="/home/r4v3n/.pyenv/bin:$PATH"
-eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
-
-export GOPATH=$HOME/.go
 POWERLEVEL9K_INSTALLATION_PATH=$ANTIGEN_BUNDLES/bhilburn/powerlevel9k
 POWERLEVEL9K_MODE='nerdfont-complete'
 POWERLEVEL9K_DIR_HOME_SUBFOLDER_BACKGROUND='green'

@@ -316,12 +316,19 @@ if [ -n "${all}" ] || [ -n "${dot}" ] ; then
 
     # source external programs
     mkdirfolder .shells
+    mkdirfolder .shells/git
 
-    wget "$GITHUB_RAW_URL/git/git/master/contrib/completion/git-completion.bash" \
-         -O "$HOME/.shells/git-completion.bash"
-    wget "$GITHUB_RAW_URL/git/git/master/contrib/completion/git-prompt.sh" \
-         -O "$HOME/.shells/git-prompt.sh"
-    installfile .shells/transmission shells/source/transmission
+    for shell in bash zsh
+    do
+      mkdirfolder .shells/$shell
+
+      wget "$GITHUB_RAW_URL/git/git/master/contrib/completion/git-completion.$shell" \
+           -O "$HOME/.shells/git/git-completion.$shell"
+
+
+      installfile .shells/$shell/transmission shells/source/transmission
+      installfile .shells/$shell/utility shells/source/utility
+    done
   fi
 fi
 
