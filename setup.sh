@@ -285,13 +285,16 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${python}" ] ; then
     PIPmodule="numexpr bottleneck Cython SciPy numpy pandas tensorflow"
 
     # try to install pip module from python3 only
-    PythonVer=$(pip -V | awk -F '[()]' '{ print $2 }' | awk '{print $2}' | cut -d '.' -f 1)
-    PythonVer3=$(pip3 -V | awk -F '[()]' '{ print $2 }' | awk '{print $2}' | cut -d '.' -f 1)
+    PythonVer=$(command -v pip > /dev/null 2>&1 && pip -V | awk -F '[()]' '{ print $2 }' | awk '{print $2}' | cut -d '.' -f 1)
+    PythonVer3=$(command -v pip3 > /dev/null 2>&1 && pip3 -V | awk -F '[()]' '{ print $2 }' | awk '{print $2}' | cut -d '.' -f 1)
 
-    if [ $PythonVer = "3" ] ; then
+    if [ $(command -v pip > /dev/null 2>&1) ] && [ $PythonVer = "3" ] ; then
       pip $PIPoption $PIPmodule
-    elif [ $PythonVer3 = "3" ] ; then
+    elif [ $(command -v pip3 > /dev/null 2>&1) ] && [ $PythonVer3 = "3" ] ; then
       pip3 $PIPoption $PIPmodule
+    else
+      wget https://bootstrap.pypa.io/get-pip.py -O $TEMP/get-pip.py
+      python3 $TEMP/get-pip.py
     fi
 
     # install pyenv
@@ -432,12 +435,11 @@ if [ -n "${all}" ] || [ -n "${latest}" ] || [ -n "${dot}" ] ; then
       if [ $OStype = "termux" ] ; then
         patch -f $PREFIX/include/c++/v1/cstdio $current_dir/patch/youcompleteme_cstdio.patch
       fi
-      cd "$current_dir/vim/bundle/YouCompleteMe"
+      cd "$HOME/.vim/bundle/YouCompleteMe"
       git submodule update --init --recursive
       git submodule -q foreach git pull -q origin master --verbose
       #cd "$current_dir/vim/bundle/YouCompleteMe/third_party/ycmd/third_party/tern_runtime"
       #sudo npm install --production
-      cd "$current_dir/vim/bundle/YouCompleteMe"
       ./install.py
 
       if [ $OStype = "termux" ] ; then
