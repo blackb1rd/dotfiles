@@ -20,12 +20,12 @@ export EDITOR=vim
 
 zsh_custom_ip(){
   local ip
-  if [[ $(route | grep '^default') ]] ; then
-    ip=$(route | grep '^default' | awk '{print $2}')
-  elif [[ $(route print | grep -P "^ +0.0.0.0 +0.0.0.0 +") ]] ; then
-    ip=$(route print | grep -P "^ +0.0.0.0 +0.0.0.0 +" | awk '{print $4}')
+  if [[ $(route 2>&1 | grep '^default') ]] ; then
+    ip=$(route 2>&1 | grep '^default' | awk '{print $2}')
+  elif [[ $(route print 2>&1 | grep -P "^ +0.0.0.0 +0.0.0.0 +") ]] ; then
+    ip=$(route print 2>&1 | grep -P "^ +0.0.0.0 +0.0.0.0 +" | awk '{print $4}')
   else
-    ip=$(route | awk 'FNR==3{print $1}')
+    ip=$(route 2>&1 | awk 'FNR==3{print $1}')
   fi
 
   local color="%F{black}"
