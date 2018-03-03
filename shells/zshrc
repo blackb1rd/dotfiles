@@ -16,7 +16,12 @@ eval "$(pyenv virtualenv-init -)"
 
 export GOPATH=$HOME/.go
 export PYTHONSTARTUP=$HOME/.pythonrc
-export EDITOR=vim
+if [[ -x $(command -v nvim) ]] ; then
+  export EDITOR=nvim
+  alias vim="nvim"
+else
+  export EDITOR=vim
+fi
 
 zsh_custom_ip(){
   local ip
