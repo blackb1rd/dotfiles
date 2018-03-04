@@ -15,6 +15,7 @@ PACKAGE="cmake
         #lua
         #gocode
         #lua-dev
+TEMP="/tmp"
 usage() {
   echo "Usage: $0 [options]"
   echo ""
@@ -148,7 +149,7 @@ if [ -n "${all}" ] || [ -n "${basictool}" ] ; then
       sudo apt-get install -y $PACKAGE \
                               || { echo 'Failed to install program' ; exit 1; }
       # if did not want to install latest version
-      if [ ! "${latest}" ] ; then
+      if [ ! "${latest}" ] && [ ! "${all}" ] ; then
         sudo apt-get install -y vim ctags
       fi
 
