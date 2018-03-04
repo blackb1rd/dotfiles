@@ -434,26 +434,10 @@ if [ -n "${all}" ] || [ -n "${latest}" ] || [ -n "${dot}" ] ; then
 
       echo "${txtbld}$(tput setaf 1)[-] Install the latest VIM$(tput sgr0)"
 
-      if [ -d "$HOME/github/vim/" ] ; then
-        rm -rf "$HOME/github/vim/"
-      fi
-
       if [ -d "$HOME/github/neovim/" ] ; then
         rm -rf "$HOME/github/neovim/"
       fi
-
-      git clone --depth 1 $GITHUB_URL/vim/vim "$HOME/github/vim/"
       git clone --depth 1 $GITHUB_URL/neovim/neovim "$HOME/github/neovim/"
-
-      cd "$HOME/github/vim/"
-      ./configure --with-features=huge --enable-gui --enable-luainterp \
-                  --enable-perlinterp --enable-pythoninterp \
-                  --enable-tclinterp --enable-python3interp \
-                  --enable-rubyinterp --enable-cscope  --enable-multibyte \
-                  --enable-fontset
-      make
-      sudo make install
-      cd .. && rm -rf "$HOME/github/vim/"
 
       cd "$HOME/github/neovim/"
       rm -r build
