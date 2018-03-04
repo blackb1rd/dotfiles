@@ -34,9 +34,9 @@ export TERM=xterm-256color
 
 zsh_custom_ip(){
   local ip
-  if [[ $(route 2>&1 | grep '^default') ]] ; then
+  if [ $(route 2>&1 | grep '^default') ] ; then
     ip=$(route 2>&1 | grep '^default' | awk '{print $2}')
-  elif [[ $(route print 2>&1 | grep -P "^ +0.0.0.0 +0.0.0.0 +") ]] ; then
+  elif [ $(route print 2>&1 | grep -P "^ +0.0.0.0 +0.0.0.0 +") ] ; then
     ip=$(route print 2>&1 | grep -P "^ +0.0.0.0 +0.0.0.0 +" | awk '{print $4}')
   else
     ip=$(route 2>&1 | awk 'FNR==3{print $1}')
