@@ -7,19 +7,14 @@ PACKAGE="cmake
          git
          htop
          irssi
-         lua
          lynx
          nodejs
-         python-dev
-         ruby-dev
          tmux
          zsh"
 
-        #python3-dev
+        #lua
         #gocode
         #lua-dev
-        #build-essential \
-
 usage() {
   echo "Usage: $0 [options]"
   echo ""
@@ -136,6 +131,19 @@ if [ -n "${all}" ] || [ -n "${basictool}" ] ; then
     DISTRIB=$(lsb_release -si | awk '{print tolower($0)}')
 
     if [ $DISTRIB = "ubuntu" ] || [ $DISTRIB = "debian" ] ; then
+      $PACKAGE+="autoconf
+                 automake
+                 build-essential
+                 cmake
+                 g++
+                 libtool
+                 libtool-bin
+                 ninja-build
+                 pkg-config
+                 python-dev
+                 python3-dev
+                 ruby-dev
+                 unzip"
       sudo apt-get update
       sudo apt-get install -y $PACKAGE \
                               || { echo 'Failed to install program' ; exit 1; }
@@ -169,7 +177,7 @@ if [ -n "${all}" ] || [ -n "${latest}" ] ; then
     sudo apt-get remove -y ctags
 
     # clone ctags
-    git clone $GITHUB_URL/universal-ctags/ctags $TEMP/ctags
+    git clone --depth 1 $GITHUB_URL/universal-ctags/ctags $TEMP/ctags
     cd $TEMP/ctags
     ./autogen.sh
     ./configure --enable-iconv
@@ -182,7 +190,7 @@ if [ -n "${all}" ] || [ -n "${latest}" ] ; then
     fi
 
     # clone ctags
-    git clone $GITHUB_URL/universal-ctags/ctags $TEMP/ctags
+    git clone --depth 1 $GITHUB_URL/universal-ctags/ctags $TEMP/ctags
     cd $TEMP/ctags
 
     # cd win32
@@ -219,6 +227,28 @@ if [ -n "${all}" ] || [ -n "${dot}" ] ; then
 
     mkdirfolder .cgdb
     installfile .cgdb/cgdbrc debugger/cgdbrc
+  fi
+fi
+
+###############################################################################
+#                           _____           _                                 #
+#                          |  ___|__  _ __ | |_ ___                           #
+#                          | |_ / _ \| '_ \| __/ __|                          #
+#                          |  _| (_) | | | | |_\__ \                          #
+#                          |_|  \___/|_| |_|\__|___/                          #
+#                                                                             #
+###############################################################################
+if [ -n "${all}" ] || [ "${fonts}" ] ; then
+  if [ ! -d "$HOME/.fonts" ] ; then
+    # Install power line fonts
+    git clone --depth 1 $GITHUB_URL/powerline/fonts.git "$current_dir/fonts"
+    cd "$current_dir/fonts" && ./install.sh
+    cd .. && rm -rf fonts
+
+    # Install nerd fonts
+    git clone --depth 1 $GITHUB_URL/ryanoasis/nerd-fonts "$current_dir/fonts"
+    cd "$current_dir/fonts" && ./install.sh
+    cd .. && rm -rf fonts
   fi
 fi
 
@@ -342,11 +372,11 @@ if [ -n "${all}" ] || [ -n "${dot}" ] ; then
 fi
 
 ###############################################################################
-#                                          _                                  #
-#                                  ___ ___| |__                               #
-#                                 / __/ __| '_ \                              #
-#                                 \__ \__ \ | | |                             #
-#                                 |___/___/_| |_|                             #
+#                               ____      _                                   #
+#                              / ___| ___| |__                                #
+#                              \___ \/ __| '_ \                               #
+#                               ___) \__ \ | | |                              #
+#                              |____/|___/_| |_|                              #
 #                                                                             #
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${dot}" ] ; then
@@ -394,16 +424,18 @@ if [ -n "${all}" ] || [ -n "${latest}" ] || [ -n "${dot}" ] ; then
 
       echo "${txtbld}$(tput setaf 1)[-] Install the latest VIM$(tput sgr0)"
 
-      if [ ! -d "$HOME/github/vim/" ] ; then
-        # download latest vim version
-        git clone $GITHUB_URL/vim/vim "$HOME/github/vim/"
+      if [ -d "$HOME/github/vim/" ] ; then
+        rm -rf "$HOME/github/vim/"
       fi
 
+      if [ -d "$HOME/github/neovim/" ] ; then
+        rm -rf "$HOME/github/neovim/"
+      fi
+
+      git clone --depth 1 $GITHUB_URL/vim/vim "$HOME/github/vim/"
+      git clone --depth 1 $GITHUB_URL/neovim/neovim "$HOME/github/neovim/"
+
       cd "$HOME/github/vim/"
-
-      # make sure this is the latest version
-      git pull
-
       ./configure --with-features=huge --enable-gui --enable-luainterp \
                   --enable-perlinterp --enable-pythoninterp \
                   --enable-tclinterp --enable-python3interp \
@@ -411,6 +443,13 @@ if [ -n "${all}" ] || [ -n "${latest}" ] || [ -n "${dot}" ] ; then
                   --enable-fontset
       make
       sudo make install
+      cd .. && rm -rf "$HOME/github/vim/"
+
+      cd "$HOME/github/neovim/"
+      rm -r build
+      make clean
+      make CMAKE_BUILD_TYPE=Release
+      cd .. && rm -rf "$HOME/github/neovim/"
     fi
     if [ -n "${all}" ] || [ -n "${dot}" ] ; then
       mkdirfolder .vim
@@ -452,18 +491,6 @@ if [ -n "${all}" ] || [ -n "${latest}" ] || [ -n "${dot}" ] ; then
       installfile .vimrc vim/vimrc
       installfolder vim/ycm
     fi
-
-    # Install fonts power line
-    if [ -n "${all}" ] || [ "${fonts}" ] ; then
-      if [ ! -d "$HOME/.fonts" ] ; then
-        git clone $GITHUB_URL/powerline/fonts.git "$current_dir/fonts"
-        cd "$current_dir/fonts" && ./install.sh
-        cd .. && rm -rf fonts
-        git clone $GITHUB_URL/ryanoasis/nerd-fonts "$current_dir/fonts"
-        cd "$current_dir/fonts" && ./install.sh
-        cd .. && rm -rf fonts
-      fi
-    fi
   elif [ $OStype = "window" ] ; then
     if [ -n "${all}" ] || [ -n "${dot}" ] ; then
       mkdirfolder .vim
@@ -489,15 +516,6 @@ if [ -n "${all}" ] || [ -n "${latest}" ] || [ -n "${dot}" ] ; then
       installfolder vim/spell
       installfile .vimrc vim/vimrc
       installfolder vim/ycm
-    fi
-    # Install fonts power line
-    if [ -n "${all}" ] || [ "${fonts}" ] ; then
-      if [ ! -d "$HOME/.fonts" ] ; then
-        git clone $GITHUB_URL/powerline/fonts.git "$current_dir/fonts"
-        cd "$current_dir/fonts" && chmod a+x install.sh
-        ./install.sh
-        cd .. && rm -rf fonts
-      fi
     fi
   fi
 fi
