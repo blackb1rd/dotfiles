@@ -326,6 +326,7 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${python}" ] ; then
     else
       wget https://bootstrap.pypa.io/get-pip.py -O $TEMP/get-pip.py
       python3 $TEMP/get-pip.py
+      pip $PIPoption $PIPmodule
     fi
 
     # install pyenv
@@ -383,6 +384,7 @@ fi
 if [ -n "${all}" ] || [ -n "${dot}" ] ; then
   if [ $OStype = "linux" ] \
      || [ $OStype = "termux" ] ; then
+    mkdirfolder .ssh/control
     installfile .ssh/config ssh/config
   fi
 fi
@@ -491,6 +493,7 @@ if [ -n "${all}" ] || [ -n "${latest}" ] || [ -n "${dot}" ] ; then
       installfile .vim/filetype.vim vim/filetype.vim
       installfolder vim/spell
       installfile .vimrc vim/vimrc
+      installfile .config/nvim/init.vim vim/vimrc
       installfolder vim/ycm
     fi
   elif [ $OStype = "window" ] ; then
