@@ -44,4 +44,7 @@
 [remote "origin"]
 	fetch = +refs/pull/*/head:refs/remotes/origin/pull/*
 
+[url "ssh://git@github.com/"]
+	insteadOf = https://github.com/
+
 # vim: set ft=gitconfig noet:
