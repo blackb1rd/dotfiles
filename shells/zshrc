@@ -17,7 +17,7 @@ if [ -d "$HOME/.pyenv" ]; then
   else
     pathadd "$PYENV_ROOT/shims"
   fi
-  if command -v pyenv >/dev/null 2>&1; then
+  if command -v pyenv > /dev/null 2>&1; then
     eval "$(pyenv init - --no-rehash)"
     eval "$(pyenv virtualenv-init -)"
   fi
@@ -34,9 +34,9 @@ export TERM=xterm-256color
 
 zsh_custom_ip(){
   local ip
-  if [ $(route 2>&1 | grep '^default') ] ; then
-    ip=$(route 2>&1 | grep '^default' | awk '{print $2}')
-  elif [ $(route print 2>&1 | grep -P "^ +0.0.0.0 +0.0.0.0 +") ] ; then
+  if [[ -n $(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*') ]] ; then
+    ip=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1')
+  elif [[ -n $(route print 2>&1 | grep -P "^ +0.0.0.0 +0.0.0.0 +") ]] ; then
     ip=$(route print 2>&1 | grep -P "^ +0.0.0.0 +0.0.0.0 +" | awk '{print $4}')
   else
     ip=$(route 2>&1 | awk 'FNR==3{print $1}')
