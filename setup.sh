@@ -450,6 +450,7 @@ if [ -n "${all}" ] || [ -n "${latest}" ] || [ -n "${dot}" ] ; then
       rm -r build
       make clean
       make CMAKE_BUILD_TYPE=Release
+      sudo make install
       cd .. && rm -rf "$HOME/github/neovim/"
     fi
     if [ -n "${all}" ] || [ -n "${dot}" ] ; then
