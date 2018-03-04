@@ -313,7 +313,14 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${python}" ] ; then
      || [ $OStype = "termux" ] ; then
     installfile .pythonrc python/pythonrc
     PIPoption="install --user --upgrade"
-    PIPmodule="numexpr bottleneck Cython SciPy numpy pandas tensorflow"
+    PIPmodule="Cython
+               SciPy
+               bottleneck
+               neovim
+               numexpr
+               numpy
+               pandas
+               tensorflow"
 
     # try to install pip module from python3 only
     PythonVer=$(command -v pip > /dev/null 2>&1 && pip -V | awk -F '[()]' '{ print $2 }' | awk '{print $2}' | cut -d '.' -f 1)

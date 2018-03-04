@@ -27,6 +27,7 @@ export PYTHONSTARTUP=$HOME/.pythonrc
 if [[ -x $(command -v nvim) ]] ; then
   export EDITOR=nvim
   alias vim="nvim"
+  alias vimdiff='nvim -d'
 else
   export EDITOR=vim
 fi
