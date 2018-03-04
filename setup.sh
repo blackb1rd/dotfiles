@@ -131,18 +131,19 @@ if [ -n "${all}" ] || [ -n "${basictool}" ] ; then
     DISTRIB=$(lsb_release -si | awk '{print tolower($0)}')
 
     if [ $DISTRIB = "ubuntu" ] || [ $DISTRIB = "debian" ] ; then
-      PACKAGE+="autoconf
-                automake
-                build-essential
-                g++
-                libtool
-                libtool-bin
-                ninja-build
-                pkg-config
-                python-dev
-                python3-dev
-                ruby-dev
-                unzip"
+      PACKAGE="$PACKAGE
+               autoconf
+               automake
+               build-essential
+               g++
+               libtool
+               libtool-bin
+               ninja-build
+               pkg-config
+               python-dev
+               python3-dev
+               ruby-dev
+               unzip"
       sudo apt-get update
       sudo apt-get install -y $PACKAGE \
                               || { echo 'Failed to install program' ; exit 1; }
