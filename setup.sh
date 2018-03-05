@@ -316,6 +316,7 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${python}" ] ; then
     PIPmodule="Cython
                SciPy
                bottleneck
+               mycli
                neovim
                numexpr
                numpy
