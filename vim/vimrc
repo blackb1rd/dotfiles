@@ -11,6 +11,8 @@ if has("win64") || has("win32")
     set rtp+=$HOME/.vim
 endif
 
+let g:ale_emit_conflict_warnings = 0
+
 " VUNDLE {{{1
 " -----------------------------
 set nocompatible              " be iMproved, required
@@ -77,6 +79,7 @@ Plugin 'vim-pandoc/vim-pandoc'
 Plugin 'vim-scripts/a.vim'
 Plugin 'vim-scripts/abolish.vim'
 Plugin 'vim-syntastic/syntastic'
+Plugin 'w0rp/ale'
 Plugin 'xolox/vim-misc'
 
 call vundle#end()            " required
@@ -241,11 +244,12 @@ nnoremap <silent> <leader>hc :GhcModCheck<CR>
 nnoremap <silent> <leader>hl :GhcModLint<CR>
 nnoremap <silent> <leader>l :ls<CR>:b<space>
 
-" pathogen
-nnoremap <silent> <leader>ht :call pathogen#helptags()<CR>
-
 " Airline
 nnoremap <silent> <leader>s :call AirToggle()<CR>
+
+" ale
+nmap <silent> <C-k> <Plug>(ale_previous_wrap)
+nmap <silent> <C-j> <Plug>(ale_next_wrap)
 
 " Signify
 nnoremap <silent> <leader>sr :SignifyRefresh<CR>
@@ -313,6 +317,14 @@ function! AirToggle()
     endif
 endfunction
 set noshowmode
+
+" ale
+let g:ale_sign_column_always = 1
+let g:ale_sign_error = 'E>'
+let g:ale_sign_warning = 'W>'
+let g:airline#extensions#ale#enabled = 1
+let g:ale_open_list = 1
+let g:ale_keep_list_window_open = 1
 
 " syntastic
 let g:syntastic_error_symbol = "\u2717"
