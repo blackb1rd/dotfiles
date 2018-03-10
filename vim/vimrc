@@ -80,6 +80,7 @@ Plugin 'vim-scripts/a.vim'
 Plugin 'vim-scripts/abolish.vim'
 Plugin 'vim-syntastic/syntastic'
 Plugin 'w0rp/ale'
+Plugin 'will133/vim-dirdiff'
 Plugin 'xolox/vim-misc'
 
 call vundle#end()            " required
