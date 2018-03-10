@@ -332,7 +332,7 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${python}" ] ; then
       pip3 $PIPoption $PIPmodule
     else
       wget https://bootstrap.pypa.io/get-pip.py -O $TEMP/get-pip.py
-      python3 $TEMP/get-pip.py
+      sudo python3 $TEMP/get-pip.py
       pip $PIPoption $PIPmodule
     fi
 
