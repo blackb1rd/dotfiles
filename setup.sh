@@ -138,7 +138,6 @@ if [ -n "${all}" ] || [ -n "${basictool}" ] ; then
                build-essential
                g++
                libtool
-               libtool-bin
                ninja-build
                pkg-config
                python-dev
@@ -453,6 +452,7 @@ if [ -n "${all}" ] || [ -n "${latest}" ] || [ -n "${dot}" ] ; then
       mkdirfolder .vim/backups
       mkdirfolder .vim/undo
       mkdirfolder .vim/
+      mkdirfolder .config/nvim
 
       if [ ! -d "$HOME/github/dotfiles/vim/bundle/Vundle.vim" ] ; then
         # download latest Vundle version
