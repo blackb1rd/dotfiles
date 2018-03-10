@@ -111,6 +111,11 @@ set wrapmargin=0
 set whichwrap+=<,>,[,],h,l
 set formatoptions=qn1
 
+if has("nvim")
+    set guicursor=n-v-c:block-Cursor/lCursor-blinkon1,i-ci:ver25-Cursor/lCursor,r-cr:hor20-Cursor/lCursor
+endif
+
+
 " Highligh unwanted whitespace
 highlight ExtraWhitespace ctermbg=red guibg=red
 match ExtraWhitespace /\s\+$\| \+ze\t/
@@ -207,6 +212,7 @@ set undofile
 
 " AUTOCMDS {{{1
 " ----------------------------
+au VimLeave     * set guicursor=a:block-blinkon1
 au VimResized   * exe "normal! \<c-w>="
 au BufWritePost * if getline(1) =~ "^#!" | silent :!chmod +x <afile>
 
