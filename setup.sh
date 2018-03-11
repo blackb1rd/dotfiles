@@ -98,18 +98,18 @@ if checkOStype $OStype ; then
 fi
 
 if [ -z "${all}" ] \
-   && [ -z "${dot}" ] \
    && [ -z "${basictool}" ] \
+   && [ -z "${dot}" ] \
    && [ -z "${fonts}" ] \
    && [ -z "${perl}" ] \
    && [ -z "${python}" ] \
+   && [ -z "${ycmd}" ] \
    && [ -z "${latest}" ] ; then
 
   echo "Need more option(installing or compiling) to be set"
   echo ""
   usage
   exit 1
-
 fi
 
 if [ $OStype = "window" ] ; then
@@ -419,7 +419,10 @@ fi
 #                               \_/  |_|_| |_| |_|                            #
 #                                                                             #
 ###############################################################################
-if [ -n "${all}" ] || [ -n "${latest}" ] || [ -n "${dot}" ] ; then
+if [ -n "${all}" ] \
+   || [ -n "${latest}" ] \
+   || [ -n "${ycmd}" ] \
+   || [ -n "${dot}" ] ; then
   if [ $OStype = "linux" ] \
      || [ $OStype = "termux" ] ; then
     if [ -n "${all}" ] || [ -n "${latest}" ] ; then
