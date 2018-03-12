@@ -10,6 +10,7 @@ PACKAGE="cmake
          lynx
          nodejs
          tmux
+	 xclip
          zsh"
 
         #lua
