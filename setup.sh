@@ -21,15 +21,16 @@ usage() {
   echo "Usage: $0 [options]"
   echo ""
   echo "Options:"
-  echo "  --os OStype       Type OS to install dotfiles(Window, Linux, Android, OSX, iOS, Yun, Openwrt)"
-  echo "  -a,  --all        Installing all setup"
-  echo "  -d,  --dot        Installing dotfiles"
-  echo "  -b,  --basictool  Installing basic tool"
-  echo "  -f,  --fonts      Installing fonts"
-  echo "  -pl, --perl       Installing perl package"
-  echo "  -py, --python     Installing python package"
-  echo "  -l,  --latest     Compiling the latest ctags and VIM version"
-  echo "  -h,  --help       Show basic help message and exit"
+  echo "  --os  OStype       Type OS to install dotfiles(Window, Linux, Android, OSX, iOS, Yun, Openwrt)"
+  echo "  -a,   --all        Installing all setup"
+  echo "  -b,   --basictool  Installing basic tool"
+  echo "  -d,   --dot        Installing dotfiles"
+  echo "  -f,   --fonts      Installing fonts"
+  echo "  -l,   --latest     Compiling the latest ctags and VIM version"
+  echo "  -pl,  --perl       Installing perl package"
+  echo "  -py,  --python     Installing python package"
+  echo "  -ycm, --ycmd       Compiling YouCompleteMe"
+  echo "  -h,   --help       Show basic help message and exit"
 }
 
 mkdirfolder () {
@@ -71,25 +72,16 @@ do
     --os )                  shift
                             OStype=$1
                             ;;
-    -a  | --all )           all=true
-                            ;;
-    -d  | --dot )           dot=true
-                            ;;
-    -b  | --basictool )     basictool=true
-                            ;;
-    -f  | --fonts )         fonts=true
-                            ;;
-    -pl | --perl )          perl=true
-                            ;;
-    -py | --python )        python=true
-                            ;;
-    -l  | --latest )        latest=true
-                            ;;
-    -h  | --help )          usage
-                            exit
-                            ;;
-    * )                     usage
-                            exit 1
+    -a   | --all )          all=true;;
+    -b   | --basictool )    basictool=true;;
+    -d   | --dot )          dot=true;;
+    -f   | --fonts )        fonts=true;;
+    -l   | --latest )       latest=true;;
+    -pl  | --perl )         perl=true;;
+    -py  | --python )       python=true;;
+    -ycm | --ycmd )         ycmd=true;;
+    -h   | --help )         usage;exit;;
+    * )                     usage;exit 1
   esac
   shift
 done
@@ -428,7 +420,8 @@ fi
 #                                                                             #
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${latest}" ] || [ -n "${dot}" ] ; then
-  if [ $OStype = "linux" ] || [ $OStype = "termux" ] ; then
+  if [ $OStype = "linux" ] \
+     || [ $OStype = "termux" ] ; then
     if [ -n "${all}" ] || [ -n "${latest}" ] ; then
       # Install latest vim version
       sudo apt-get remove -y vim
@@ -465,8 +458,16 @@ if [ -n "${all}" ] || [ -n "${latest}" ] || [ -n "${dot}" ] ; then
       installfolder vim/colors
 
       # download all plugin
-      vim +PluginInstall +qall
+      nvim +PluginInstall +qall
 
+      installfile .vim/dict.add vim/dict.add
+      installfile .vim/filetype.vim vim/filetype.vim
+      installfolder vim/spell
+      installfile .vimrc vim/vimrc
+      installfile .config/nvim/init.vim vim/vimrc
+      installfolder vim/ycm
+    fi
+    if [ -n "${all}" ] || [ -n "${ycmd}" ] ; then
       # Install YouCompleteMe
       if [ $OStype = "termux" ] ; then
         patch -f $PREFIX/include/c++/v1/cstdio $current_dir/patch/youcompleteme_cstdio.patch
@@ -481,13 +482,6 @@ if [ -n "${all}" ] || [ -n "${latest}" ] || [ -n "${dot}" ] ; then
       if [ $OStype = "termux" ] ; then
         patch -f -N -R $PREFIX/include/c++/v1/cstdio $current_dir/patch/youcompleteme_cstdio.patch
       fi
-
-      installfile .vim/dict.add vim/dict.add
-      installfile .vim/filetype.vim vim/filetype.vim
-      installfolder vim/spell
-      installfile .vimrc vim/vimrc
-      installfile .config/nvim/init.vim vim/vimrc
-      installfolder vim/ycm
     fi
   elif [ $OStype = "window" ] ; then
     if [ -n "${all}" ] || [ -n "${dot}" ] ; then
