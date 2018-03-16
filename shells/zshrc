@@ -25,9 +25,16 @@ fi
 export GOPATH=$HOME/.go
 export PYTHONSTARTUP=$HOME/.pythonrc
 if [[ -x $(command -v nvim) ]] ; then
-  export EDITOR=nvim
-  alias vim="nvim"
-  alias vimdiff='nvim -d'
+  case $(uname) in
+    CYGWIN_NT-* | MSYS_NT-*)
+      export EDITOR=vim
+      ;;
+    *)
+      export EDITOR=nvim
+      alias vim="nvim"
+      alias vimdiff='nvim -d'
+      ;;
+  esac
 else
   export EDITOR=vim
 fi
@@ -35,18 +42,22 @@ export TERM=xterm-256color
 
 zsh_custom_ip(){
   local ip
-  if [[ -n $(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*') ]] ; then
-    ip=$(ifconfig | \
-         grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | \
-         grep -Eo '([0-9]*\.){3}[0-9]*' | \
-         grep -v '127.0.0.1' | \
-         awk 'FNR==1{print $1}')
-  elif [[ -n $(route print 2>&1 | grep -P "^ +0.0.0.0 +0.0.0.0 +") ]] ; then
-    ip=$(route print 2>&1 | grep -P "^ +0.0.0.0 +0.0.0.0 +" | awk '{print $4}')
-  else
-    ip=$(route 2>&1 | awk 'FNR==3{print $1}')
-  fi
-
+  case $(uname) in
+    CYGWIN_NT-* | MSYS_NT-*)
+      ip=$(route print 2>&1 | grep -P "^ +0.0.0.0 +0.0.0.0 +" | awk '{print $4}')
+      ;;
+    *)
+      if [[ -n $(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*') ]] ; then
+        ip=$(ifconfig | \
+          grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | \
+          grep -Eo '([0-9]*\.){3}[0-9]*' | \
+          grep -v '127.0.0.1' | \
+          awk 'FNR==1{print $1}')
+      else
+        ip=$(route 2>&1 | awk 'FNR==3{print $1}')
+      fi
+      ;;
+  esac
   local color="%F{black}"
   echo -n "%{$color%}$ip"
 }
@@ -76,7 +87,7 @@ antigen bundle colored-man-pages
 antigen bundle colorize
 antigen bundle command-not-found
 antigen bundle git
-antigen bundle go
+antigen bundle golang
 antigen bundle pip
 antigen bundle screen
 antigen bundle tmux
