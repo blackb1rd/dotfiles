@@ -22,22 +22,25 @@ if [ -d "$HOME/.pyenv" ]; then
     eval "$(pyenv virtualenv-init -)"
   fi
 fi
-export GOPATH=$HOME/.go
-export PYTHONSTARTUP=$HOME/.pythonrc
-if [[ -x $(command -v nvim) ]] ; then
-  case $(uname) in
-    CYGWIN_NT-* | MSYS_NT-*)
-      export EDITOR=vim
-      ;;
-    *)
+case $(uname) in
+  CYGWIN_NT-* | MSYS_NT-*)
+    export EDITOR=vim
+    pathadd "/mingw64/bin"
+    export GOROOT=/mingw64/lib/go
+    export GOPATH=/mingw64
+    ;;
+  *)
+    export GOPATH=$HOME/.go
+    export PYTHONSTARTUP=$HOME/.pythonrc
+    if [[ -x $(command -v nvim) ]] ; then
       export EDITOR=nvim
       alias vim="nvim"
       alias vimdiff='nvim -d'
-      ;;
-  esac
-else
-  export EDITOR=vim
-fi
+    else
+      export EDITOR=vim
+    fi
+    ;;
+esac
 export TERM=xterm-256color
 
 zsh_custom_ip(){
