@@ -1,0 +1,13 @@
+diff --git a/functions/utilities.zsh b/functions/utilities.zsh
+index b4bfb83..e529e5d 100644
+--- a/functions/utilities.zsh
++++ b/functions/utilities.zsh
+@@ -85,7 +85,7 @@ case $(uname) in
+       OS='OSX'
+       OS_ICON=$(print_icon 'APPLE_ICON')
+       ;;
+-    CYGWIN_NT-*)
++    CYGWIN_NT-* | MSYS_NT-*)
+       OS='Windows'
+       OS_ICON=$(print_icon 'WINDOWS_ICON')
+       ;;
