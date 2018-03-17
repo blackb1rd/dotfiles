@@ -52,6 +52,7 @@ case $(uname) in
                  htop
                  irssi
                  libbz2-dev
+                 libevent-dev
                  libncurses5-dev
                  libreadline-dev
                  libsqlite3-dev
@@ -66,7 +67,6 @@ case $(uname) in
                  python3-dev
                  ruby-dev
                  tk-dev
-                 tmux
                  unzip
                  wget
                  xclip
@@ -90,6 +90,7 @@ case $(uname) in
                  htop
                  irssi
                  libbz2-dev
+                 libevent-dev
                  libncurses5-dev
                  libreadline-dev
                  libsqlite3-dev
@@ -104,7 +105,6 @@ case $(uname) in
                  python3-dev
                  ruby-dev
                  tk-dev
-                 tmux
                  unzip
                  wget
                  xclip
