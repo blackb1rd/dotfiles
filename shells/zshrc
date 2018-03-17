@@ -21,6 +21,8 @@ if [ -d "$HOME/.pyenv" ]; then
     eval "$(pyenv init - --no-rehash)"
     eval "$(pyenv virtualenv-init -)"
   fi
+  pyenv activate neovim2 2> /dev/null
+  pyenv activate neovim3 2> /dev/null
 fi
 case $(uname) in
   CYGWIN_NT-* | MSYS_NT-*)
