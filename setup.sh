@@ -3,12 +3,12 @@
 GITHUB_RAW_URL='https://raw.githubusercontent.com'
 GITHUB_URL='https://github.com'
 TEMP="/tmp"
+ROOT_PERM=""
+USRPREFIX="/usr/local"
 PYTHON2_VERSION="2.7.14"
 PYTHON3_VERSION="3.6.4"
 PYTHON3_MAJOR_VERSION=$(echo $PYTHON3_VERSION | cut -c 1-3)
 
-os_release_id="$(grep -E '^ID=([a-zA-Z]*)' /etc/os-release | cut -d '=' -f 2)"
-os_version_id="$(grep -E '^VERSION_ID="([0-9\.]*)"' /etc/os-release | cut -d '=' -f 2 | tr -d '"')"
 case $(uname) in
   Darwin)
     OStype=Darwin
@@ -32,140 +32,226 @@ case $(uname) in
     OStype=DragonFly
     ;;
   Linux)
-    case "$os_release_id" in
-      "arch")
-        OStype=arch
-        ;;
-      "debian")
-        OStype=debian
-        PKG_CMD_UPDATE="sudo apt-get update"
-        PKG_CMD_INSTALL="sudo apt-get install -y"
-        PKG_CMD_REMOVE="sudo apt-get remove -y"
-        PACKAGE="autoconf
-                 automake
-                 build-essential
-                 cmake
-                 curl
-                 figlet
-                 g++
-                 git
-                 htop
-                 irssi
-                 libbz2-dev
-                 libevent-dev
-                 libncurses5-dev
-                 libreadline-dev
-                 libsqlite3-dev
-                 libtool
-                 llvm
-                 lynx
-                 make
-                 ninja-build
-                 nodejs
-                 pkg-config
-                 python-dev
-                 python3-dev
-                 ruby-dev
-                 tk-dev
-                 unzip
-                 wget
-                 xclip
-                 xz-utils
-                 zlib1g-dev
-                 zsh"
-        ;;
-      "ubuntu")
-        OStype=ubuntu
-        PKG_CMD_UPDATE="sudo apt-get update"
-        PKG_CMD_INSTALL="sudo apt-get install -y"
-        PKG_CMD_REMOVE="sudo apt-get remove -y"
-        PACKAGE="autoconf
-                 automake
-                 build-essential
-                 cmake
-                 curl
-                 figlet
-                 g++
-                 git
-                 htop
-                 irssi
-                 libbz2-dev
-                 libevent-dev
-                 libncurses5-dev
-                 libreadline-dev
-                 libsqlite3-dev
-                 libtool
-                 llvm
-                 lynx
-                 make
-                 ninja-build
-                 nodejs
-                 pkg-config
-                 python-dev
-                 python3-dev
-                 ruby-dev
-                 tk-dev
-                 unzip
-                 wget
-                 xclip
-                 xz-utils
-                 zlib1g-dev
-                 zsh"
-        if [ $os_version_id = "14.04" ] ; then
-          PACKAGE="$PACKAGE
-                   cmake3"
-        fi
-        ;;
-      "elementary")
-        OStype=elementary
-        ;;
-      "fedora")
-        OStype=fedora
-        PKG_CMD_UPDATE="sudo yum update"
-        PKG_CMD_INSTALL="sudo yum install -y"
-        PKG_CMD_REMOVE="sudo yum remove -y"
-        ;;
-      "coreos")
-        OStype=coreos
-        ;;
-      "gentoo")
-        OStype=gentoo
-        ;;
-      "mageia")
-        OStype=mageia
-        ;;
-      "centos")
-        OStype=centos
-        PKG_CMD_UPDATE="sudo yum update"
-        PKG_CMD_INSTALL="sudo yum install -y"
-        PKG_CMD_REMOVE="sudo yum remove -y"
-        ;;
-      "opensuse"|"tumbleweed")
-        OStype=opensuse
-        ;;
-      "sabayon")
-        OStype=sabayon
-        ;;
-      "slackware")
-        OStype=slackware
-        ;;
-      "linuxmint")
-        OStype=linuxmint
-        PKG_CMD_UPDATE="sudo apt-get update"
-        PKG_CMD_INSTALL="sudo apt-get install -y"
-        PKG_CMD_UPDATE="sudo apt-get remove -y"
-        ;;
-      *)
-        ;;
-    esac
+    if [ -f "/etc/os-release" ] ; then
+      os_release_id="$(grep -E '^ID=([a-zA-Z]*)' /etc/os-release | cut -d '=' -f 2)"
+      os_version_id="$(grep -E '^VERSION_ID="([0-9\.]*)"' /etc/os-release | cut -d '=' -f 2 | tr -d '"')"
+      case "$os_release_id" in
+        "arch")
+          OStype=arch
+          ;;
+        "debian")
+          OStype=debian
+          ROOT_PERM="sudo"
+          PKG_CMD_UPDATE="$ROOT_PERM apt-get update"
+          PKG_CMD_INSTALL="$ROOT_PERM apt-get install -y"
+          PKG_CMD_REMOVE="$ROOT_PERM apt-get remove -y"
+          PACKAGE="autoconf
+                   automake
+                   build-essential
+                   cmake
+                   curl
+                   figlet
+                   g++
+                   git
+                   htop
+                   irssi
+                   libbz2-dev
+                   libevent-dev
+                   libncurses5-dev
+                   libreadline-dev
+                   libsqlite3-dev
+                   libtool
+                   llvm
+                   lynx
+                   make
+                   ninja-build
+                   nodejs
+                   pkg-config
+                   python-dev
+                   python3-dev
+                   ruby-dev
+                   tk-dev
+                   unzip
+                   wget
+                   xclip
+                   xz-utils
+                   zlib1g-dev
+                   zsh"
+          PIPmodule="Cython
+                     SciPy
+                     bottleneck
+                     mycli
+                     neovim
+                     numexpr
+                     numpy
+                     pandas
+                     tensorflow"
+          ;;
+        "ubuntu")
+          OStype=ubuntu
+          ROOT_PERM="sudo"
+          PKG_CMD_UPDATE="$ROOT_PERM apt-get update"
+          PKG_CMD_INSTALL="$ROOT_PERM apt-get install -y"
+          PKG_CMD_REMOVE="$ROOT_PERM apt-get remove -y"
+          PACKAGE="autoconf
+                   automake
+                   build-essential
+                   cmake
+                   curl
+                   figlet
+                   g++
+                   git
+                   htop
+                   irssi
+                   libbz2-dev
+                   libevent-dev
+                   libncurses5-dev
+                   libreadline-dev
+                   libsqlite3-dev
+                   libtool
+                   llvm
+                   lynx
+                   make
+                   ninja-build
+                   nodejs
+                   pkg-config
+                   python-dev
+                   python3-dev
+                   ruby-dev
+                   tk-dev
+                   unzip
+                   wget
+                   xclip
+                   xz-utils
+                   zlib1g-dev
+                   zsh"
+          PIPmodule="Cython
+                     SciPy
+                     bottleneck
+                     mycli
+                     neovim
+                     numexpr
+                     numpy
+                     pandas
+                     tensorflow"
+          if [ $os_version_id = "14.04" ] ; then
+            PACKAGE="$PACKAGE
+                     cmake3"
+          fi
+          ;;
+        "elementary")
+          OStype=elementary
+          ;;
+        "fedora")
+          OStype=fedora
+          ROOT_PERM="sudo"
+          PKG_CMD_UPDATE="$ROOT_PERM yum update"
+          PKG_CMD_INSTALL="$ROOT_PERM yum install -y"
+          PKG_CMD_REMOVE="$ROOT_PERM yum remove -y"
+          PIPmodule="Cython
+                     SciPy
+                     bottleneck
+                     mycli
+                     neovim
+                     numexpr
+                     numpy
+                     pandas
+                     tensorflow"
+          ;;
+        "coreos")
+          OStype=coreos
+          ;;
+        "gentoo")
+          OStype=gentoo
+          ;;
+        "mageia")
+          OStype=mageia
+          ;;
+        "centos")
+          OStype=centos
+          ROOT_PERM="sudo"
+          PKG_CMD_UPDATE="$ROOT_PERM yum update"
+          PKG_CMD_INSTALL="$ROOT_PERM yum install -y"
+          PKG_CMD_REMOVE="$ROOT_PERM yum remove -y"
+          PIPmodule="Cython
+                     SciPy
+                     bottleneck
+                     mycli
+                     neovim
+                     numexpr
+                     numpy
+                     pandas
+                     tensorflow"
+          ;;
+        "opensuse"|"tumbleweed")
+          OStype=opensuse
+          ;;
+        "sabayon")
+          OStype=sabayon
+          ;;
+        "slackware")
+          OStype=slackware
+          ;;
+        "linuxmint")
+          OStype=linuxmint
+          ROOT_PERM="sudo"
+          PKG_CMD_UPDATE="$ROOT_PERM apt-get update"
+          PKG_CMD_INSTALL="$ROOT_PERM apt-get install -y"
+          PKG_CMD_REMOVE="$ROOT_PERM apt-get remove -y"
+          PIPmodule="Cython
+                     SciPy
+                     bottleneck
+                     mycli
+                     neovim
+                     numexpr
+                     numpy
+                     pandas
+                     tensorflow"
+          ;;
+        *)
+          ;;
+      esac
+    fi
 
     # Check if we're running on Android
     case $(uname -o 2>/dev/null) in
       Android )
         OStype=Android
         PKG_CMD_UPDATE="pkg update"
-        PKG_CMD_INSTALL="pkg install"
-        PKG_CMD_INSTALL="pkg uninstall"
+        PKG_CMD_INSTALL="pkg install -y"
+        PKG_CMD_REMOVE="pkg uninstall"
+        PACKAGE="autoconf
+                 automake
+                 cmake
+                 curl
+                 figlet
+                 git
+                 htop
+                 irssi
+                 libbz2-dev
+                 libevent-dev
+                 libtool
+                 llvm
+                 lynx
+                 make
+                 nodejs
+                 pkg-config
+                 python-dev
+                 ruby-dev
+                 unzip
+                 wget
+                 xz-utils
+                 zsh"
+        PIPmodule="Cython
+                   SciPy
+                   bottleneck
+                   mycli
+                   neovim
+                   numexpr
+                   numpy
+                   pandas"
+        TEMP=$TMPDIR
+        USRPREFIX=$PREFIX
         ;;
     esac
     ;;
@@ -212,8 +298,8 @@ installfolder () {
 checkOStype () {
   case $1 in
     debian|ubuntu ) return 1 ;;
-          Android ) return 1 ;;
-          MSYS_NT ) return 1 ;;
+          android ) return 1 ;;
+          msys_nt ) return 1 ;;
                 * ) return 0 ;;
   esac
 }
@@ -262,7 +348,7 @@ if [ -z "${all}" ] \
   exit 1
 fi
 
-if [ $OStype = "MSYS_NT" ] ; then
+if [ $OStype = "msys_nt" ] ; then
   export MSYS=winsymlinks:nativestrict
   export HOME=$USERPROFILE
 fi
@@ -299,9 +385,9 @@ if [ -n "${all}" ] || [ -n "${latest}" ] ; then
   git clone --depth 1 $GITHUB_URL/universal-ctags/ctags $TEMP/ctags
   cd $TEMP/ctags
   ./autogen.sh
-  ./configure --enable-iconv
+  ./configure --prefix=$USRPREFIX --enable-iconv
   make
-  sudo make install
+  $ROOT_PERM make install
 fi
 
 ###############################################################################
@@ -391,15 +477,6 @@ fi
 if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${python}" ] ; then
   installfile .pythonrc python/pythonrc
   PIPoption="install --user --upgrade"
-  PIPmodule="Cython
-             SciPy
-             bottleneck
-             mycli
-             neovim
-             numexpr
-             numpy
-             pandas
-             tensorflow"
 
   # install pyenv
   curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash
@@ -490,9 +567,9 @@ if [ -n "${all}" ] || [ -n "${dot}" ] ; then
     git clone --depth 1 $GITHUB_URL/tmux/tmux $TEMP/tmux
     cd $TEMP/tmux
     sh autogen.sh
-    ./configure
+    ./configure --prefix=$USRPREFIX
     make
-    sudo make install
+    $ROOT_PERM make install
   fi
 
   installfile .tmux.conf tmux/tmux.conf
@@ -526,7 +603,7 @@ if [ -n "${all}" ] \
     rm -r build
     make clean
     make CMAKE_BUILD_TYPE=Release
-    sudo make install
+    $ROOT_PERM make install
     cd .. && rm -rf "$HOME/github/neovim/"
   fi
   if [ -n "${all}" ] || [ -n "${dot}" ] ; then
@@ -568,7 +645,7 @@ if [ -n "${all}" ] \
   fi
   if [ -n "${all}" ] || [ -n "${ycmd}" ] ; then
     # Install YouCompleteMe
-    if [ $OStype = "Android" ] ; then
+    if [ $OStype = "android" ] ; then
       patch -f $PREFIX/include/c++/v1/cstdio $current_dir/patch/youcompleteme_cstdio.patch
     fi
     cd "$HOME/.vim/bundle/YouCompleteMe"
@@ -581,7 +658,7 @@ if [ -n "${all}" ] \
     echo $EXTRA_CMAKE_ARGS
     ./install.py
 
-    if [ $OStype = "Android" ] ; then
+    if [ $OStype = "android" ] ; then
       patch -f -N -R $PREFIX/include/c++/v1/cstdio $current_dir/patch/youcompleteme_cstdio.patch
     fi
   fi
