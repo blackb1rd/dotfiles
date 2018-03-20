@@ -1,0 +1,187 @@
+--- oh-my-tmux/.tmux.conf	2018-03-20 10:00:53.214058000 +0700
++++ /export/home/psaechua/.tmux.conf	2018-03-20 09:57:36.794235000 +0700
+@@ -24,10 +24,10 @@
+ set -g history-limit 5000                 # boost history
+ 
+ # edit configuration
+-bind e new-window -n '~/.tmux.conf.local' "sh -c '\${EDITOR:-vim} ~/.tmux.conf.local && tmux source ~/.tmux.conf && tmux display \"~/.tmux.conf sourced\"'"
++bind e new-window -n '/export/home/psaechua/.tmux.conf.local' "sh -c '\${EDITOR:-vim} /export/home/psaechua/.tmux.conf.local && tmux source /export/home/psaechua/.tmux.conf && tmux display \"/export/home/psaechua/.tmux.conf sourced\"'"
+ 
+ # reload configuration
+-bind r source-file ~/.tmux.conf \; display '~/.tmux.conf sourced'
++bind r source-file /export/home/psaechua/.tmux.conf \; display '/export/home/psaechua/.tmux.conf sourced'
+ 
+ 
+ # -- display -------------------------------------------------------------------
+@@ -76,7 +76,7 @@
+ bind < swap-pane -U       # swap current pane with the previous one
+ 
+ # maximize current pane
+-bind + run 'cut -c3- ~/.tmux.conf | sh -s _maximize_pane "#{session_name}" #D'
++bind + run 'cut -c3- /export/home/psaechua/.tmux.conf | sh -s _maximize_pane "#{session_name}" #D'
+ 
+ # pane resizing
+ bind -r H resize-pane -L 2
+@@ -92,17 +92,17 @@
+ bind Tab last-window        # move to last active window
+ 
+ # toggle mouse
+-bind m run "cut -c3- ~/.tmux.conf | sh -s _toggle_mouse"
++bind m run "cut -c3- /export/home/psaechua/.tmux.conf | sh -s _toggle_mouse"
+ 
+ 
+ # -- urlview -------------------------------------------------------------------
+ 
+-bind U run "cut -c3- ~/.tmux.conf | sh -s _urlview #{pane_id}"
++bind U run "cut -c3- /export/home/psaechua/.tmux.conf | sh -s _urlview #{pane_id}"
+ 
+ 
+ # -- facebook pathpicker -------------------------------------------------------
+ 
+-bind F run "cut -c3- ~/.tmux.conf | sh -s _fpp #{pane_id}"
++bind F run "cut -c3- /export/home/psaechua/.tmux.conf | sh -s _fpp #{pane_id}"
+ 
+ 
+ # -- list choice (tmux < 2.4) --------------------------------------------------
+@@ -160,12 +160,12 @@
+ 
+ # -- user defined overrides ----------------------------------------------------
+ 
+-if '[ -f ~/.tmux.conf.local ]' 'source ~/.tmux.conf.local'
++if '[ -f /export/home/psaechua/.tmux.conf.local ]' 'source /export/home/psaechua/.tmux.conf.local'
+ 
+ 
+ # -- 8< ------------------------------------------------------------------------
+ 
+-run 'cut -c3- ~/.tmux.conf | sh -s _apply_configuration'
++run 'cut -c3- /export/home/psaechua/.tmux.conf | sh -s _apply_configuration'
+ 
+ 
+ # EOF
+@@ -198,7 +198,7 @@
+ #   current_pane=${2:-$(tmux display -p '#{pane_id}')}
+ #
+ #   dead_panes=$(tmux list-panes -s -t "$current_session" -F '#{pane_dead} #{pane_id} #{pane_start_command}' | grep -o '^1 %.\+maximized.\+$' || true)
+-#   restore=$(echo "$dead_panes" | sed -n -E -e "s/^1 $current_pane .+maximized.+'(%[0-9]+)'$/tmux swap-pane -s \1 -t $current_pane \; kill-pane -t $current_pane/p" -e "s/^1 (%[0-9]+) .+maximized.+'$current_pane'$/tmux swap-pane -s \1 -t $current_pane \; kill-pane -t \1/p" )
++#   restore=$(echo "$dead_panes" | sed -n -r -e "s/^1 $current_pane .+maximized.+'(%[0-9]+)'$/tmux swap-pane -s \1 -t $current_pane \; kill-pane -t $current_pane/p" -e "s/^1 (%[0-9]+) .+maximized.+'$current_pane'$/tmux swap-pane -s \1 -t $current_pane \; kill-pane -t \1/p" )
+ #
+ #   if [ -z "$restore" ]; then
+ #     [ "$(tmux list-panes -t "$current_session:" | wc -l | sed 's/^ *//g')" -eq 1 ] && tmux display "Can't maximize with only one pane" && return
+@@ -614,11 +614,11 @@
+ #   tmux_conf_new_window_retain_current_path=${tmux_conf_new_window_retain_current_path:-false}
+ #   while IFS= read -r line; do
+ #     [ -z "$line" ] && continue
+-#     left=$(printf '%s' "$line" | cut -c-"$column" | sed -E -e 's/[^ \ta-zA-Z0-9,._+@%/-]/\\&/g')
++#     left=$(printf '%s' "$line" | cut -c-"$column" | sed -r -e 's/[^ \ta-zA-Z0-9,._+@%/-]/\\&/g')
+ #     if _is_enabled "$tmux_conf_new_window_retain_current_path"; then
+-#       right=$(printf '%s' "$line" | cut -c"$column-" | awk -F'\"' 'BEGIN { OFS = FS } { for (i = 1; i <= NF; i+=2) { gsub(/#{.+}/, "\"&\"", $i) } print }' | sed -E -e 's/new-window$/new-window -c "#{pane_current_path}"/g')
++#       right=$(printf '%s' "$line" | cut -c"$column-" | awk -F'\"' 'BEGIN { OFS = FS } { for (i = 1; i <= NF; i+=2) { gsub(/#{.+}/, "\"&\"", $i) } print }' | sed -r -e 's/new-window$/new-window -c "#{pane_current_path}"/g')
+ #     else
+-#       right=$(printf '%s' "$line" | cut -c"$column"- | awk -F'\"' 'BEGIN { OFS = FS } { for (i = 1; i <= NF; i+=2) { gsub(/#{.+}/, "\"&\"", $i) } print }' | sed -E -e 's/-c[ \t]+"#\{pane_current_path\}"$//g')
++#       right=$(printf '%s' "$line" | cut -c"$column"- | awk -F'\"' 'BEGIN { OFS = FS } { for (i = 1; i <= NF; i+=2) { gsub(/#{.+}/, "\"&\"", $i) } print }' | sed -r -e 's/-c[ \t]+"#\{pane_current_path\}"$//g')
+ #     fi
+ #     eval "tmux $left $right" 2>/dev/null || true
+ #   done  << EOF
+@@ -628,11 +628,11 @@
+ #   tmux_conf_new_pane_retain_current_path=${tmux_conf_new_pane_retain_current_path:-true}
+ #   while IFS= read -r line; do
+ #     [ -z "$line" ] && continue
+-#     left=$(printf '%s' "$line" | cut -c-"$column" | sed -E -e 's/[^ \ta-zA-Z0-9,._+@%/-]/\\&/g')
++#     left=$(printf '%s' "$line" | cut -c-"$column" | sed -r -e 's/[^ \ta-zA-Z0-9,._+@%/-]/\\&/g')
+ #     if _is_enabled "$tmux_conf_new_pane_retain_current_path"; then
+-#       right=$(printf '%s' "$line" | cut -c"$column-" | awk -F'\"' 'BEGIN { OFS = FS } { for (i = 1; i <= NF; i+=2) { gsub(/#{.+}/, "\"&\"", $i) } print }' | sed -E -e 's/split-window([ \t]+-(h|v))?$/& -c "#{pane_current_path}"/g')
++#       right=$(printf '%s' "$line" | cut -c"$column-" | awk -F'\"' 'BEGIN { OFS = FS } { for (i = 1; i <= NF; i+=2) { gsub(/#{.+}/, "\"&\"", $i) } print }' | sed -r -e 's/split-window([ \t]+-(h|v))?$/& -c "#{pane_current_path}"/g')
+ #     else
+-#       right=$(printf '%s' "$line" | cut -c"$column"- | awk -F'\"' 'BEGIN { OFS = FS } { for (i = 1; i <= NF; i+=2) { gsub(/#{.+}/, "\"&\"", $i) } print }' | sed -E -e 's/-c[ \t]+"#\{pane_current_path\}"$//g')
++#       right=$(printf '%s' "$line" | cut -c"$column"- | awk -F'\"' 'BEGIN { OFS = FS } { for (i = 1; i <= NF; i+=2) { gsub(/#{.+}/, "\"&\"", $i) } print }' | sed -r -e 's/-c[ \t]+"#\{pane_current_path\}"$//g')
+ #     fi
+ #     eval "tmux $left $right" 2>/dev/null || true
+ #   done  << EOF
+@@ -642,11 +642,11 @@
+ #   tmux_conf_new_pane_reconnect_ssh=${tmux_conf_new_pane_reconnect_ssh:-false}
+ #   while IFS= read -r line; do
+ #     [ -z "$line" ] && continue
+-#     left=$(printf '%s' "$line" | cut -c-"$column" | sed -E -e 's/[^ \ta-zA-Z0-9,._+@%/-]/\\&/g')
++#     left=$(printf '%s' "$line" | cut -c-"$column" | sed -r -e 's/[^ \ta-zA-Z0-9,._+@%/-]/\\&/g')
+ #     if _is_enabled "$tmux_conf_new_pane_reconnect_ssh"; then
+-#       right=$(printf '%s' "$line" | cut -c"$column"- | awk -F'\"' 'BEGIN { OFS = FS } { for (i = 1; i <= NF; i+=2) { gsub(/#{.+}/, "\"&\"", $i) } print }' | sed -E -e 's/"/\\"/g' -e 's/split-window([^;]+)/run-shell "cut -c3- ~\/\.tmux\.conf | sh -s _split_window #{pane_tty}\1"/g')
++#       right=$(printf '%s' "$line" | cut -c"$column"- | awk -F'\"' 'BEGIN { OFS = FS } { for (i = 1; i <= NF; i+=2) { gsub(/#{.+}/, "\"&\"", $i) } print }' | sed -r -e 's/"/\\"/g' -e 's/split-window([^;]+)/run-shell "cut -c3- ~\/\.tmux\.conf | sh -s _split_window #{pane_tty}\1"/g')
+ #     else
+-#       right=$(printf '%s' "$line" | cut -c"$column"- | awk -F'\"' 'BEGIN { OFS = FS } { for (i = 1; i <= NF; i+=2) { gsub(/#{.+}/, "\"&\"", $i) } print }' | sed -E -e 's/\\"/"/g' -e 's/run-shell "cut -c3- ~\/\.tmux\.conf \| sh -s _split_window #\{pane_tty\}([^;]+)"/split-window\1/g' -e 's/#\{.+\}/\"&\"/g')
++#       right=$(printf '%s' "$line" | cut -c"$column"- | awk -F'\"' 'BEGIN { OFS = FS } { for (i = 1; i <= NF; i+=2) { gsub(/#{.+}/, "\"&\"", $i) } print }' | sed -r -e 's/\\"/"/g' -e 's/run-shell "cut -c3- ~\/\.tmux\.conf \| sh -s _split_window #\{pane_tty\}([^;]+)"/split-window\1/g' -e 's/#\{.+\}/\"&\"/g')
+ #     fi
+ #     eval "tmux $left $right" 2>/dev/null || true
+ #   done  << EOF
+@@ -656,11 +656,11 @@
+ #   tmux_conf_new_session_prompt=${tmux_conf_new_session_prompt:-false}
+ #   while IFS= read -r line; do
+ #     [ -z "$line" ] && continue
+-#     left=$(printf '%s' "$line" | cut -c-"$column" | sed -E -e 's/[^ \ta-zA-Z0-9,._+@%/-]/\\&/g')
++#     left=$(printf '%s' "$line" | cut -c-"$column" | sed -r -e 's/[^ \ta-zA-Z0-9,._+@%/-]/\\&/g')
+ #     if _is_enabled "$tmux_conf_new_session_prompt"; then
+-#       right=$(printf '%s' "$line" | cut -c"$column"- | awk -F'\"' 'BEGIN { OFS = FS } { for (i = 1; i <= NF; i+=2) { gsub(/#{.+}/, "\"&\"", $i) } print }' | sed -E -e 's/new-session$/command-prompt -p new-session \"new-session -s '"'"'%%'"'"'\"/g')
++#       right=$(printf '%s' "$line" | cut -c"$column"- | awk -F'\"' 'BEGIN { OFS = FS } { for (i = 1; i <= NF; i+=2) { gsub(/#{.+}/, "\"&\"", $i) } print }' | sed -r -e 's/new-session$/command-prompt -p new-session \"new-session -s '"'"'%%'"'"'\"/g')
+ #     else
+-#       right=$(printf '%s' "$line" | cut -c"$column"- | awk -F'\"' 'BEGIN { OFS = FS } { for (i = 1; i <= NF; i+=2) { gsub(/#{.+}/, "\"&\"", $i) } print }'| sed -E -e 's/command-prompt -p new-session[^;]+/new-session/g')
++#       right=$(printf '%s' "$line" | cut -c"$column"- | awk -F'\"' 'BEGIN { OFS = FS } { for (i = 1; i <= NF; i+=2) { gsub(/#{.+}/, "\"&\"", $i) } print }'| sed -r -e 's/command-prompt -p new-session[^;]+/new-session/g')
+ #     fi
+ #     eval "tmux $left $right" 2>/dev/null || true
+ #   done  << EOF
+@@ -685,11 +685,11 @@
+ #
+ #       while IFS= read -r line; do
+ #         [ -z "$line" ] && continue
+-#         left=$(printf '%s' "$line" | cut -c-"$column" | sed -E -e 's/[^ \ta-zA-Z0-9,._+@%/-]/\\&/g')
++#         left=$(printf '%s' "$line" | cut -c-"$column" | sed -r -e 's/[^ \ta-zA-Z0-9,._+@%/-]/\\&/g')
+ #         if _is_enabled "$tmux_conf_copy_to_os_clipboard"; then
+-#           right=$(printf '%s' "$line" | cut -c"$column"- | awk -F'\"' 'BEGIN { OFS = FS } { for (i = 1; i <= NF; i+=2) { gsub(/#{.+}/, "\"&\"", $i) } print }' | sed -E -e "s/copy-selection(-and-cancel)?$/copy-pipe\1 \"$command\"/g")
++#           right=$(printf '%s' "$line" | cut -c"$column"- | awk -F'\"' 'BEGIN { OFS = FS } { for (i = 1; i <= NF; i+=2) { gsub(/#{.+}/, "\"&\"", $i) } print }' | sed -r -e "s/copy-selection(-and-cancel)?$/copy-pipe\1 \"$command\"/g")
+ #         else
+-#           right=$(printf '%s' "$line" | cut -c"$column"- | awk -F'\"' 'BEGIN { OFS = FS } { for (i = 1; i <= NF; i+=2) { gsub(/#{.+}/, "\"&\"", $i) } print }' | sed -E -e "s/copy-pipe(-and-cancel)? \"$command\"$/copy-selection\1/g")
++#           right=$(printf '%s' "$line" | cut -c"$column"- | awk -F'\"' 'BEGIN { OFS = FS } { for (i = 1; i <= NF; i+=2) { gsub(/#{.+}/, "\"&\"", $i) } print }' | sed -r -e "s/copy-pipe(-and-cancel)? \"$command\"$/copy-selection\1/g")
+ #         fi
+ #         eval "tmux $left $right" 2>/dev/null || true
+ #       done  << EOF
+@@ -1001,13 +1001,13 @@
+ #
+ #   case "$status_left $status_right" in
+ #     *'#{battery_status}'*|*'#{battery_bar}'*|*'#{battery_hbar}'*|*'#{battery_vbar}'*|*'#{battery_percentage}'*)
+-#       status_left=$(echo "$status_left" | sed -E \
++#       status_left=$(echo "$status_left" | sed -r \
+ #         -e 's/#\{(\?)?battery_bar/#\{\1@battery_bar/g' \
+ #         -e 's/#\{(\?)?battery_hbar/#\{\1@battery_hbar/g' \
+ #         -e 's/#\{(\?)?battery_vbar/#\{\1@battery_vbar/g' \
+ #         -e 's/#\{(\?)?battery_status/#\{\1@battery_status/g' \
+ #         -e 's/#\{(\?)?battery_percentage/#\{\1@battery_percentage/g')
+-#       status_right=$(echo "$status_right" | sed -E \
++#       status_right=$(echo "$status_right" | sed -r \
+ #         -e 's/#\{(\?)?battery_bar/#\{\1@battery_bar/g' \
+ #         -e 's/#\{(\?)?battery_hbar/#\{\1@battery_hbar/g' \
+ #         -e 's/#\{(\?)?battery_vbar/#\{\1@battery_vbar/g' \
+@@ -1043,12 +1043,12 @@
+ #
+ #   case "$status_left $status_right" in
+ #     *'#{uptime_d}'*|*'#{uptime_h}'*|*'#{uptime_m}'*)
+-#       status_left=$(echo "$status_left" | sed -E \
++#       status_left=$(echo "$status_left" | sed -r \
+ #         -e 's/#\{(\?)?uptime_d/#\{\1@uptime_d/g' \
+ #         -e 's/#\{(\?)?uptime_h/#\{\1@uptime_h/g' \
+ #         -e 's/#\{(\?)?uptime_m/#\{\1@uptime_m/g' \
+ #         -e 's/#\{(\?)?uptime_s/#\{\1@uptime_s/g')
+-#       status_right=$(echo "$status_right" | sed -E \
++#       status_right=$(echo "$status_right" | sed -r \
+ #         -e 's/#\{(\?)?uptime_d/#\{\1@uptime_d/g' \
+ #         -e 's/#\{(\?)?uptime_h/#\{\1@uptime_h/g' \
+ #         -e 's/#\{(\?)?uptime_m/#\{\1@uptime_m/g' \
+@@ -1059,9 +1059,9 @@
+ #
+ #   case "$status_left $status_right" in
+ #     *'#{loadavg}'*)
+-#       status_left=$(echo "$status_left" | sed -E \
++#       status_left=$(echo "$status_left" | sed -r \
+ #         -e 's/#\{(\?)?loadavg/#\{\1@loadavg/g')
+-#       status_right=$(echo "$status_right" | sed -E \
++#       status_right=$(echo "$status_right" | sed -r \
+ #         -e 's/#\{(\?)?loadavg/#\{\1@loadavg/g')
+ #       status_right="#(cut -c3- ~/.tmux.conf | sh -s _loadavg)$status_right"
+ #       ;;
