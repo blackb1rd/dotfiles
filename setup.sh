@@ -1,5 +1,7 @@
 #!/bin/sh
 
+. shells/source/utility
+
 GITHUB_RAW_URL='https://raw.githubusercontent.com'
 GITHUB_URL='https://github.com'
 TEMP="/tmp"
@@ -60,6 +62,7 @@ case $(uname) in
                    libncurses5-dev
                    libreadline-dev
                    libsqlite3-dev
+                   libssl-dev
                    libtool
                    llvm
                    lynx
@@ -108,6 +111,7 @@ case $(uname) in
                    libncurses5-dev
                    libreadline-dev
                    libsqlite3-dev
+                   libssl-dev
                    libtool
                    llvm
                    lynx
@@ -134,10 +138,6 @@ case $(uname) in
                      numpy
                      pandas
                      tensorflow"
-          if [ $os_version_id = "14.04" ] ; then
-            PACKAGE="$PACKAGE
-                     cmake3"
-          fi
           ;;
         "elementary")
           OStype=elementary
@@ -417,14 +417,14 @@ fi
 if [ -n "${all}" ] || [ "${fonts}" ] ; then
   if [ ! -d "$HOME/.fonts" ] ; then
     # Install power line fonts
-    git clone --depth 1 $GITHUB_URL/powerline/fonts.git "$current_dir/fonts"
-    cd "$current_dir/fonts" && ./install.sh
-    cd .. && rm -rf fonts
+    git clone --depth 1 $GITHUB_URL/powerline/fonts.git "$TEMP/fonts"
+    cd "$TEMP/fonts" && ./install.sh
+    cd $current_dir && rm -rf "$TEMP/fonts"
 
     # Install nerd fonts
-    git clone --depth 1 $GITHUB_URL/ryanoasis/nerd-fonts "$current_dir/fonts"
-    cd "$current_dir/fonts" && ./install.sh
-    cd .. && rm -rf fonts
+    git clone --depth 1 $GITHUB_URL/ryanoasis/nerd-fonts "$TEMP/fonts"
+    cd "$TEMP/fonts" && ./install.sh
+    cd $current_dir && rm -rf "$TEMP/fonts"
   fi
 fi
 
@@ -480,6 +480,9 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${python}" ] ; then
 
   # install pyenv
   curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash
+
+  # Adding pyenv path
+  pathadd "$HOME/.pyenv/bin"
 
   export PYTHON_CONFIGURE_OPTS="--enable-shared"
   pyenv install -s $PYTHON2_VERSION
@@ -604,7 +607,7 @@ if [ -n "${all}" ] \
     make clean
     make CMAKE_BUILD_TYPE=Release
     $ROOT_PERM make install
-    cd .. && rm -rf "$HOME/github/neovim/"
+    cd $current_dir && rm -rf "$HOME/github/neovim/"
   fi
   if [ -n "${all}" ] || [ -n "${dot}" ] ; then
     mkdirfolder .vim
