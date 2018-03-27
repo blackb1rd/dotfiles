@@ -10,19 +10,6 @@ zstyle ':completion:*:*:git:*' script $HOME/.shells/git/git-completion.zsh
 
 pathadd "/sbin"
 pathadd "$HOME/.go/bin/"
-if [ -d "$HOME/.pyenv" ]; then
-  export PYENV_ROOT=$HOME/.pyenv
-  if [ -d "$PYENV_ROOT/bin" ]; then
-    pathadd "$PYENV_ROOT/bin"
-  else
-    pathadd "$PYENV_ROOT/shims"
-  fi
-  if command -v pyenv > /dev/null 2>&1; then
-    eval "$(pyenv init - --no-rehash)"
-    eval "$(pyenv virtualenv-init -)"
-  fi
-  pyenv activate neovim3 2> /dev/null
-fi
 case $(uname) in
   CYGWIN_NT-* | MSYS_NT-*)
     export EDITOR=vim
@@ -31,6 +18,19 @@ case $(uname) in
     export GOPATH=/mingw64
     ;;
   *)
+    if [ -d "$HOME/.pyenv" ]; then
+      export PYENV_ROOT=$HOME/.pyenv
+      if [ -d "$PYENV_ROOT/bin" ]; then
+        pathadd "$PYENV_ROOT/bin"
+      else
+        pathadd "$PYENV_ROOT/shims"
+      fi
+      if command -v pyenv > /dev/null 2>&1; then
+        eval "$(pyenv init - --no-rehash)"
+        eval "$(pyenv virtualenv-init -)"
+      fi
+      pyenv activate neovim3 2> /dev/null
+    fi
     export GOPATH=$HOME/.go
     export PYTHONSTARTUP=$HOME/.pythonrc
     if [[ -x $(command -v nvim) ]] ; then
