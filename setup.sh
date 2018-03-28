@@ -618,17 +618,15 @@ if [ -n "${all}" ] \
 
     mkdirfolder .config/nvim
 
-    if [ ! -d "$HOME/github/dotfiles/vim/bundle/Vundle.vim" ] ; then
-      # download latest Vundle version
-      mkdir -p "$HOME/github/dotfiles/vim/bundle/"
-      git clone $GITHUB_URL/VundleVim/Vundle.vim.git "$HOME/github/dotfiles/vim/bundle/Vundle.vim"
+    if [ ! -d "$HOME/.local/share/nvim/site/autoload/plug.vim" ] ; then
+      curl -fLo $HOME/.local/share/nvim/site/autoload/plug.vim --create-dirs \
+        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     fi
 
-    installfolder vim/bundle
     installfolder vim/colors
 
     # download all plugin
-    nvim +PluginInstall +qall
+    nvim +slient +VimEnter +PlugInstall +qall
 
     # vim
     # keep these confiure if use original vim
