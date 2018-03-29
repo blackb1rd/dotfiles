@@ -654,7 +654,6 @@ if [ -n "${all}" ] \
     git submodule -q foreach git pull -q origin master --verbose
     #cd "$current_dir/vim/bundle/YouCompleteMe/third_party/ycmd/third_party/tern_runtime"
     #sudo npm install --production
-    export PYTHON_CONFIGURE_OPTS="--enable-shared"
     EXTRA_CMAKE_ARGS="-DPYTHON_INCLUDE_DIR=$HOME/.pyenv/versions/$PYTHON3_VERSION/include/python${PYTHON3_MAJOR_VERSION}m -DPYTHON_LIBRARY=$HOME/.pyenv/versions/$PYTHON3_VERSION/lib/libpython${PYTHON3_MAJOR_VERSION}m.so"
     echo $EXTRA_CMAKE_ARGS
     ./install.py
