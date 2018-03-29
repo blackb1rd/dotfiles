@@ -271,6 +271,7 @@ usage() {
   echo "  -d,   --dot        Installing dotfiles"
   echo "  -f,   --fonts      Installing fonts"
   echo "  -l,   --latest     Compiling the latest ctags and VIM version"
+  echo "  -go,  --golang     Installing golang package"
   echo "  -pl,  --perl       Installing perl package"
   echo "  -py,  --python     Installing python package"
   echo "  -ycm, --ycmd       Compiling YouCompleteMe"
@@ -313,6 +314,7 @@ do
     -d   | --dot )          dot=true;;
     -f   | --fonts )        fonts=true;;
     -l   | --latest )       latest=true;;
+    -go  | --golang )       golang=true;;
     -pl  | --perl )         perl=true;;
     -py  | --python )       python=true;;
     -ycm | --ycmd )         ycmd=true;;
@@ -438,6 +440,21 @@ fi
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${dot}" ] ; then
   installfile .gitconfig git/gitconfig
+fi
+
+###############################################################################
+#                                  ____                                       #
+#                                 / ___| ___                                  #
+#                                | |  _ / _ \                                 #
+#                                | |_| | (_) |                                #
+#                                 \____|\___/                                 #
+#                                                                             #
+###############################################################################
+if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${golang}" ] ; then
+  go get -u github.com/golang/dep/cmd/dep
+  go get github.com/mattn/go-sqlite3
+  go get github.com/mmcdole/gofeed
+  go get github.com/tensorflow/tensorflow/tensorflow/go
 fi
 
 ###############################################################################
