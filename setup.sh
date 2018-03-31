@@ -88,7 +88,8 @@ case $(uname) in
                      numexpr
                      numpy
                      pandas
-                     tensorflow"
+                     tensorflow
+                     torrench"
           ;;
         "ubuntu")
           OStype=ubuntu
@@ -137,7 +138,8 @@ case $(uname) in
                      numexpr
                      numpy
                      pandas
-                     tensorflow"
+                     tensorflow
+                     torrench"
           ;;
         "elementary")
           OStype=elementary
@@ -156,7 +158,8 @@ case $(uname) in
                      numexpr
                      numpy
                      pandas
-                     tensorflow"
+                     tensorflow
+                     torrench"
           ;;
         "coreos")
           OStype=coreos
@@ -181,7 +184,8 @@ case $(uname) in
                      numexpr
                      numpy
                      pandas
-                     tensorflow"
+                     tensorflow
+                     torrench"
           ;;
         "opensuse"|"tumbleweed")
           OStype=opensuse
@@ -206,7 +210,8 @@ case $(uname) in
                      numexpr
                      numpy
                      pandas
-                     tensorflow"
+                     tensorflow
+                     torrench"
           ;;
         *)
           ;;
@@ -249,7 +254,8 @@ case $(uname) in
                    neovim
                    numexpr
                    numpy
-                   pandas"
+                   pandas
+                   torrench"
         TEMP=$TMPDIR
         USRPREFIX=$PREFIX
         ;;
@@ -452,6 +458,7 @@ fi
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${golang}" ] ; then
   go get -u github.com/golang/dep/cmd/dep
+  go get github.com/cenkalti/backoff
   go get github.com/mattn/go-sqlite3
   go get github.com/mmcdole/gofeed
   go get github.com/tensorflow/tensorflow/tensorflow/go
@@ -511,10 +518,15 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${python}" ] ; then
   pyenv virtualenv $PYTHON3_VERSION neovim3
 
   pyenv activate neovim2
-  pip install $PIPmodule
+  pip install --upgrade $PIPmodule
 
   pyenv activate neovim3
-  pip install $PIPmodule
+  pip install --upgrade $PIPmodule
+
+  mkdirfolder .config/torrench
+  wget "https://pastebin.com/raw/reymRHSL" \
+   -O "$HOME/.config/torrench/config.ini"
+
 
   # set pyenv to system
   pyenv shell $PYTHON3_VERSION
