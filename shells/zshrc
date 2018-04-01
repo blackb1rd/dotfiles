@@ -11,16 +11,16 @@ zstyle ':completion:*:*:git:*' script $HOME/.shells/git/git-completion.zsh
 pathadd "/sbin"
 pathadd "$HOME/.go/bin/"
 case $(uname) in
-  CYGWIN_NT-* | MSYS_NT-*)
+  CYGWIN_NT-* | MSYS_NT-* )
     export EDITOR=vim
     pathadd "/mingw64/bin"
     export GOROOT=/mingw64/lib/go
     export GOPATH=/mingw64
     ;;
-  *)
-    if [ -d "$HOME/.pyenv" ]; then
+  * )
+    if [ -d "$HOME/.pyenv" ] ; then
       export PYENV_ROOT=$HOME/.pyenv
-      if [ -d "$PYENV_ROOT/bin" ]; then
+      if [ -d "$PYENV_ROOT/bin" ] ; then
         pathadd "$PYENV_ROOT/bin"
       else
         pathadd "$PYENV_ROOT/shims"
@@ -40,6 +40,18 @@ case $(uname) in
       alias vimdiff='nvim -d'
     else
       export EDITOR=vim
+    fi
+
+    if [ -f "/etc/os-release" ] ; then
+      os_release_id="$(grep -E '^ID=([a-zA-Z]*)' /etc/os-release | cut -d '=' -f 2)"
+      os_version_id="$(grep -E '^VERSION_ID="([0-9\.]*)"' /etc/os-release | cut -d '=' -f 2 | tr -d '"')"
+      case "$os_release_id" in
+        "ubuntu")
+          if [ $os_version_id = "14.04" ] ; then
+            pathadd "/usr/lib/go-1.10/bin"
+          fi
+          ;;
+      esac
     fi
     ;;
 esac

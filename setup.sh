@@ -55,6 +55,7 @@ case $(uname) in
                    figlet
                    g++
                    git
+                   golang-go
                    htop
                    irssi
                    libbz2-dev
@@ -97,10 +98,10 @@ case $(uname) in
           PKG_CMD_UPDATE="$ROOT_PERM apt-get update"
           PKG_CMD_INSTALL="$ROOT_PERM apt-get install -y"
           PKG_CMD_REMOVE="$ROOT_PERM apt-get remove -y"
+          PKG_CMD_ADD_REPO="$ROOT_PERM add-apt-repository -y"
           PACKAGE="autoconf
                    automake
                    build-essential
-                   cmake
                    curl
                    figlet
                    g++
@@ -130,6 +131,17 @@ case $(uname) in
                    xz-utils
                    zlib1g-dev
                    zsh"
+          if [ $os_version_id = "14.04" ] ; then
+            REPOSITORY="ppa:gophers/archive"
+            PACKAGE="$PACKAGE
+                     cmake3
+                     golang-1.10-go"
+          else
+            REPOSITORY="ppa:longsleep/golang-backports"
+            PACKAGE="$PACKAGE
+                     cmake
+                     golang-go"
+          fi
           PIPmodule="Cython
                      SciPy
                      bottleneck
@@ -345,6 +357,7 @@ if [ -z "${all}" ] \
    && [ -z "${basictool}" ] \
    && [ -z "${dot}" ] \
    && [ -z "${fonts}" ] \
+   && [ -z "${golang}" ] \
    && [ -z "${perl}" ] \
    && [ -z "${python}" ] \
    && [ -z "${ycmd}" ] \
@@ -364,9 +377,15 @@ fi
 # Install program
 if [ -n "${all}" ] || [ -n "${basictool}" ] ; then
   echo "${txtbld}$(tput setaf 1)[-] Install the basic tool$(tput sgr0)"
+  if [ -n "${REPOSITORY}" ] ; then
+    for repo in $REPOSITORY
+    do
+      $PKG_CMD_ADD_REPO $repo
+    done
+  fi
   $PKG_CMD_UPDATE
-  $PKG_CMD_INSTALL $PACKAGE \
-                          || { echo 'Failed to install program' ; exit 1; }
+  $PKG_CMD_INSTALL $PACKAGE || { echo 'Failed to install program' ; exit 1; }
+
   # if did not want to install latest version
   if [ ! "${latest}" ] && [ ! "${all}" ] ; then
     $PKG_CMD_INSTALL vim ctags
@@ -685,7 +704,7 @@ if [ -n "${all}" ] \
     #sudo npm install --production
     EXTRA_CMAKE_ARGS="-DPYTHON_INCLUDE_DIR=$HOME/.pyenv/versions/$PYTHON3_VERSION/include/python${PYTHON3_MAJOR_VERSION}m -DPYTHON_LIBRARY=$HOME/.pyenv/versions/$PYTHON3_VERSION/lib/libpython${PYTHON3_MAJOR_VERSION}m.so"
     echo $EXTRA_CMAKE_ARGS
-    ./install.py
+    ./install.py --go-completer
 
     if [ $OStype = "android" ] ; then
       patch -f -N -R $PREFIX/include/c++/v1/cstdio $current_dir/patch/youcompleteme_cstdio.patch
