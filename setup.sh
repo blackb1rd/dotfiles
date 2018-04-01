@@ -406,6 +406,7 @@ current_dir="$( cd "$( dirname "$0" )" && pwd )"
 #                                                                             #
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${latest}" ] ; then
+  echo "${txtbld}$(tput setaf 1)[-] Install the ctags$(tput sgr0)"
   $PKG_CMD_REMOVE ctags
 
   # clone ctags
@@ -415,6 +416,7 @@ if [ -n "${all}" ] || [ -n "${latest}" ] ; then
   ./configure --prefix=$USRPREFIX --enable-iconv
   make
   $ROOT_PERM make install
+  echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
 fi
 
 ###############################################################################
@@ -427,10 +429,12 @@ fi
 #                                                                             #
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${dot}" ] ; then
+  echo "${txtbld}$(tput setaf 1)[-] Install the debugger$(tput sgr0)"
   installfile .gdbrc debugger/gdbrc
 
   mkdirfolder .cgdb
   installfile .cgdb/cgdbrc debugger/cgdbrc
+  echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
 fi
 
 ###############################################################################
@@ -442,17 +446,17 @@ fi
 #                                                                             #
 ###############################################################################
 if [ -n "${all}" ] || [ "${fonts}" ] ; then
-  if [ ! -d "$HOME/.fonts" ] ; then
-    # Install power line fonts
-    git clone --depth 1 $GITHUB_URL/powerline/fonts.git "$TEMP/fonts"
-    cd "$TEMP/fonts" && ./install.sh
-    cd $current_dir && rm -rf "$TEMP/fonts"
+  echo "${txtbld}$(tput setaf 1)[-] Install the fonts$(tput sgr0)"
+  # Install power line fonts
+  git clone --depth 1 $GITHUB_URL/powerline/fonts.git "$TEMP/fonts"
+  cd "$TEMP/fonts" && ./install.sh
+  cd $current_dir && rm -rf "$TEMP/fonts"
 
-    # Install nerd fonts
-    git clone --depth 1 $GITHUB_URL/ryanoasis/nerd-fonts "$TEMP/fonts"
-    cd "$TEMP/fonts" && ./install.sh
-    cd $current_dir && rm -rf "$TEMP/fonts"
-  fi
+  # Install nerd fonts
+  git clone --depth 1 $GITHUB_URL/ryanoasis/nerd-fonts "$TEMP/fonts"
+  cd "$TEMP/fonts" && ./install.sh
+  cd $current_dir && rm -rf "$TEMP/fonts"
+  echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
 fi
 
 ###############################################################################
@@ -464,7 +468,9 @@ fi
 #                                                                             #
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${dot}" ] ; then
+  echo "${txtbld}$(tput setaf 1)[-] Install the git$(tput sgr0)"
   installfile .gitconfig git/gitconfig
+  echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
 fi
 
 ###############################################################################
@@ -476,11 +482,19 @@ fi
 #                                                                             #
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${golang}" ] ; then
+  echo "${txtbld}$(tput setaf 1)[-] Install the go$(tput sgr0)"
   go get -u github.com/golang/dep/cmd/dep
   go get github.com/cenkalti/backoff
   go get github.com/mattn/go-sqlite3
   go get github.com/mmcdole/gofeed
+  TF_TYPE="cpu" # Change to "gpu" for GPU support
+  TARGET_DIRECTORY='/usr/local'
+  curl -L \
+    "https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-${TF_TYPE}-$(go env GOOS)-x86_64-1.7.0-rc1.tar.gz" |
+  $ROOT_PERM tar -C $TARGET_DIRECTORY -xz
+  $ROOT_PERM ldconfig
   go get github.com/tensorflow/tensorflow/tensorflow/go
+  echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
 fi
 
 ###############################################################################
@@ -492,7 +506,9 @@ fi
 #                                                                             #
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${dot}" ] ; then
+  echo "${txtbld}$(tput setaf 1)[-] Install the irssi$(tput sgr0)"
   installfolder irssi
+  echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
 fi
 
 ###############################################################################
@@ -505,7 +521,9 @@ fi
 #                                                                             #
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${dot}" ] ; then
+  echo "${txtbld}$(tput setaf 1)[-] Install the htop$(tput sgr0)"
   installfile .htoprc htop/htoprc
+  echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
 fi
 
 ###############################################################################
@@ -518,6 +536,7 @@ fi
 #                                                                             #
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${python}" ] ; then
+  echo "${txtbld}$(tput setaf 1)[-] Install the python$(tput sgr0)"
   installfile .pythonrc python/pythonrc
   PIPoption="install --user --upgrade"
 
@@ -550,6 +569,7 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${python}" ] ; then
   # set pyenv to system
   pyenv shell $PYTHON3_VERSION
   pyenv global $PYTHON3_VERSION
+  echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
 fi
 
 ###############################################################################
@@ -561,6 +581,7 @@ fi
 #                                                                             #
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${dot}" ] ; then
+  echo "${txtbld}$(tput setaf 1)[-] Install the shell$(tput sgr0)"
   if [ ! -f "$HOME/.antigen.zsh" ]; then
     curl -L git.io/antigen > $HOME/.antigen.zsh
   fi
@@ -583,6 +604,7 @@ if [ -n "${all}" ] || [ -n "${dot}" ] ; then
     installfile .shells/$shell/transmission shells/source/transmission
     installfile .shells/$shell/utility shells/source/utility
   done
+  echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
 fi
 
 ###############################################################################
@@ -594,8 +616,10 @@ fi
 #                                                                             #
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${dot}" ] ; then
+  echo "${txtbld}$(tput setaf 1)[-] Install the ssh$(tput sgr0)"
   mkdirfolder .ssh/control
   installfile .ssh/config ssh/config
+  echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
 fi
 
 ###############################################################################
@@ -607,6 +631,7 @@ fi
 #                                                                             #
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${dot}" ] ; then
+  echo "${txtbld}$(tput setaf 1)[-] Install the tmux$(tput sgr0)"
   if [ ! -d "$HOME/.tmux" ] ; then
     git clone $GITHUB_URL/gpakosz/.tmux.git $HOME/.tmux
   else
@@ -625,6 +650,7 @@ if [ -n "${all}" ] || [ -n "${dot}" ] ; then
 
   installfile .tmux.conf tmux/tmux.conf
   installfile .tmux.conf.local tmux/tmux.conf.local
+  echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
 fi
 
 ###############################################################################
@@ -640,6 +666,7 @@ if [ -n "${all}" ] \
    || [ -n "${ycmd}" ] \
    || [ -n "${dot}" ] ; then
   if [ -n "${all}" ] || [ -n "${latest}" ] ; then
+  echo "${txtbld}$(tput setaf 1)[-] Install the vim$(tput sgr0)"
     # Install latest vim version
     $PKG_CMD_REMOVE vim
 
@@ -710,4 +737,5 @@ if [ -n "${all}" ] \
       patch -f -N -R $PREFIX/include/c++/v1/cstdio $current_dir/patch/youcompleteme_cstdio.patch
     fi
   fi
+  echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
 fi
