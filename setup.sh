@@ -298,7 +298,7 @@ usage() {
 
 mkdirfolder () {
   if [ ! -d "$HOME/$1" ] ; then
-    mkdir "$HOME/$1"
+    mkdir -p "$HOME/$1"
   fi
 }
 
