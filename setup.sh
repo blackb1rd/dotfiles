@@ -446,17 +446,19 @@ fi
 #                                                                             #
 ###############################################################################
 if [ -n "${all}" ] || [ "${fonts}" ] ; then
-  echo "${txtbld}$(tput setaf 1)[-] Install the fonts$(tput sgr0)"
-  # Install power line fonts
-  git clone --depth 1 $GITHUB_URL/powerline/fonts.git "$TEMP/fonts"
-  cd "$TEMP/fonts" && ./install.sh
-  cd $current_dir && rm -rf "$TEMP/fonts"
+  if [ $OStype != "android" ] ; then
+    echo "${txtbld}$(tput setaf 1)[-] Install the fonts$(tput sgr0)"
+    # Install power line fonts
+    git clone --depth 1 $GITHUB_URL/powerline/fonts.git "$TEMP/fonts"
+    cd "$TEMP/fonts" && ./install.sh
+    cd $current_dir && rm -rf "$TEMP/fonts"
 
-  # Install nerd fonts
-  git clone --depth 1 $GITHUB_URL/ryanoasis/nerd-fonts "$TEMP/fonts"
-  cd "$TEMP/fonts" && ./install.sh
-  cd $current_dir && rm -rf "$TEMP/fonts"
-  echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
+    # Install nerd fonts
+    git clone --depth 1 $GITHUB_URL/ryanoasis/nerd-fonts "$TEMP/fonts"
+    cd "$TEMP/fonts" && ./install.sh
+    cd $current_dir && rm -rf "$TEMP/fonts"
+    echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
+  fi
 fi
 
 ###############################################################################
@@ -640,13 +642,15 @@ if [ -n "${all}" ] || [ -n "${dot}" ] ; then
   fi
 
   if [ -n "${all}" ] || [ -n "${latest}" ] ; then
-    # clone tmux
-    git clone --depth 1 $GITHUB_URL/tmux/tmux $TEMP/tmux
-    cd $TEMP/tmux
-    sh autogen.sh
-    ./configure --prefix=$USRPREFIX
-    make
-    $ROOT_PERM make install
+    if [ $OStype != "android" ] ; then
+      # clone tmux
+      git clone --depth 1 $GITHUB_URL/tmux/tmux $TEMP/tmux
+      cd $TEMP/tmux
+      sh autogen.sh
+      ./configure --prefix=$USRPREFIX
+      make
+      $ROOT_PERM make install
+    fi
   fi
 
   installfile .tmux.conf tmux/tmux.conf
@@ -666,24 +670,26 @@ if [ -n "${all}" ] \
    || [ -n "${latest}" ] \
    || [ -n "${ycmd}" ] \
    || [ -n "${dot}" ] ; then
-  if [ -n "${all}" ] || [ -n "${latest}" ] ; then
   echo "${txtbld}$(tput setaf 1)[-] Install the vim$(tput sgr0)"
-    # Install latest vim version
-    $PKG_CMD_REMOVE vim
+  if [ -n "${all}" ] || [ -n "${latest}" ] ; then
+    if [ $OStype != "android" ] ; then
+      # Install latest vim version
+      $PKG_CMD_REMOVE vim
 
-    echo "${txtbld}$(tput setaf 1)[-] Install the latest VIM$(tput sgr0)"
+      echo "${txtbld}$(tput setaf 1)[-] Install the latest VIM$(tput sgr0)"
 
-    if [ -d "$HOME/github/neovim/" ] ; then
-      rm -rf "$HOME/github/neovim/"
+      if [ -d "$HOME/github/neovim/" ] ; then
+        rm -rf "$HOME/github/neovim/"
+      fi
+      git clone --depth 1 $GITHUB_URL/neovim/neovim "$HOME/github/neovim/"
+
+      cd "$HOME/github/neovim/"
+      rm -r build
+      make clean
+      make CMAKE_BUILD_TYPE=Release
+      $ROOT_PERM make install
+      cd $current_dir && rm -rf "$HOME/github/neovim/"
     fi
-    git clone --depth 1 $GITHUB_URL/neovim/neovim "$HOME/github/neovim/"
-
-    cd "$HOME/github/neovim/"
-    rm -r build
-    make clean
-    make CMAKE_BUILD_TYPE=Release
-    $ROOT_PERM make install
-    cd $current_dir && rm -rf "$HOME/github/neovim/"
   fi
   if [ -n "${all}" ] || [ -n "${dot}" ] ; then
     mkdirfolder .vim
@@ -718,7 +724,6 @@ if [ -n "${all}" ] \
     installfile .config/nvim/init.vim vim/vimrc
     installfolder config/nvim/spell
     installfolder config/nvim/ycm
-
   fi
   if [ -n "${all}" ] || [ -n "${ycmd}" ] ; then
     # Install YouCompleteMe
