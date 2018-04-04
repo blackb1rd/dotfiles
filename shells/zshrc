@@ -31,7 +31,6 @@ case $(uname) in
       fi
       pyenv activate neovim3 2> /dev/null
     fi
-    export GOROOT=/usr/lib/go-1.10/
     export GOPATH=$HOME/.go
     export PYTHONSTARTUP=$HOME/.pythonrc
     if [[ -x $(command -v nvim) ]] ; then
@@ -48,6 +47,7 @@ case $(uname) in
       case "$os_release_id" in
         "ubuntu")
           if [ $os_version_id = "14.04" ] ; then
+            export GOROOT=/usr/lib/go-1.10/
             pathadd "/usr/lib/go-1.10/bin"
           fi
           ;;
