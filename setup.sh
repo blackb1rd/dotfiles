@@ -55,7 +55,6 @@ case $(uname) in
                    figlet
                    g++
                    git
-                   golang-go
                    htop
                    irssi
                    libbz2-dev
