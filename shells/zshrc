@@ -51,6 +51,8 @@ case $(uname) in
             pathadd "/usr/lib/go-1.10/bin"
           fi
           ;;
+        "debian")
+          pathadd "/usr/local/go/bin"
       esac
     fi
     ;;
