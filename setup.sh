@@ -83,6 +83,10 @@ case $(uname) in
           PIPmodule="Cython
                      SciPy
                      bottleneck
+                     h5py
+                     keras
+                     scipy
+                     matplotlib
                      mycli
                      neovim
                      numexpr
@@ -144,6 +148,10 @@ case $(uname) in
           PIPmodule="Cython
                      SciPy
                      bottleneck
+                     h5py
+                     keras
+                     scipy
+                     matplotlib
                      mycli
                      neovim
                      numexpr
@@ -164,6 +172,10 @@ case $(uname) in
           PIPmodule="Cython
                      SciPy
                      bottleneck
+                     h5py
+                     keras
+                     scipy
+                     matplotlib
                      mycli
                      neovim
                      numexpr
@@ -190,6 +202,10 @@ case $(uname) in
           PIPmodule="Cython
                      SciPy
                      bottleneck
+                     h5py
+                     keras
+                     scipy
+                     matplotlib
                      mycli
                      neovim
                      numexpr
@@ -216,6 +232,10 @@ case $(uname) in
           PIPmodule="Cython
                      SciPy
                      bottleneck
+                     h5py
+                     keras
+                     scipy
+                     matplotlib
                      mycli
                      neovim
                      numexpr
