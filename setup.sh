@@ -504,19 +504,24 @@ fi
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${golang}" ] ; then
   echo "${txtbld}$(tput setaf 1)[-] Install the go$(tput sgr0)"
+  go get -u github.com/cenkalti/backoff
   go get -u github.com/derekparker/delve/cmd/dlv
-  go get -u github.com/golang/dep/cmd/dep
   go get -u github.com/go-sql-driver/mysql
-  go get github.com/cenkalti/backoff
-  go get github.com/mattn/go-sqlite3
-  go get github.com/mmcdole/gofeed
-  TF_TYPE="cpu" # Change to "gpu" for GPU support
-  TARGET_DIRECTORY='/usr/local'
-  curl -L \
-    "https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-${TF_TYPE}-$(go env GOOS)-x86_64-1.7.0-rc1.tar.gz" |
-  $ROOT_PERM tar -C $TARGET_DIRECTORY -xz
-  $ROOT_PERM ldconfig
-  go get github.com/tensorflow/tensorflow/tensorflow/go
+  go get -u github.com/golang/dep/cmd/dep
+  go get -u github.com/gonum/gonum
+  go get -u github.com/gonum/plot
+  go get -u github.com/mattn/go-sqlite3
+  go get -u github.com/mmcdole/gofeed
+  go get -u gonum/hdf5
+  if [ $OStype != "android" ] ; then
+    TF_TYPE="cpu" # Change to "gpu" for GPU support
+    TARGET_DIRECTORY='/usr/local'
+    curl -L \
+      "https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-${TF_TYPE}-$(go env GOOS)-x86_64-1.7.0-rc1.tar.gz" |
+    $ROOT_PERM tar -C $TARGET_DIRECTORY -xz
+    $ROOT_PERM ldconfig
+    go get github.com/tensorflow/tensorflow/tensorflow/go
+  fi
   echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
 fi
 
