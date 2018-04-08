@@ -8,98 +8,125 @@ Feel free use, tweak, or modify.
 This configuration makes heavy use of [pathogen] to manage plugins.
 The important plugins I rely on:
 
-- [a]
-- [abolish]
-- [ag]
-- [airline-themes]
-- [airline]
-- [browserlink]
-- [commentary]
-- [css3-syntax]
-- [eunuch]
-- [fugitive]
-- [ghcmod]
+
+- [YouCompleteMe]
+- [a.vim]
+- [abolish.vim]
+- [ag.vim]
+- [ale]
+- [browserlink.vim]
+- [ctrlp.vim]
+- [fzf.vim]
+- [ghcmod-vim]
+- [gv.vim]
 - [html-template-syntax]
-- [html5-syntax]
-- [indent-guides]
-- [instant-markdown]
-- [json]
-- [less]
-- [misc]
+- [html5-syntax.vim]
+- [indentLine]
 - [molokai]
-- [multiple-cursors]
 - [nerdcommenter]
+- [nerdtree-git-plugin]
 - [nerdtree]
-- [nginx]
-- [opencl]
-- [pandoc]
-- [pathogen]
-- [railscasts-theme]
-- [repeat]
-- [searchindex]
-- [signify]
-- [snippets]
-- [surround]
-- [switch]
+- [nginx.vim]
+- [switch.vim]
 - [syntastic]
 - [tabular]
 - [tagbar]
-- [taglist]
-- [tlib]
-- [tmux]
+- [taglist.vim]
+- [tlib_vim]
 - [ultisnips]
 - [undotree]
-- [unimpaired]
-- [vc]
+- [unicode.vim]
+- [vc.vim]
+- [vim-airline-themes]
+- [vim-airline]
+- [vim-colorscheme-primary]
+- [vim-commentary]
+- [vim-css3-syntax]
+- [vim-devicons]
+- [vim-dirdiff]
+- [vim-dispatch]
+- [vim-easy-align]
+- [vim-easymotion]
+- [vim-eunuch]
+- [vim-fugitive]
+- [vim-go]
+- [vim-godebug]
+- [vim-instant-markdown]
+- [vim-json]
+- [vim-less]
+- [vim-misc]
+- [vim-multiple-cursors]
+- [vim-nerdtree-syntax-highlight]
+- [vim-opencl]
+- [vim-pandoc]
+- [vim-railscasts-theme]
+- [vim-repeat]
+- [vim-searchindex]
+- [vim-signify]
+- [vim-snippets]
+- [vim-surround]
+- [vim-tmux]
+- [vim-unimpaired]
 - [vimproc]
-- [vinarise]
-- [YouCompleteMe]
+- [vinarise.vim]
 
-  [a]: https://github.com/vim-scripts/a.vim.git
-  [abolish]: https://github.com/vim-scripts/abolish.vim.git
-  [ag]: https://github.com/rking/ag.vim.git
-  [airline]: https://github.com/bling/vim-airline.git
-  [airline-themes]: https://github.com/vim-airline/vim-airline-themes.git
-  [browserlink]: https://github.com/jaxbot/browserlink.vim.git
-  [commentary]: https://github.com/tpope/vim-commentary.git
-  [conque]: https://github.com/nicoraffo/conque.get
-  [css3-syntax]: https://github.com/hail2u/vim-css3-syntax.git
-  [ctrlpvim]: https://github.com/ctrlpvim/ctrlp.vim.git
-  [eunuch]: https://github.com/tpope/vim-eunuch.git
-  [fugitive]: https://github.com/tpope/vim-fugitive.git
-  [ghcmod]: https://github.com/eagletmt/ghcmod-vim.git
-  [html-template-syntax]: https://github.com/pbrisbin/html-template-syntax.git
-  [html5-syntax]: https://github.com/othree/html5-syntax.vim.git
-  [indent-guides]: https://github.com/nathanaelkane/vim-indent-guides.git
-  [instant-markdown]: https://github.com/suan/vim-instant-markdown.git
-  [json]: https://github.com/helino/vim-json.git
-  [less]: https://github.com/groenewege/vim-less.git
-  [misc]: https://github.com/xolox/vim-misc.git
-  [molokai]: https://github.com/tomasr/molokai.git
-  [multiple-cursors]: https://github.com/terryma/vim-multiple-cursors.git
-  [nerdcommenter]: https://github.com/scrooloose/nerdcommenter.git
-  [nerdtree]: https://github.com/scrooloose/nerdtree.git
-  [nginx]: https://github.com/evanmiller/nginx-vim-syntax.git
-  [opencl]: https://github.com/petRUShka/vim-opencl.git
-  [pandoc]: https://github.com/vim-pandoc/vim-pandoc.git
-  [pathogen]: https://github.com/tpope/vim-pathogen.git
-  [railscasts-theme]: https://github.com/dhruvasagar/vim-railscasts-theme.git
-  [repeat]: https://github.com/tpope/vim-repeat.git
-  [searchindex]: https://github.com/google/vim-searchindex.git
-  [signify]: https://github.com/mhinz/vim-signify.git
-  [snippets]: https://github.com/honza/vim-snippets.git
-  [surround]: https://github.com/tpope/vim-surround.git
-  [switch]: https://github.com/AndrewRadev/switch.vim.git
-  [syntastic]: https://github.com/scrooloose/syntastic.git
-  [tabular]: https://github.com/godlygeek/tabular.git
-  [tagbar]: https://github.com/majutsushi/tagbar.git
-  [taglist]: http://www.vim.org/scripts/download_script.php?src_id=19574
-  [tlib]: https://github.com/tomtom/tlib_vim.git
-  [tmux]: https://github.com/tsaleh/vim-tmux.git
-  [ultisnips]: https://github.com/SirVer/ultisnips.git
-  [undotree]: https://github.com/mbbill/undotree.git
-  [unimpaired]: https://github.com/tpope/vim-unimpaired.git
-  [vc]: https://github.com/juneedahamed/vc.vim.git
-  [vimproc]: https://github.com/Shougo/vimproc.git
-  [vinarise]: https://github.com/Shougo/vinarise.vim.git
-  [YouCompleteMe]: https://github.com/Valloric/YouCompleteMe.git
+  [YouCompleteMe]: https://github.com/Valloric/YouCompleteMe'
+  [a.vim]: https://github.com/vim-scripts/a.vim'
+  [abolish.vim]: https://github.com/vim-scripts/abolish.vim'
+  [ag.vim]: https://github.com/rking/ag.vim'
+  [ale]: https://github.com/w0rp/ale'
+  [browserlink.vim]: https://github.com/jaxbot/browserlink.vim'
+  [ctrlp.vim]: https://github.com/ctrlpvim/ctrlp.vim'
+  [fzf.vim]: https://github.com/junegunn/fzf.vim'
+  [ghcmod-vim]: https://github.com/eagletmt/ghcmod-vim'
+  [gv.vim]: https://github.com/junegunn/gv.vim'
+  [html-template-syntax]: https://github.com/pbrisbin/html-template-syntax'
+  [html5-syntax.vim]: https://github.com/othree/html5-syntax.vim'
+  [indentLine]: https://github.com/Yggdroot/indentLine'
+  [molokai]: https://github.com/tomasr/molokai'
+  [nerdcommenter]: https://github.com/scrooloose/nerdcommenter'
+  [nerdtree-git-plugin]: https://github.com/scrooloose/nerdtree'
+  [nerdtree]: https://github.com/Xuyuanp/nerdtree-git-plugin'
+  [nginx.vim]: https://github.com/chr4/nginx.vim'
+  [switch.vim]: https://github.com/AndrewRadev/switch.vim'
+  [syntastic]: https://github.com/vim-syntastic/syntastic'
+  [tabular]: https://github.com/godlygeek/tabular'
+  [tagbar]: https://github.com/majutsushi/tagbar'
+  [taglist.vim]: https://github.com/blackb1rd/taglist.vim'
+  [tlib_vim]: https://github.com/tomtom/tlib_vim'
+  [ultisnips]: https://github.com/SirVer/ultisnips'
+  [undotree]: https://github.com/mbbill/undotree'
+  [unicode.vim]: https://github.com/chrisbra/unicode.vim'
+  [vc.vim]: https://github.com/juneedahamed/vc.vim'
+  [vim-airline-themes]: https://github.com/vim-airline/vim-airline'
+  [vim-airline]: https://github.com/vim-airline/vim-airline-themes'
+  [vim-colorscheme-primary]: https://github.com/google/vim-colorscheme-primary'
+  [vim-commentary]: https://github.com/tpope/vim-commentary'
+  [vim-css3-syntax]: https://github.com/hail2u/vim-css3-syntax'
+  [vim-devicons]: https://github.com/ryanoasis/vim-devicons'
+  [vim-dirdiff]: https://github.com/will133/vim-dirdiff'
+  [vim-dispatch]: https://github.com/tpope/vim-dispatch'
+  [vim-easy-align]: https://github.com/junegunn/vim-easy-align'
+  [vim-easymotion]: https://github.com/easymotion/vim-easymotion'
+  [vim-eunuch]: https://github.com/tpope/vim-eunuch'
+  [vim-fugitive]: https://github.com/tpope/vim-fugitive'
+  [vim-go]: https://github.com/fatih/vim-go'
+  [vim-godebug]: https://github.com/jodosha/vim-godebug'
+  [vim-instant-markdown]: https://github.com/suan/vim-instant-markdown'
+  [vim-json]: https://github.com/elzr/vim-json'
+  [vim-less]: https://github.com/groenewege/vim-less'
+  [vim-misc]: https://github.com/xolox/vim-misc'
+  [vim-multiple-cursors]: https://github.com/terryma/vim-multiple-cursors'
+  [vim-nerdtree-syntax-highlight]: https://github.com/tiagofumo/vim-nerdtree-syntax-highlight'
+  [vim-opencl]: https://github.com/petRUShka/vim-opencl'
+  [vim-pandoc]: https://github.com/vim-pandoc/vim-pandoc'
+  [vim-railscasts-theme]: https://github.com/dhruvasagar/vim-railscasts-theme'
+  [vim-repeat]: https://github.com/tpope/vim-repeat'
+  [vim-searchindex]: https://github.com/google/vim-searchindex'
+  [vim-signify]: https://github.com/mhinz/vim-signify'
+  [vim-snippets]: https://github.com/honza/vim-snippets'
+  [vim-surround]: https://github.com/tpope/vim-surround'
+  [vim-tmux]: https://github.com/tsaleh/vim-tmux'
+  [vim-unimpaired]: https://github.com/tpope/vim-unimpaired'
+  [vimproc]: https://github.com/Shougo/vimproc'
+  [vinarise.vim]: https://github.com/Shougo/vinarise.vim'
