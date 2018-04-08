@@ -311,6 +311,7 @@ usage() {
   echo "  -go,  --golang     Installing golang package"
   echo "  -pl,  --perl       Installing perl package"
   echo "  -py,  --python     Installing python package"
+  echo "  -rb,  --ruby       Installing ruby package"
   echo "  -ycm, --ycmd       Compiling YouCompleteMe"
   echo "  -h,   --help       Show basic help message and exit"
 }
@@ -354,6 +355,7 @@ do
     -go  | --golang )       golang=true;;
     -pl  | --perl )         perl=true;;
     -py  | --python )       python=true;;
+    -rb  | --ruby )         ruby=true;;
     -ycm | --ycmd )         ycmd=true;;
     -h   | --help )         usage;exit;;
     * )                     usage;exit 1
@@ -379,6 +381,7 @@ if [ -z "${all}" ] \
    && [ -z "${golang}" ] \
    && [ -z "${perl}" ] \
    && [ -z "${python}" ] \
+   && [ -z "${ruby}" ] \
    && [ -z "${ycmd}" ] \
    && [ -z "${latest}" ] ; then
 
@@ -598,6 +601,19 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${python}" ] ; then
   pyenv shell $PYTHON3_VERSION
   pyenv global $PYTHON3_VERSION
   echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
+fi
+
+###############################################################################
+#                           ____        _                                     #
+#                          |  _ \ _   _| |__  _   _                           #
+#                          | |_) | | | | '_ \| | | |                          #
+#                          |  _ <| |_| | |_) | |_| |                          #
+#                          |_| \_\\__,_|_.__/ \__, |                          #
+#                                             |___/                           #
+#                                                                             #
+###############################################################################
+if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${ruby}" ] ; then
+  $ROOT_PERM gem install neovim
 fi
 
 ###############################################################################
