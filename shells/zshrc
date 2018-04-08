@@ -30,6 +30,9 @@ case $(uname) in
         eval "$(pyenv virtualenv-init -)"
       fi
       pyenv activate neovim3 2> /dev/null
+      if [[ -n $VIRTUAL_ENV && -e "${VIRTUAL_ENV}/bin/activate" ]]; then
+        source "${VIRTUAL_ENV}/bin/activate"
+      fi
     fi
     export GOPATH=$HOME/.go
     export PYTHONSTARTUP=$HOME/.pythonrc
