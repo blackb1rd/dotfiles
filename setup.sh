@@ -438,6 +438,7 @@ if [ -n "${all}" ] || [ -n "${latest}" ] ; then
   ./configure --prefix=$USRPREFIX --enable-iconv
   make
   $ROOT_PERM make install
+  cd $current_dir && rm -rf "$TEMP/ctags"
   echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
 fi
 
@@ -691,6 +692,7 @@ if [ -n "${all}" ] || [ -n "${dot}" ] ; then
       ./configure --prefix=$USRPREFIX
       make
       $ROOT_PERM make install
+      cd $current_dir && rm -rf "$TEMP/tmux"
     fi
   fi
 
