@@ -93,7 +93,8 @@ case $(uname) in
                      numpy
                      pandas
                      tensorflow
-                     torrench"
+                     torrench
+                     yapf"
           ;;
         "ubuntu")
           OStype=ubuntu
@@ -158,7 +159,8 @@ case $(uname) in
                      numpy
                      pandas
                      tensorflow
-                     torrench"
+                     torrench
+                     yapf"
           ;;
         "elementary")
           OStype=elementary
@@ -182,7 +184,8 @@ case $(uname) in
                      numpy
                      pandas
                      tensorflow
-                     torrench"
+                     torrench
+                     yapf"
           ;;
         "coreos")
           OStype=coreos
@@ -212,7 +215,8 @@ case $(uname) in
                      numpy
                      pandas
                      tensorflow
-                     torrench"
+                     torrench
+                     yapf"
           ;;
         "opensuse"|"tumbleweed")
           OStype=opensuse
@@ -242,7 +246,8 @@ case $(uname) in
                      numpy
                      pandas
                      tensorflow
-                     torrench"
+                     torrench
+                     yapf"
           ;;
         *)
           ;;
@@ -286,7 +291,8 @@ case $(uname) in
                    numexpr
                    numpy
                    pandas
-                   torrench"
+                   torrench
+                   yapf"
         TEMP=$TMPDIR
         USRPREFIX=$PREFIX
         ;;
