@@ -514,6 +514,7 @@ fi
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${golang}" ] ; then
   echo "${txtbld}$(tput setaf 1)[-] Install the go$(tput sgr0)"
+  go get -u github.com/PuerkitoBio/goquery
   go get -u github.com/cenkalti/backoff
   go get -u github.com/derekparker/delve/cmd/dlv
   go get -u github.com/go-sql-driver/mysql
