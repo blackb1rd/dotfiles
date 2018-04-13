@@ -49,10 +49,8 @@ case $(uname) in
       os_version_id="$(grep -E '^VERSION_ID="([0-9\.]*)"' /etc/os-release | cut -d '=' -f 2 | tr -d '"')"
       case "$os_release_id" in
         "ubuntu")
-          if [ $os_version_id = "14.04" ] ; then
-            export GOROOT=/usr/lib/go-1.10/
-            pathadd "/usr/lib/go-1.10/bin"
-          fi
+          export GOROOT=/usr/lib/go-1.10/
+          pathadd "/usr/lib/go-1.10/bin"
           ;;
         "debian")
           pathadd "/usr/local/go/bin"
