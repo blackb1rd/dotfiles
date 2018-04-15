@@ -523,7 +523,7 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${golang}" ] ; then
   go get -u github.com/gonum/plot
   go get -u github.com/mattn/go-sqlite3
   go get -u github.com/mmcdole/gofeed
-  go get -u gonum/hdf5
+  go get -u github.com/gonum/hdf5
   if [ $OStype != "android" ] ; then
     TF_TYPE="cpu" # Change to "gpu" for GPU support
     TARGET_DIRECTORY='/usr/local'
