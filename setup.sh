@@ -531,7 +531,7 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${golang}" ] ; then
       "https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-${TF_TYPE}-$(go env GOOS)-x86_64-1.7.0-rc1.tar.gz" |
     $ROOT_PERM tar -C $TARGET_DIRECTORY -xz
     $ROOT_PERM ldconfig
-    go get github.com/tensorflow/tensorflow/tensorflow/go
+    go get -u github.com/tensorflow/tensorflow/tensorflow/go
   fi
   echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
 fi
