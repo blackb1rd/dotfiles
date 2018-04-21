@@ -515,15 +515,16 @@ fi
 if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${golang}" ] ; then
   echo "${txtbld}$(tput setaf 1)[-] Install the go$(tput sgr0)"
   go get -u github.com/PuerkitoBio/goquery
+  go get -u github.com/beevik/ntp
   go get -u github.com/cenkalti/backoff
   go get -u github.com/derekparker/delve/cmd/dlv
   go get -u github.com/go-sql-driver/mysql
   go get -u github.com/golang/dep/cmd/dep
   go get -u github.com/gonum/gonum
+  go get -u github.com/gonum/hdf5
   go get -u github.com/gonum/plot
   go get -u github.com/mattn/go-sqlite3
   go get -u github.com/mmcdole/gofeed
-  go get -u github.com/gonum/hdf5
   if [ $OStype != "android" ] ; then
     TF_TYPE="cpu" # Change to "gpu" for GPU support
     TARGET_DIRECTORY='/usr/local'
