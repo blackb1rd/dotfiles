@@ -580,26 +580,28 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${python}" ] ; then
   installfile .pythonrc python/pythonrc
   PIPoption="install --user --upgrade"
 
-  # install pyenv
-  curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash
+  if [ $OStype != "android" ] ; then
+    # install pyenv
+    curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash
 
-  # Adding pyenv path
-  pathadd "$HOME/.pyenv/bin"
+    # Adding pyenv path
+    pathadd "$HOME/.pyenv/bin"
 
-  export PYTHON_CONFIGURE_OPTS="--enable-shared"
-  pyenv install -s $PYTHON2_VERSION
-  pyenv install -s $PYTHON3_VERSION
+    export PYTHON_CONFIGURE_OPTS="--enable-shared"
+    pyenv install -s $PYTHON2_VERSION
+    pyenv install -s $PYTHON3_VERSION
 
-  eval "$(pyenv init -)"
-  eval "$(pyenv virtualenv-init -)"
-  pyenv virtualenv $PYTHON2_VERSION neovim2
-  pyenv virtualenv $PYTHON3_VERSION neovim3
+    eval "$(pyenv init -)"
+    eval "$(pyenv virtualenv-init -)"
+    pyenv virtualenv $PYTHON2_VERSION neovim2
+    pyenv virtualenv $PYTHON3_VERSION neovim3
 
-  pyenv activate neovim2
-  pip install --upgrade $PIPmodule
+    pyenv activate neovim2
+    pip $PIPoption $PIPmodule
 
-  pyenv activate neovim3
-  pip install --upgrade $PIPmodule
+    pyenv activate neovim3
+  fi
+  pip $PIPoption $PIPmodule
 
   mkdirfolder .config/torrench
   wget "https://pastebin.com/raw/reymRHSL" \
