@@ -60,7 +60,9 @@ case $(uname) in
                    irssi
                    libbz2-dev
                    libevent-dev
+                   liblzma-dev
                    libncurses5-dev
+                   libpcre3-dev
                    libreadline-dev
                    libsqlite3-dev
                    libssl-dev
@@ -116,7 +118,9 @@ case $(uname) in
                    irssi
                    libbz2-dev
                    libevent-dev
+                   liblzma-dev
                    libncurses5-dev
+                   libpcre3-dev
                    libreadline-dev
                    libsqlite3-dev
                    libssl-dev
@@ -430,6 +434,29 @@ fi
 
 # Get the current directory
 current_dir="$( cd "$( dirname "$0" )" && pwd )"
+
+###############################################################################
+#                                    _                                        #
+#                                   / \   __ _                                #
+#                                  / _ \ / _` |                               #
+#                                 / ___ \ (_| |                               #
+#                                /_/   \_\__, |                               #
+#                                        |___/                                #
+#                                                                             #
+###############################################################################
+if [ -n "${all}" ] || [ -n "${latest}" ] ; then
+  echo "${txtbld}$(tput setaf 1)[-] Install the silversearcher-ag$(tput sgr0)"
+  $PKG_CMD_REMOVE silversearcher-ag
+
+  # clone silversearcher-ag
+  git clone --depth 1 $GITHUB_URL/ggreer/the_silver_searcher $TEMP/the_silver_searcher
+  cd $TEMP/the_silver_searcher
+  ./build.sh
+  make
+  $ROOT_PERM make install
+  cd $current_dir && rm -rf "$TEMP/the_silver_searcher"
+  echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
+fi
 
 ###############################################################################
 #                            ____ _                                           #
