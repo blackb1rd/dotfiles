@@ -10,6 +10,7 @@ USRPREFIX="/usr/local"
 PYTHON2_VERSION="2.7.14"
 PYTHON3_VERSION="3.6.4"
 PYTHON3_MAJOR_VERSION=$(echo $PYTHON3_VERSION | cut -c 1-3)
+PIPoption="install --user --upgrade"
 
 case $(uname) in
   Darwin)
@@ -88,6 +89,7 @@ case $(uname) in
                      scipy
                      matplotlib
                      mycli
+                     mysqlclient
                      neovim
                      numexpr
                      numpy
@@ -154,6 +156,7 @@ case $(uname) in
                      scipy
                      matplotlib
                      mycli
+                     mysqlclient
                      neovim
                      numexpr
                      numpy
@@ -179,6 +182,7 @@ case $(uname) in
                      scipy
                      matplotlib
                      mycli
+                     mysqlclient
                      neovim
                      numexpr
                      numpy
@@ -210,6 +214,7 @@ case $(uname) in
                      scipy
                      matplotlib
                      mycli
+                     mysqlclient
                      neovim
                      numexpr
                      numpy
@@ -241,6 +246,7 @@ case $(uname) in
                      scipy
                      matplotlib
                      mycli
+                     mysqlclient
                      neovim
                      numexpr
                      numpy
@@ -287,6 +293,7 @@ case $(uname) in
                    SciPy
                    bottleneck
                    mycli
+                   mysqlclient
                    neovim
                    numexpr
                    numpy
@@ -578,7 +585,6 @@ fi
 if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${python}" ] ; then
   echo "${txtbld}$(tput setaf 1)[-] Install the python$(tput sgr0)"
   installfile .pythonrc python/pythonrc
-  PIPoption="install --user --upgrade"
 
   if [ $OStype != "android" ] ; then
     # install pyenv
