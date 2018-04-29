@@ -150,6 +150,7 @@ fi
 
 if [ -d "$HOME/.rbenv" ] ; then
   pathadd "$HOME/.rbenv/bin"
+  eval "$(rbenv init -)"
 fi
 
 alias tmux="TERM=screen-256color tmux"
