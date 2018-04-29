@@ -11,6 +11,7 @@ PYTHON2_VERSION="2.7.14"
 PYTHON3_VERSION="3.6.4"
 PYTHON3_MAJOR_VERSION=$(echo $PYTHON3_VERSION | cut -c 1-3)
 PIPoption="install --user --upgrade"
+RUBY_VERSION="2.5.1"
 
 case $(uname) in
   Darwin)
@@ -72,7 +73,6 @@ case $(uname) in
                    lynx
                    make
                    ninja-build
-                   nodejs
                    pkg-config
                    python-dev
                    python3-dev
@@ -131,7 +131,6 @@ case $(uname) in
                    lynx
                    make
                    ninja-build
-                   nodejs
                    pkg-config
                    python-dev
                    python3-dev
@@ -333,6 +332,7 @@ usage() {
   echo "  -pl,  --perl       Installing perl package"
   echo "  -py,  --python     Installing python package"
   echo "  -rb,  --ruby       Installing ruby package"
+  echo "  -rs,  --rust       Installing rust package"
   echo "  -ycm, --ycmd       Compiling YouCompleteMe"
   echo "  -h,   --help       Show basic help message and exit"
 }
@@ -605,6 +605,22 @@ if [ -n "${all}" ] || [ -n "${dot}" ] ; then
 fi
 
 ###############################################################################
+#                        _   _           _       _                            #
+#                       | \ | | ___   __| | ___ (_)___                        #
+#                       |  \| |/ _ \ / _` |/ _ \| / __|                       #
+#                       | |\  | (_) | (_| |  __/| \__ \                       #
+#                       |_| \_|\___/ \__,_|\___|/ |___/                       #
+#                                             |__/                            #
+#                                                                             #
+###############################################################################
+if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${nodejs}" ] ; then
+  if [ $OStype != "android" ] ; then
+    curl -sL https://deb.nodesource.com/setup_9.x | $ROOT_PERM -E bash -
+    $PKG_CMD_INSTALL -y nodejs
+  fi
+fi
+
+###############################################################################
 #                      ____        _   _                                      #
 #                     |  _ \ _   _| |_| |__   ___  _ __                       #
 #                     | |_) | | | | __| '_ \ / _ \| '_ \                      #
@@ -661,7 +677,30 @@ fi
 #                                                                             #
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${ruby}" ] ; then
+  git clone $GITHUB_URL/rbenv/rbenv $HOME/.rbenv
+  cd $HOME/.rbenv && src/configure && make -C src
+  cd $current_dir
+  pathadd "$HOME/.rbenv/bin"
+  curl -fsSL $GITHUB_URL/rbenv/rbenv-installer/raw/master/bin/rbenv-doctor | bash
+  mkdir -p "$(rbenv root)"/plugins
+  git clone $GITHUB_URL/rbenv/ruby-build.git "$(rbenv root)"/plugins/ruby-build
+  rbenv install $RUBY_VERSION
+  rbenv shell $RUBY_VERSION
+  rbenv global $RUBY_VERSION
+  rbenv rehash
   $ROOT_PERM gem install neovim
+fi
+
+###############################################################################
+#                             ____            _                               #
+#                            |  _ \ _   _ ___| |_                             #
+#                            | |_) | | | / __| __|                            #
+#                            |  _ <| |_| \__ \ |_                             #
+#                            |_| \_\\__,_|___/\__|                            #
+#                                                                             #
+###############################################################################
+if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${rust}" ] ; then
+  curl -sSf https://static.rust-lang.org/rustup.sh | sh
 fi
 
 ###############################################################################
