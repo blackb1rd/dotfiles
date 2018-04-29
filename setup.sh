@@ -61,6 +61,7 @@ case $(uname) in
                    libbz2-dev
                    libevent-dev
                    liblzma-dev
+                   libmysqlclient-dev
                    libncurses5-dev
                    libpcre3-dev
                    libreadline-dev
@@ -119,6 +120,7 @@ case $(uname) in
                    libbz2-dev
                    libevent-dev
                    liblzma-dev
+                   libmysqlclient-dev
                    libncurses5-dev
                    libpcre3-dev
                    libreadline-dev
@@ -178,6 +180,7 @@ case $(uname) in
           PKG_CMD_UPDATE="$ROOT_PERM yum update"
           PKG_CMD_INSTALL="$ROOT_PERM yum install -y"
           PKG_CMD_REMOVE="$ROOT_PERM yum remove -y"
+          PACKAGE="mysql-devel"
           PIPmodule="Cython
                      SciPy
                      bottleneck
@@ -210,6 +213,7 @@ case $(uname) in
           PKG_CMD_UPDATE="$ROOT_PERM yum update"
           PKG_CMD_INSTALL="$ROOT_PERM yum install -y"
           PKG_CMD_REMOVE="$ROOT_PERM yum remove -y"
+          PACKAGE="mysql-devel"
           PIPmodule="Cython
                      SciPy
                      bottleneck
