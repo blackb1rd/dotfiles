@@ -617,6 +617,7 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${nodejs}" ] ; then
   if [ $OStype != "android" ] ; then
     curl -sL https://deb.nodesource.com/setup_9.x | $ROOT_PERM -E bash -
     $PKG_CMD_INSTALL -y nodejs
+    $ROOT_PERM npm install -g neovim
   fi
 fi
 
