@@ -2,6 +2,22 @@
 " author:   Prachya Saechua
 " ----------------------------------------------------------------------------
 
+if $TERM =~ '^\(rxvt\|screen\|interix\|putty\)\(-.*\)\?$'
+    set notermguicolors
+elseif $TERM =~ '^\(tmux\|iterm\|vte\|gnome\)\(-.*\)\?$'
+    set termguicolors
+elseif $TERM =~ '^\(xterm\)\(-.*\)\?$'
+    if $XTERM_VERSION != ''
+        set notermguicolors
+    elseif $KONSOLE_PROFILE_NAME != ''
+        set termguicolors
+    elseif $VTE_VERSION != ''
+        set termguicolors
+    else
+        set notermguicolors
+    endif
+endif
+
 if has("unix")
     set shell=/bin/bash
 elseif has("win64") || has("win32")
