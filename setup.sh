@@ -685,11 +685,12 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${ruby}" ] ; then
   curl -fsSL $GITHUB_URL/rbenv/rbenv-installer/raw/master/bin/rbenv-doctor | bash
   mkdir -p "$(rbenv root)"/plugins
   git clone $GITHUB_URL/rbenv/ruby-build.git "$(rbenv root)"/plugins/ruby-build
+  git clone $GITHUB_URL/carsomyr/rbenv-bundler.git "$(rbenv root)"/plugins/bundler
   rbenv install $RUBY_VERSION
   rbenv shell $RUBY_VERSION
   rbenv global $RUBY_VERSION
+  gem install neovim bundler
   rbenv rehash
-  $ROOT_PERM gem install neovim
 fi
 
 ###############################################################################
