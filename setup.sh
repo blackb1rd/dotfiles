@@ -333,6 +333,7 @@ usage() {
   echo "  -py,  --python     Installing python package"
   echo "  -rb,  --ruby       Installing ruby package"
   echo "  -rs,  --rust       Installing rust package"
+  echo "  -tmx, --tmux       Compiling tmux"
   echo "  -ycm, --ycmd       Compiling YouCompleteMe"
   echo "  -h,   --help       Show basic help message and exit"
 }
@@ -377,6 +378,8 @@ do
     -pl  | --perl )         perl=true;;
     -py  | --python )       python=true;;
     -rb  | --ruby )         ruby=true;;
+    -rs  | --rust )         rust=true;;
+    -tmx | --tmux )         tmux=true;;
     -ycm | --ycmd )         ycmd=true;;
     -h   | --help )         usage;exit;;
     * )                     usage;exit 1
@@ -403,6 +406,8 @@ if [ -z "${all}" ] \
    && [ -z "${perl}" ] \
    && [ -z "${python}" ] \
    && [ -z "${ruby}" ] \
+   && [ -z "${rust}" ] \
+   && [ -z "${tmux}" ] \
    && [ -z "${ycmd}" ] \
    && [ -z "${latest}" ] ; then
 
@@ -763,7 +768,7 @@ fi
 #                           |_||_| |_| |_|\__,_/_/\_\                         #
 #                                                                             #
 ###############################################################################
-if [ -n "${all}" ] || [ -n "${dot}" ] ; then
+if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${tmux}" ] ; then
   echo "${txtbld}$(tput setaf 1)[-] Install the tmux$(tput sgr0)"
   if [ ! -d "$HOME/.tmux" ] ; then
     git clone $GITHUB_URL/gpakosz/.tmux.git $HOME/.tmux
