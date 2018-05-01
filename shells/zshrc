@@ -1,4 +1,5 @@
 #!/bin/zsh
+export TERM="xterm-256color"
 
 # sources external in folder .shells
 for file in $HOME/.shells/zsh/*
