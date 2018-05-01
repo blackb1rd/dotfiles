@@ -776,7 +776,7 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${tmux}" ] ; then
     git -C "$HOME/.tmux" pull
   fi
 
-  if [ -n "${all}" ] || [ -n "${latest}" ] ; then
+  if [ -n "${all}" ] || [ -n "${latest}" ] || [ -n "${tmux}" ] ; then
     if [ $OStype != "android" ] ; then
       # clone tmux
       git clone --depth 1 $GITHUB_URL/tmux/tmux $TEMP/tmux
