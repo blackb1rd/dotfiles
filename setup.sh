@@ -323,19 +323,20 @@ usage() {
   echo "Usage: $0 [options]"
   echo ""
   echo "Options:"
-  echo "  -a,   --all        Installing all setup"
-  echo "  -b,   --basictool  Installing basic tool"
-  echo "  -d,   --dot        Installing dotfiles"
-  echo "  -f,   --fonts      Installing fonts"
-  echo "  -l,   --latest     Compiling the latest ctags and VIM version"
-  echo "  -go,  --golang     Installing golang package"
-  echo "  -pl,  --perl       Installing perl package"
-  echo "  -py,  --python     Installing python package"
-  echo "  -rb,  --ruby       Installing ruby package"
-  echo "  -rs,  --rust       Installing rust package"
-  echo "  -tmx, --tmux       Compiling tmux"
-  echo "  -ycm, --ycmd       Compiling YouCompleteMe"
-  echo "  -h,   --help       Show basic help message and exit"
+  echo "  -a,    --all        Installing all setup"
+  echo "  -b,    --basictool  Installing basic tool"
+  echo "  -d,    --dot        Installing dotfiles"
+  echo "  -f,    --fonts      Installing fonts"
+  echo "  -l,    --latest     Compiling the latest ctags and VIM version"
+  echo "  -go,   --golang     Installing golang package"
+  echo "  -pl,   --perl       Installing perl package"
+  echo "  -py,   --python     Installing python package"
+  echo "  -rb,   --ruby       Installing ruby package"
+  echo "  -rs,   --rust       Installing rust package"
+  echo "  -nvim, --neovim     Compiling neovim"
+  echo "  -tmux,  --tmux      Compiling tmux"
+  echo "  -ycm,  --ycmd       Compiling YouCompleteMe"
+  echo "  -h,    --help       Show basic help message and exit"
 }
 
 mkdirfolder () {
@@ -369,20 +370,21 @@ checkOStype () {
 while [ $# != 0 ]
 do
   case $1 in
-    -a   | --all )          all=true;;
-    -b   | --basictool )    basictool=true;;
-    -d   | --dot )          dot=true;;
-    -f   | --fonts )        fonts=true;;
-    -l   | --latest )       latest=true;;
-    -go  | --golang )       golang=true;;
-    -pl  | --perl )         perl=true;;
-    -py  | --python )       python=true;;
-    -rb  | --ruby )         ruby=true;;
-    -rs  | --rust )         rust=true;;
-    -tmx | --tmux )         tmux=true;;
-    -ycm | --ycmd )         ycmd=true;;
-    -h   | --help )         usage;exit;;
-    * )                     usage;exit 1
+    -a    | --all )          all=true;;
+    -b    | --basictool )    basictool=true;;
+    -d    | --dot )          dot=true;;
+    -f    | --fonts )        fonts=true;;
+    -l    | --latest )       latest=true;;
+    -go   | --golang )       golang=true;;
+    -pl   | --perl )         perl=true;;
+    -py   | --python )       python=true;;
+    -rb   | --ruby )         ruby=true;;
+    -rs   | --rust )         rust=true;;
+    -nvim | --neovim )       neovim=true;;
+    -tmux | --tmux )         tmux=true;;
+    -ycm  | --ycmd )         ycmd=true;;
+    -h    | --help )         usage;exit;;
+    * )                      usage;exit 1
   esac
   shift
 done
@@ -407,6 +409,7 @@ if [ -z "${all}" ] \
    && [ -z "${python}" ] \
    && [ -z "${ruby}" ] \
    && [ -z "${rust}" ] \
+   && [ -z "${neovim}" ] \
    && [ -z "${tmux}" ] \
    && [ -z "${ycmd}" ] \
    && [ -z "${latest}" ] ; then
@@ -804,10 +807,11 @@ fi
 ###############################################################################
 if [ -n "${all}" ] \
    || [ -n "${latest}" ] \
+   || [ -n "${neovim}" ] \
    || [ -n "${ycmd}" ] \
    || [ -n "${dot}" ] ; then
   echo "${txtbld}$(tput setaf 1)[-] Install the vim$(tput sgr0)"
-  if [ -n "${all}" ] || [ -n "${latest}" ] ; then
+  if [ -n "${all}" ] || [ -n "${latest}" ] || [ -n "${neovim}" ] ; then
     if [ $OStype != "android" ] ; then
       # Install latest vim version
       $PKG_CMD_REMOVE vim
@@ -815,12 +819,13 @@ if [ -n "${all}" ] \
       echo "${txtbld}$(tput setaf 1)[-] Install the latest VIM$(tput sgr0)"
 
       if [ -d "$HOME/github/neovim/" ] ; then
-        rm -rf "$HOME/github/neovim/"
+        git clone --depth 1 $GITHUB_URL/neovim/neovim "$HOME/github/neovim/"
+      else
+        git -C "$HOME/github/neovim/" pull
       fi
-      git clone --depth 1 $GITHUB_URL/neovim/neovim "$HOME/github/neovim/"
 
       cd "$HOME/github/neovim/"
-      rm -r build
+      rm -rf build
       make clean
       make CMAKE_BUILD_TYPE=Release
       $ROOT_PERM make install
