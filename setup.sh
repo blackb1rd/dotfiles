@@ -818,7 +818,7 @@ if [ -n "${all}" ] \
 
       echo "${txtbld}$(tput setaf 1)[-] Install the latest VIM$(tput sgr0)"
 
-      if [ -d "$HOME/github/neovim/" ] ; then
+      if [ ! -d "$HOME/github/neovim/" ] ; then
         git clone --depth 1 $GITHUB_URL/neovim/neovim "$HOME/github/neovim/"
       else
         git -C "$HOME/github/neovim/" pull
