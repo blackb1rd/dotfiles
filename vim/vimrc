@@ -8,10 +8,8 @@ elseif $TERM =~ '^\(tmux\|iterm\|vte\|gnome\)\(-.*\)\?$'
     set termguicolors
 elseif $TERM =~ '^\(xterm\)\(-.*\)\?$'
     if $XTERM_VERSION != ''
-        set notermguicolors
-    elseif $KONSOLE_PROFILE_NAME != ''
         set termguicolors
-    elseif $VTE_VERSION != ''
+    elseif $KONSOLE_PROFILE_NAME != ''
         set termguicolors
     else
         set notermguicolors
