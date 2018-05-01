@@ -4,21 +4,19 @@
 
 if has("unix")
     set shell=/bin/bash
-endif
-
-if has("win64") || has("win32")
+elseif has("win64") || has("win32")
     " Window need to set runtimepath
     set rtp+=$HOME/.vim
 endif
 
 function! BuildComposerVimMarkdown(info)
-  if a:info.status != 'unchanged' || a:info.force
-    if has('nvim')
-      !cargo build --release
-    else
-      !cargo build --release --no-default-features --features json-rpc
+    if a:info.status != 'unchanged' || a:info.force
+        if has('nvim')
+            !cargo build --release
+        else
+            !cargo build --release --no-default-features --features json-rpc
+        endif
     endif
-  endif
 endfunction
 
 
