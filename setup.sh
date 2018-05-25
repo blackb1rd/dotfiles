@@ -21,10 +21,48 @@ case $(uname) in
     OStype=CYGWIN_NT
     ;;
   MSYS_NT-*)
+    current_dir="$(cygpath -a .)"
     OStype=MSYS_NT
     PKG_CMD_UPDATE="pacman -Sy"
-    PKG_CMD_INSTALL="pacman -Suu"
+    PKG_CMD_INSTALL="pacman -S --noconfirm"
     PKG_CMD_REMOVE="pacman -R"
+    PACKAGE="autoconf
+             automake
+             cmake
+             curl
+	     gcc
+             git
+             irssi
+             libbz2
+             libevent
+             liblzma
+             libreadline
+             libtool
+             llvm
+	     mingw-w64-i686-gcc
+	     mingw-w64-i686-go
+	     mingw-w64-i686-jansson
+	     mingw-w64-i686-libxml2
+	     mingw-w64-i686-libyaml
+	     mingw-w64-i686-pcre
+	     mingw-w64-i686-pkg-config
+	     mingw-w64-i686-xz
+	     mingw-w64-x86_64-gcc
+	     mingw-w64-x86_64-go
+	     mingw-w64-x86_64-jansson
+	     mingw-w64-x86_64-libxml2
+	     mingw-w64-x86_64-libyaml
+	     mingw-w64-x86_64-pcre
+	     mingw-w64-x86_64-pkg-config
+	     mingw-w64-x86_64-xz
+             make
+             pkg-config
+             python
+             python3
+             ruby
+             unzip
+             wget
+             zsh"
     ;;
   FreeBSD)
     OStype=FreeBSD
@@ -36,6 +74,7 @@ case $(uname) in
     OStype=DragonFly
     ;;
   Linux)
+    current_dir="$( cd "$( dirname "$0" )" && pwd )"
     if [ -f "/etc/os-release" ] ; then
       os_release_id="$(grep -E '^ID=([a-zA-Z]*)' /etc/os-release | cut -d '=' -f 2)"
       os_version_id="$(grep -E '^VERSION_ID="([0-9\.]*)"' /etc/os-release | cut -d '=' -f 2 | tr -d '"')"
@@ -443,9 +482,6 @@ if [ -n "${all}" ] || [ -n "${basictool}" ] ; then
   fi
   echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
 fi
-
-# Get the current directory
-current_dir="$( cd "$( dirname "$0" )" && pwd )"
 
 ###############################################################################
 #                                    _                                        #
