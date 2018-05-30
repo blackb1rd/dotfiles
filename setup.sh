@@ -23,15 +23,16 @@ case $(uname) in
   MSYS_NT-*)
     current_dir="$(cygpath -a .)"
     OStype=MSYS_NT
-    PKG_CMD_UPDATE="pacman -Sy"
-    PKG_CMD_INSTALL="pacman -S --noconfirm"
+    PKG_CMD_UPDATE="pacman -Syy"
+    PKG_CMD_INSTALL="pacman --needed -Su --noconfirm"
     PKG_CMD_REMOVE="pacman -R"
     PACKAGE="autoconf
              automake
              cmake
              curl
-	     gcc
+             gcc
              git
+             gperf
              irssi
              libbz2
              libevent
@@ -39,30 +40,45 @@ case $(uname) in
              libreadline
              libtool
              llvm
-	     mingw-w64-i686-gcc
-	     mingw-w64-i686-go
-	     mingw-w64-i686-jansson
-	     mingw-w64-i686-libxml2
-	     mingw-w64-i686-libyaml
-	     mingw-w64-i686-pcre
-	     mingw-w64-i686-pkg-config
-	     mingw-w64-i686-xz
-	     mingw-w64-x86_64-gcc
-	     mingw-w64-x86_64-go
-	     mingw-w64-x86_64-jansson
-	     mingw-w64-x86_64-libxml2
-	     mingw-w64-x86_64-libyaml
-	     mingw-w64-x86_64-pcre
-	     mingw-w64-x86_64-pkg-config
-	     mingw-w64-x86_64-xz
              make
+             mingw-w64-i686-cmake
+             mingw-w64-i686-gcc
+             mingw-w64-i686-go
+             mingw-w64-i686-jansson
+             mingw-w64-i686-libtool
+             mingw-w64-i686-libxml2
+             mingw-w64-i686-libyaml
+             mingw-w64-i686-make
+             mingw-w64-i686-pcre
+             mingw-w64-i686-perl
+             mingw-w64-i686-pkg-config
+             mingw-w64-i686-python2
+             mingw-w64-i686-unibilium
+             mingw-w64-i686-xz
+             mingw-w64-x86_64-cmake
+             mingw-w64-x86_64-gcc
+             mingw-w64-x86_64-go
+             mingw-w64-x86_64-jansson
+             mingw-w64-x86_64-libtool
+             mingw-w64-x86_64-libxml2
+             mingw-w64-x86_64-libyaml
+             mingw-w64-x86_64-make
+             mingw-w64-x86_64-pcre
+             mingw-w64-x86_64-perl
+             mingw-w64-x86_64-pkg-config
+             mingw-w64-x86_64-python2
+             mingw-w64-x86_64-unibilium
+             mingw-w64-x86_64-xz
              pkg-config
-             python
+             python2
              python3
              ruby
              unzip
              wget
              zsh"
+    pathadd "/mingw64/bin"
+    [ -z "$GOROOT" ] && export GOROOT=/mingw64/lib/go
+    [ -z "$GOPATH" ] && export GOPATH=/mingw64
     ;;
   FreeBSD)
     OStype=FreeBSD
@@ -793,10 +809,12 @@ fi
 #                                                                             #
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${dot}" ] ; then
-  echo "${txtbld}$(tput setaf 1)[-] Install the ssh$(tput sgr0)"
-  mkdirfolder .ssh/control
-  installfile .ssh/config ssh/config
-  echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
+  if [ -n "${OStype}" != "MSYS_NT" ] ; then
+    echo "${txtbld}$(tput setaf 1)[-] Install the ssh$(tput sgr0)"
+    mkdirfolder .ssh/control
+    installfile .ssh/config ssh/config
+    echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
+  fi
 fi
 
 ###############################################################################
