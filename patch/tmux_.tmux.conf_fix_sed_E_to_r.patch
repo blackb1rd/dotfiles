@@ -1,5 +1,5 @@
 --- oh-my-tmux/.tmux.conf	2018-03-20 10:00:53.214058000 +0700
-+++ /export/home/psaechua/.tmux.conf	2018-03-20 09:57:36.794235000 +0700
++++ .tmux.conf	2018-03-20 09:57:36.794235000 +0700
 @@ -24,10 +24,10 @@
  set -g history-limit 5000                 # boost history
  

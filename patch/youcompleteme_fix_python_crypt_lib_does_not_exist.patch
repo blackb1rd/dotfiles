@@ -1,0 +1,11 @@
+--- /data/data/com.termux/files/usr/include/python3.6m/Python.h	2018-07-29 13:29:22.663823631 +0700
++++ Python.h	2018-07-29 13:36:57.420535600 +0700
+@@ -36,7 +36,7 @@
+ #include <unistd.h>
+ #endif
+ #ifdef HAVE_CRYPT_H
+-#include <crypt.h>
++//#include <crypt.h>
+ #endif
+ 
+ /* For size_t? */
