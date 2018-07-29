@@ -111,6 +111,7 @@ case $(uname) in
                    curl
                    figlet
                    g++
+                   gettext
                    git
                    htop
                    irssi
@@ -124,6 +125,7 @@ case $(uname) in
                    libsqlite3-dev
                    libssl-dev
                    libtool
+                   libtool-bin
                    llvm
                    lynx
                    make
@@ -169,6 +171,7 @@ case $(uname) in
                    curl
                    figlet
                    g++
+                   gettext
                    git
                    htop
                    irssi
@@ -182,6 +185,7 @@ case $(uname) in
                    libsqlite3-dev
                    libssl-dev
                    libtool
+                   libtool-bin
                    llvm
                    lynx
                    make
