@@ -926,6 +926,7 @@ if [ -n "${all}" ] \
       patch -f $PREFIX/include/c++/v1/cstdio $current_dir/patch/youcompleteme_cstdio_fix_unable_to_use_fgetpos.patch
     fi
     cd "$HOME/.vim/bundle/YouCompleteMe"
+    git pull
     git submodule update --init --recursive
     git submodule -q foreach git pull -q origin master --verbose
     #cd "$current_dir/vim/bundle/YouCompleteMe/third_party/ycmd/third_party/tern_runtime"
