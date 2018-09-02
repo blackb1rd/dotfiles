@@ -704,6 +704,7 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${python}" ] ; then
 
     # Adding pyenv path
     pathadd "$HOME/.pyenv/bin"
+	pyenv update
 
     export PYTHON_CONFIGURE_OPTS="--enable-shared"
     pyenv install -s $PYTHON2_VERSION
@@ -813,7 +814,7 @@ fi
 #                                                                             #
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${dot}" ] ; then
-  if [ -n "${OStype}" != "MSYS_NT" ] ; then
+  if [ "${OStype}" != "MSYS_NT" ] ; then
     echo "${txtbld}$(tput setaf 1)[-] Install the ssh$(tput sgr0)"
     mkdirfolder .ssh/control
     installfile .ssh/config ssh/config
@@ -899,18 +900,14 @@ if [ -n "${all}" ] \
 
     mkdirfolder .config/nvim
 
-    if [ ! -d "$HOME/.local/share/nvim/site/autoload/plug.vim" ] ; then
-      curl -fLo $HOME/.local/share/nvim/site/autoload/plug.vim --create-dirs \
+    if [ ! -d "$HOME/.config/nvim/autoload/plug.vim" ] ; then
+      curl -fLo "$HOME/.config/nvim/autoload/plug.vim" --create-dirs \
         https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     fi
 
     installfolder vim/colors
 
-    # download all plugin
-    nvim +slient +VimEnter +PlugInstall +qall
-
-    # vim
-    # keep these confiure if use original vim
+    # vim, keep these confiure if use original vim
     installfile .vim/dict.add vim/dict.add
     installfile .vim/filetype.vim vim/filetype.vim
     installfile .vimrc vim/vimrc
@@ -923,9 +920,12 @@ if [ -n "${all}" ] \
     installfile .config/nvim/init.vim vim/vimrc
     installfolder config/nvim/spell
     installfolder config/nvim/ycm
+
+    # download all plugin
+    nvim +slient +VimEnter +PlugInstall +qall
   fi
   if [ -n "${all}" ] || [ -n "${ycmd}" ] ; then
-    # Install YouCompleteMe
+    echo "${txtbld}$(tput setaf 1)[-] Install YouCompleteMe$(tput sgr0)"
     if [ $OStype = "android" ] ; then
       patch -f $PREFIX/include/c++/v1/cstdio $current_dir/patch/youcompleteme_cstdio_fix_unable_to_use_fgetpos.patch
       patch -f $PREFIX/include/python3.6m/Python.h $current_dir/patch/youcompleteme_fix_python_crypt_lib_does_not_exist.patch
