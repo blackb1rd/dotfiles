@@ -782,6 +782,7 @@ if [ -n "${all}" ] || [ -n "${dot}" ] ; then
   echo "${txtbld}$(tput setaf 1)[-] Install the shell$(tput sgr0)"
   if [ ! -f "$HOME/.antigen.zsh" ]; then
     curl -L git.io/antigen > $HOME/.antigen.zsh
+    patch ~/.antigen.zsh patch/antigen_.antigen.zsh_locatiin.patch
   fi
 
   installfile .zshrc shells/zshrc
