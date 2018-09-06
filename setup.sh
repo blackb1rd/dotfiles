@@ -934,7 +934,6 @@ if [ -n "${all}" ] \
     cd "$HOME/.vim/bundle/YouCompleteMe"
     git pull
     git submodule update --init --recursive
-    git submodule -q foreach git pull -q origin master --verbose
     #cd "$current_dir/vim/bundle/YouCompleteMe/third_party/ycmd/third_party/tern_runtime"
     #sudo npm install --production
     if [ $OStype != "android" ] ; then
