@@ -8,7 +8,7 @@ TEMP="/tmp"
 ROOT_PERM=""
 USRPREFIX="/usr/local"
 PYTHON2_VERSION="2.7.15"
-PYTHON3_VERSION="3.7.0"
+PYTHON3_VERSION="3.6.6"
 PYTHON3_MAJOR_VERSION=$(echo $PYTHON3_VERSION | cut -c 1-3)
 PIPoption="install --user --upgrade"
 RUBY_VERSION="2.5.1"
@@ -710,18 +710,18 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${python}" ] ; then
     pyenv install -s $PYTHON2_VERSION
     pyenv install -s $PYTHON3_VERSION
 
-    pip install --upgrade pip
-
     eval "$(pyenv init -)"
     eval "$(pyenv virtualenv-init -)"
     pyenv virtualenv $PYTHON2_VERSION neovim2
     pyenv virtualenv $PYTHON3_VERSION neovim3
 
     pyenv activate neovim2
+    pip install --upgrade pip
     pip $PIPoption $PIPmodule
 
     pyenv activate neovim3
   fi
+  pip install --upgrade pip
   pip $PIPoption $PIPmodule
 
   mkdirfolder .config/torrench
