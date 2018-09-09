@@ -7,8 +7,8 @@ GITHUB_URL='https://github.com'
 TEMP="/tmp"
 ROOT_PERM=""
 USRPREFIX="/usr/local"
-PYTHON2_VERSION="2.7.14"
-PYTHON3_VERSION="3.6.4"
+PYTHON2_VERSION="2.7.15"
+PYTHON3_VERSION="3.7.0"
 PYTHON3_MAJOR_VERSION=$(echo $PYTHON3_VERSION | cut -c 1-3)
 PIPoption="install --user --upgrade"
 RUBY_VERSION="2.5.1"
@@ -704,11 +704,13 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${python}" ] ; then
 
     # Adding pyenv path
     pathadd "$HOME/.pyenv/bin"
-	pyenv update
+    pyenv update
 
     export PYTHON_CONFIGURE_OPTS="--enable-shared"
     pyenv install -s $PYTHON2_VERSION
     pyenv install -s $PYTHON3_VERSION
+
+    pip install --upgrade pip
 
     eval "$(pyenv init -)"
     eval "$(pyenv virtualenv-init -)"
@@ -725,7 +727,6 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${python}" ] ; then
   mkdirfolder .config/torrench
   wget "https://pastebin.com/raw/reymRHSL" \
    -O "$HOME/.config/torrench/config.ini"
-
 
   # set pyenv to system
   pyenv shell $PYTHON3_VERSION
