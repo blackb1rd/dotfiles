@@ -930,7 +930,6 @@ if [ -n "${all}" ] \
     echo "${txtbld}$(tput setaf 1)[-] Install YouCompleteMe$(tput sgr0)"
     if [ $OStype = "android" ] ; then
       patch -f $PREFIX/include/c++/v1/cstdio $current_dir/patch/youcompleteme_cstdio_fix_unable_to_use_fgetpos.patch
-      patch -f $PREFIX/include/python3.6m/Python.h $current_dir/patch/youcompleteme_fix_python_crypt_lib_does_not_exist.patch
     fi
     cd "$HOME/.vim/bundle/YouCompleteMe"
     git pull
@@ -945,7 +944,6 @@ if [ -n "${all}" ] \
 
     if [ $OStype = "android" ] ; then
       patch -f -N -R $PREFIX/include/c++/v1/cstdio $current_dir/patch/youcompleteme_cstdio_fix_unable_to_use_fgetpos.patch
-      patch -f -N -R $PREFIX/include/python3.6m/Python.h $current_dir/patch/youcompleteme_fix_python_crypt_lib_does_not_exist.patch
     fi
   fi
   echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
