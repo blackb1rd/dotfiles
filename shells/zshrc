@@ -1,7 +1,10 @@
 #!/bin/zsh
 export TERM="xterm-256color"
+
 case $(uname -a) in
-  *Microsoft*) unsetopt BG_NICE ;;
+  *Microsoft*)
+    unsetopt BG_NICE
+    ;;
 esac
 
 # sources external in folder .shells
@@ -139,6 +142,12 @@ antigen apply
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ]; then
-  tmux attach || exec tmux
-fi
+case $(uname -a) in
+  *Microsoft*)
+    ;;
+  *)
+    if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ]; then
+      tmux attach || exec tmux
+    fi
+    ;;
+esac
