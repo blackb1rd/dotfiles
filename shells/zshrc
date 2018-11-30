@@ -66,8 +66,16 @@ case $(uname) in
       os_version_id="$(grep -E '^VERSION_ID="([0-9\.]*)"' /etc/os-release | cut -d '=' -f 2 | tr -d '"')"
       case "$os_release_id" in
         "ubuntu")
-          export GOROOT=/usr/lib/go-1.10/
-          pathadd "/usr/lib/go-1.10/bin"
+          case "$os_version_id" in
+            "16.04" | "18.04" | "18.10")
+              export GOROOT=/usr/lib/go-1.11/
+              pathadd "/usr/lib/go-1.11/bin"
+            ;;
+            *)
+              export GOROOT=/usr/lib/go-1.10/
+              pathadd "/usr/lib/go-1.10/bin"
+            ;;
+          esac
           ;;
         "debian")
           export GOROOT=/usr/local/go/

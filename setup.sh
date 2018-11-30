@@ -206,7 +206,9 @@ case $(uname) in
             PACKAGE="$PACKAGE
                      cmake3
                      golang-1.10-go"
-          else
+          elif [ $os_version_id = "16.04" ] ||
+               [ $os_version_id = "18.04" ] ||
+               [ $os_version_id = "18.10" ] ; then
             REPOSITORY="ppa:longsleep/golang-backports"
             PACKAGE="$PACKAGE
                      cmake
@@ -622,11 +624,11 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${golang}" ] ; then
   go get -u github.com/derekparker/delve/cmd/dlv
   go get -u github.com/go-sql-driver/mysql
   go get -u github.com/golang/dep/cmd/dep
-  go get -u github.com/gonum/gonum
-  go get -u github.com/gonum/hdf5
-  go get -u github.com/gonum/plot
   go get -u github.com/mattn/go-sqlite3
   go get -u github.com/mmcdole/gofeed
+  go get -u gonum.org/v1/gonum/...
+  go get -u gonum.org/v1/plot/...
+  go get -u gonum.org/v1/hdf5/...
   if [ $OStype != "android" ] ; then
     TF_TYPE="cpu" # Change to "gpu" for GPU support
     TARGET_DIRECTORY='/usr/local'
