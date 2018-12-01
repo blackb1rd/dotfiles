@@ -223,10 +223,10 @@ case $(uname) in
                      matplotlib
                      mycli
                      mysqlclient
-                     neovim
                      numexpr
                      numpy
                      pandas
+                     pynvim
                      tensorflow
                      torrench
                      yapf"
@@ -250,10 +250,10 @@ case $(uname) in
                      matplotlib
                      mycli
                      mysqlclient
-                     neovim
                      numexpr
                      numpy
                      pandas
+                     pynvim
                      tensorflow
                      torrench
                      yapf"
@@ -283,10 +283,10 @@ case $(uname) in
                      matplotlib
                      mycli
                      mysqlclient
-                     neovim
                      numexpr
                      numpy
                      pandas
+                     pynvim
                      tensorflow
                      torrench
                      yapf"
@@ -315,10 +315,10 @@ case $(uname) in
                      matplotlib
                      mycli
                      mysqlclient
-                     neovim
                      numexpr
                      numpy
                      pandas
+                     pynvim
                      tensorflow
                      torrench
                      yapf"
