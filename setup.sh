@@ -930,9 +930,6 @@ if [ -n "${all}" ] \
   fi
   if [ -n "${all}" ] || [ -n "${ycmd}" ] ; then
     echo "${txtbld}$(tput setaf 1)[-] Install YouCompleteMe$(tput sgr0)"
-    if [ $OStype = "android" ] ; then
-      patch -f $PREFIX/include/c++/v1/cstdio $current_dir/patch/youcompleteme_cstdio_fix_unable_to_use_fgetpos.patch
-    fi
     cd "$HOME/.vim/bundle/YouCompleteMe"
     git pull
     git submodule update --init --recursive
@@ -943,10 +940,6 @@ if [ -n "${all}" ] \
     fi
     echo $EXTRA_CMAKE_ARGS
     ./install.py --go-completer
-
-    if [ $OStype = "android" ] ; then
-      patch -f -N -R $PREFIX/include/c++/v1/cstdio $current_dir/patch/youcompleteme_cstdio_fix_unable_to_use_fgetpos.patch
-    fi
   fi
   echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
 fi
