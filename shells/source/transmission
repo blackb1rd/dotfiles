@@ -4,7 +4,8 @@ tsm-daemon-reload() { sudo service transmission-daemon reload;}
 tsm-start()         { transmission-remote -n 'transmission:transmission' -t "$1" -s;}
 tsm-stop()          { transmission-remote -n 'transmission:transmission' -t "$1" -s;}
 tsm-add()           { transmission-remote -n 'transmission:transmission' -a "$1";}
-tsm-remove()           { transmission-remote -n 'transmission:transmission' -t "$1" -r;}
+tsm-remove()        { transmission-remote -n 'transmission:transmission' -t "$1" -r;}
 tsm-list()          { transmission-remote -n 'transmission:transmission' -l;}
+tsm-info()          { transmission-remote -n 'transmission:transmission' -t "$1" -i;}
 tsm-basicstats()    { transmission-remote -n 'transmission:transmission' -st;}
 tsm-fullstats()     { transmission-remote -n 'transmission:transmission' -si;}
