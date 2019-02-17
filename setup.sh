@@ -185,7 +185,6 @@ case $(uname) in
                    libsqlite3-dev
                    libssl-dev
                    libtool
-                   libtool-bin
                    llvm
                    lynx
                    make
@@ -212,7 +211,8 @@ case $(uname) in
             REPOSITORY="ppa:longsleep/golang-backports"
             PACKAGE="$PACKAGE
                      cmake
-                     golang-go"
+                     golang-go
+                     libtool-bin"
           fi
           PIPmodule="Cython
                      SciPy
@@ -892,7 +892,7 @@ if [ -n "${all}" ] \
       make clean
       make CMAKE_BUILD_TYPE=Release
       $ROOT_PERM make install
-      cd $current_dir && rm -rf "$HOME/github/neovim/"
+      cd $current_dir && $ROOT_PERM rm -rf "$HOME/github/neovim/"
     fi
   fi
   if [ -n "${all}" ] || [ -n "${dot}" ] ; then
