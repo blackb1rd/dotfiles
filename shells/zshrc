@@ -154,8 +154,34 @@ case $(uname -a) in
   *Microsoft*)
     ;;
   *)
-    if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ]; then
-      tmux attach || exec tmux
+    # this checking will be remove soon in future
+    if [ -f "/etc/os-release" ] ; then
+      os_release_id="$(grep -E '^ID=([a-zA-Z]*)' /etc/os-release | cut -d '=' -f 2)"
+      os_version_id="$(grep -E '^VERSION_ID="([0-9\.]*)"' /etc/os-release | cut -d '=' -f 2 | tr -d '"')"
+      case "$os_release_id" in
+        "ubuntu")
+          case "$os_version_id" in
+            # There is a bug in VTE in old version causing scambling character
+            # in terminal when using TMUX
+            "14.04")
+            ;;
+            # This shall be new versoin ubuntu
+            *)
+              zsh_tmux_caller
+            ;;
+          esac
+          ;;
+        *)
+          zsh_tmux_caller
+      esac
+    else
+      zsh_tmux_caller
     fi
     ;;
 esac
+
+zsh_tmux_caller(){
+  if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ]; then
+    tmux attach || exec tmux
+  fi
+}
