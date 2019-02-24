@@ -61,7 +61,9 @@ case $(uname) in
       export EDITOR=vim
     fi
 
-    if [ -f "/etc/os-release" ] ; then
+    if [ -d "/usr/local/go/bin" ] ; then
+      pathadd "/usr/local/go/bin"
+    elif [ -f "/etc/os-release" ] ; then
       os_release_id="$(grep -E '^ID=([a-zA-Z]*)' /etc/os-release | cut -d '=' -f 2)"
       os_version_id="$(grep -E '^VERSION_ID="([0-9\.]*)"' /etc/os-release | cut -d '=' -f 2 | tr -d '"')"
       case "$os_release_id" in
