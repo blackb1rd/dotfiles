@@ -567,6 +567,10 @@ if [ -n "${all}" ] || [ -n "${dot}" ] ; then
 
   mkdirfolder .cgdb
   installfile .cgdb/cgdbrc debugger/cgdbrc
+
+  # install gdb-dashboard https://github.com/cyrus-and/gdb-dashboard
+  wget -P ~ git.io/.gdbinit
+
   echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
 fi
 
