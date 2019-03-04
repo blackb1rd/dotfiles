@@ -152,6 +152,12 @@ antigen apply
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
+zsh_tmux_caller(){
+  if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ]; then
+    tmux attach || exec tmux
+  fi
+}
+
 case $(uname -a) in
   *Microsoft*)
     ;;
@@ -181,9 +187,3 @@ case $(uname -a) in
     fi
     ;;
 esac
-
-zsh_tmux_caller(){
-  if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ]; then
-    tmux attach || exec tmux
-  fi
-}
