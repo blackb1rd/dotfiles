@@ -70,7 +70,7 @@ case $(uname) in
         "ubuntu")
           case "$os_version_id" in
             "16.04" | "18.04" | "18.10")
-              export GOROOT=/usr/lib/go-1.11/
+              export GOROOT=/usr/lib/go-1.12/
               pathadd "/usr/lib/go-1.11/bin"
             ;;
             *)
