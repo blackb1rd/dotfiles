@@ -390,6 +390,7 @@ usage() {
   echo "  -f,    --fonts      Installing fonts"
   echo "  -l,    --latest     Compiling the latest ctags and VIM version"
   echo "  -go,   --golang     Installing golang package"
+  echo "  -node, --nodejs     Installing nodejs package"
   echo "  -pl,   --perl       Installing perl package"
   echo "  -py,   --python     Installing python package"
   echo "  -rb,   --ruby       Installing ruby package"
@@ -437,6 +438,7 @@ do
     -f    | --fonts )        fonts=true;;
     -l    | --latest )       latest=true;;
     -go   | --golang )       golang=true;;
+    -node | --nodejs )       nodejs=true;;
     -pl   | --perl )         perl=true;;
     -py   | --python )       python=true;;
     -rb   | --ruby )         ruby=true;;
@@ -466,6 +468,7 @@ if [ -z "${all}" ] \
    && [ -z "${dot}" ] \
    && [ -z "${fonts}" ] \
    && [ -z "${golang}" ] \
+   && [ -z "${nodejs}" ] \
    && [ -z "${perl}" ] \
    && [ -z "${python}" ] \
    && [ -z "${ruby}" ] \
@@ -685,9 +688,10 @@ fi
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${nodejs}" ] ; then
   if [ $OStype != "android" ] ; then
-    curl -sL https://deb.nodesource.com/setup_9.x | $ROOT_PERM -E bash -
+    curl -sL https://deb.nodesource.com/setup_11.x | $ROOT_PERM -E bash -
     $PKG_CMD_INSTALL -y nodejs
     $ROOT_PERM npm install -g neovim
+    $ROOT_PERM npm install -g react-native-cli
   fi
 fi
 
