@@ -15,8 +15,16 @@ done
 
 zstyle ':completion:*:*:git:*' script $HOME/.shells/git/git-completion.zsh
 
+# Add Path
 pathadd "/sbin"
 pathadd "$HOME/.go/bin/"
+pathadd "$ANDROID_HOME/emulator"
+pathadd "$ANDROID_HOME/tools"
+pathadd "$ANDROID_HOME/tools/bin"
+pathadd "$ANDROID_HOME/platform-tools"
+
+export ANDROID_HOME=$HOME/Android/Sdk
+
 case $(uname) in
   CYGWIN_NT-* | MSYS_NT-* )
     export EDITOR=vim
