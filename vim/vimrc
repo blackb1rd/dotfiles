@@ -109,6 +109,10 @@ Plug 'hail2u/vim-css3-syntax'
 Plug 'othree/html5-syntax.vim'
 Plug 'pbrisbin/html-template-syntax'
 
+" javascript
+Plug 'pangloss/vim-javascript'
+Plug 'mxw/vim-jsx'
+
 " Theme
 Plug 'dhruvasagar/vim-railscasts-theme'
 Plug 'google/vim-colorscheme-primary'
