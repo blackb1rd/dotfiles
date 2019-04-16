@@ -134,6 +134,7 @@ case $(uname) in
                    pkg-config
                    python-dev
                    python3-dev
+                   qemu-kvm
                    ruby-dev
                    tk-dev
                    unzip
@@ -193,6 +194,7 @@ case $(uname) in
                    pkg-config
                    python-dev
                    python3-dev
+                   qemu-kvm
                    ruby-dev
                    tk-dev
                    unzip
