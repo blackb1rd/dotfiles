@@ -155,7 +155,6 @@ case $(uname) in
                      numpy
                      pandas
                      tensorflow
-                     torrench
                      yapf"
           ;;
         "ubuntu")
@@ -228,7 +227,6 @@ case $(uname) in
                      pandas
                      pynvim
                      tensorflow
-                     torrench
                      yapf"
           ;;
         "elementary")
@@ -255,7 +253,6 @@ case $(uname) in
                      pandas
                      pynvim
                      tensorflow
-                     torrench
                      yapf"
           ;;
         "coreos")
@@ -288,7 +285,6 @@ case $(uname) in
                      pandas
                      pynvim
                      tensorflow
-                     torrench
                      yapf"
           ;;
         "opensuse"|"tumbleweed")
@@ -320,7 +316,6 @@ case $(uname) in
                      pandas
                      pynvim
                      tensorflow
-                     torrench
                      yapf"
           ;;
         *)
@@ -366,7 +361,6 @@ case $(uname) in
                    numexpr
                    numpy
                    pandas
-                   torrench
                    yapf"
         TEMP=$TMPDIR
         USRPREFIX=$PREFIX
@@ -598,6 +592,7 @@ if [ -n "${all}" ] || [ "${fonts}" ] ; then
     cd "$TEMP/fonts" && ./install.sh
     cd $current_dir && rm -rf "$TEMP/fonts"
     echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
+    # "DejaVu Sans Mono Nerd Font 12"
   fi
 fi
 
@@ -689,9 +684,11 @@ fi
 if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${nodejs}" ] ; then
   if [ $OStype != "android" ] ; then
     curl -sL https://deb.nodesource.com/setup_11.x | $ROOT_PERM -E bash -
-    $PKG_CMD_INSTALL -y nodejs
-    $ROOT_PERM npm install -g neovim
-    $ROOT_PERM npm install -g react-native-cli
+    curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | $ROOT_PERM apt-key add -
+    echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+    $PKG_CMD_INSTALL -y nodejs yarn
+
+    yarn add react-native-cli neovim expo-cli
   fi
 fi
 
@@ -941,13 +938,12 @@ if [ -n "${all}" ] \
     cd "$HOME/.vim/bundle/YouCompleteMe"
     git pull
     git submodule update --init --recursive
-    #cd "$current_dir/vim/bundle/YouCompleteMe/third_party/ycmd/third_party/tern_runtime"
-    #sudo npm install --production
+    cd "$current_dir/vim/bundle/YouCompleteMe"
     if [ $OStype != "android" ] ; then
       EXTRA_CMAKE_ARGS="-DPYTHON_INCLUDE_DIR=$HOME/.pyenv/versions/$PYTHON3_VERSION/include/python${PYTHON3_MAJOR_VERSION}m -DPYTHON_LIBRARY=$HOME/.pyenv/versions/$PYTHON3_VERSION/lib/libpython${PYTHON3_MAJOR_VERSION}m.so"
     fi
     echo $EXTRA_CMAKE_ARGS
-    ./install.py --go-completer
+    python3 install.py --go-completer --ts-completer
   fi
   echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
 fi
