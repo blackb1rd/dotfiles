@@ -131,6 +131,7 @@ case $(uname) in
                    make
                    ninja-build
                    openjdk-8-jre
+                   openjdk-8-jdk
                    pkg-config
                    python-dev
                    python3-dev
@@ -191,6 +192,7 @@ case $(uname) in
                    make
                    ninja-build
                    openjdk-8-jre
+                   openjdk-8-jdk
                    pkg-config
                    python-dev
                    python3-dev
