@@ -130,6 +130,7 @@ case $(uname) in
                    lynx
                    make
                    ninja-build
+                   openjdk-8-jre
                    pkg-config
                    python-dev
                    python3-dev
@@ -188,6 +189,7 @@ case $(uname) in
                    lynx
                    make
                    ninja-build
+                   openjdk-8-jre
                    pkg-config
                    python-dev
                    python3-dev
@@ -275,6 +277,7 @@ case $(uname) in
                      SciPy
                      bottleneck
                      h5py
+                     java-1.8.0-openjdk
                      keras
                      scipy
                      matplotlib
