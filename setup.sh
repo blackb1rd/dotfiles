@@ -1,6 +1,6 @@
 #!/bin/sh
 
-. shells/source/utility
+. shells/source/utility.sh
 
 GITHUB_RAW_URL='https://raw.githubusercontent.com'
 GITHUB_URL='https://github.com'
@@ -396,6 +396,7 @@ usage() {
   echo "  -py,   --python     Installing python package"
   echo "  -rb,   --ruby       Installing ruby package"
   echo "  -rs,   --rust       Installing rust package"
+  echo "  -sh,   --shell      Installing shell"
   echo "  -nvim, --neovim     Compiling neovim"
   echo "  -tmux,  --tmux      Compiling tmux"
   echo "  -ycm,  --ycmd       Compiling YouCompleteMe"
@@ -444,6 +445,7 @@ do
     -py   | --python )       python=true;;
     -rb   | --ruby )         ruby=true;;
     -rs   | --rust )         rust=true;;
+    -sh   | --shell )        shell=true;;
     -nvim | --neovim )       neovim=true;;
     -tmux | --tmux )         tmux=true;;
     -ycm  | --ycmd )         ycmd=true;;
@@ -474,6 +476,7 @@ if [ -z "${all}" ] \
    && [ -z "${python}" ] \
    && [ -z "${ruby}" ] \
    && [ -z "${rust}" ] \
+   && [ -z "${shell}" ] \
    && [ -z "${neovim}" ] \
    && [ -z "${tmux}" ] \
    && [ -z "${ycmd}" ] \
@@ -810,12 +813,14 @@ fi
 #                            |____/|_| |_|\___|_|_|                           #
 #                                                                             #
 ###############################################################################
-if [ -n "${all}" ] || [ -n "${dot}" ] ; then
+if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${shell}" ] ; then
   echo "${txtbld}$(tput setaf 1)[-] Install the shell$(tput sgr0)"
   if [ ! -f "$HOME/.antigen.zsh" ]; then
     curl -L git.io/antigen > $HOME/.antigen.zsh
     patch ~/.antigen.zsh patch/antigen_.antigen.zsh_locatiin.patch
   fi
+
+  antigen update
 
   installfile .zshrc shells/zshrc
   installfile .bashrc shells/bashrc
@@ -832,8 +837,8 @@ if [ -n "${all}" ] || [ -n "${dot}" ] ; then
          -O "$HOME/.shells/git/git-completion.$shell"
 
 
-    installfile .shells/$shell/transmission shells/source/transmission
-    installfile .shells/$shell/utility shells/source/utility
+    installfile .shells/$shell/transmission.sh shells/source/transmission.sh
+    installfile .shells/$shell/utility.sh shells/source/utility.sh
   done
   echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
 fi
