@@ -719,6 +719,8 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${nodejs}" ] ; then
                                expo-cli         \
                                react-native-cli \
                                react            \
+                               redux            \
+                               mobx             \
                                neovim
   fi
 fi
