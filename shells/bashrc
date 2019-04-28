@@ -154,7 +154,7 @@ case $(uname) in
         source "${VIRTUAL_ENV}/bin/activate"
       fi
     fi
-    
+
     if [ -d "$HOME/.rbenv" ] ; then
       pathadd "$HOME/.rbenv/bin"
       eval "$(rbenv init -)"
