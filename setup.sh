@@ -715,11 +715,11 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${nodejs}" ] ; then
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
     $PKG_CMD_INSTALL -y nodejs yarn
 
-    yarn global add async            \
-                    expo-cli         \
-                    react-native-cli \
-                    react            \
-                    neovim
+    $ROOT_PERM yarn global add async            \
+                               expo-cli         \
+                               react-native-cli \
+                               react            \
+                               neovim
   fi
 fi
 
