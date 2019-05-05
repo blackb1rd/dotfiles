@@ -9,7 +9,7 @@ pathadd() {
 
 myupdate()
 {
-  sudo apt-get update && sudo apt-get upgrade
+  sudo apt-get update && sudo apt-get -y upgrade
   nvim +PlugInstall +qall
   nvim +PlugUpdate +qall
   antigen update
