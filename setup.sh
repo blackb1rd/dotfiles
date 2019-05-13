@@ -157,6 +157,7 @@ case $(uname) in
                      numexpr
                      numpy
                      pandas
+                     python-language-server
                      tensorflow
                      yapf"
           ;;
@@ -232,6 +233,7 @@ case $(uname) in
                      numpy
                      pandas
                      pynvim
+                     python-language-server
                      tensorflow
                      yapf"
           ;;
@@ -258,6 +260,7 @@ case $(uname) in
                      numpy
                      pandas
                      pynvim
+                     python-language-server
                      tensorflow
                      yapf"
           ;;
@@ -291,6 +294,7 @@ case $(uname) in
                      numpy
                      pandas
                      pynvim
+                     python-language-server
                      tensorflow
                      yapf"
           ;;
@@ -322,6 +326,7 @@ case $(uname) in
                      numpy
                      pandas
                      pynvim
+                     python-language-server
                      tensorflow
                      yapf"
           ;;
@@ -368,6 +373,7 @@ case $(uname) in
                    numexpr
                    numpy
                    pandas
+                   python-language-server
                    yapf"
         TEMP=$TMPDIR
         USRPREFIX=$PREFIX
