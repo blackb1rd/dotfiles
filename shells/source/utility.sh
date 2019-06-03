@@ -7,6 +7,19 @@ pathadd() {
   fi
 }
 
+githubUpdate () {
+    echo "${txtbld}$(tput setaf 1)[-] Updating $3, please wait...$(tput sgr0)"
+    CurrentDir=${PWD}
+    if [ ! -d "$2" ]; then
+      git clone "git://github.com/$1" "$2"
+    else
+      cd "$2" && git pull -v
+    fi
+    wait
+    cd $CurrentDir
+    echo "${txtbld}$(tput setaf 4)[>] $3 updated successfully!$(tput sgr0)"
+  }
+
 myupdate()
 {
   # Check argument
@@ -31,6 +44,10 @@ myupdate()
     nvim +PlugInstall +qall
     nvim +PlugUpdate +qall
     antigen update
+    githubUpdate "gpakosz/.tmux" "$HOME/.tmux" ".tmux"
+    githubUpdate "sqlmapproject/sqlmap" "$HOME/github/sqlmap" "sqlmap"
+    pip list --outdated --format=freeze | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip install -U
+    go get -u all
 
     if [ -n "${development}" ] ; then
       flutter upgrade
