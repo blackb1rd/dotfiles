@@ -41,6 +41,7 @@ myupdate()
     myupdateusage
   else
     sudo apt-get update && sudo apt-get -y upgrade
+    sudo snap refresh
     nvim +PlugInstall +qall
     nvim +PlugUpdate +qall
     antigen update

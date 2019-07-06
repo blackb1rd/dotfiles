@@ -171,11 +171,13 @@ case $(uname) in
           PACKAGE="autoconf
                    automake
                    build-essential
+                   cmake
                    curl
                    figlet
                    g++
                    gettext
                    git
+                   golang-go
                    htop
                    irssi
                    libbz2-dev
@@ -188,6 +190,7 @@ case $(uname) in
                    libsqlite3-dev
                    libssl-dev
                    libtool
+                   libtool-bin
                    llvm
                    lynx
                    make
@@ -199,6 +202,7 @@ case $(uname) in
                    python3-dev
                    qemu-kvm
                    ruby-dev
+                   snapd
                    tk-dev
                    unzip
                    wget
@@ -206,20 +210,7 @@ case $(uname) in
                    xz-utils
                    zlib1g-dev
                    zsh"
-          if [ $os_version_id = "14.04" ] ; then
-            REPOSITORY="ppa:gophers/archive"
-            PACKAGE="$PACKAGE
-                     cmake3
-                     golang-1.10-go"
-          elif [ $os_version_id = "16.04" ] ||
-               [ $os_version_id = "18.04" ] ||
-               [ $os_version_id = "18.10" ] ; then
-            REPOSITORY="ppa:longsleep/golang-backports"
-            PACKAGE="$PACKAGE
-                     cmake
-                     golang-go
-                     libtool-bin"
-          fi
+          REPOSITORY="ppa:longsleep/golang-backports"
           PIPmodule="Cython
                      SciPy
                      bottleneck
@@ -233,6 +224,7 @@ case $(uname) in
                      numpy
                      pandas
                      pynvim
+                     Pygments
                      python-language-server
                      tensorflow
                      yapf"
