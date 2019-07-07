@@ -135,7 +135,6 @@ case $(uname) in
                    libbz2-dev
                    libevent-dev
                    liblzma-dev
-                   libmysqlclient-dev
                    libncurses5-dev
                    libpcre3-dev
                    libreadline-dev
@@ -169,6 +168,7 @@ case $(uname) in
             "ubuntu")
               OStype=ubuntu
               PACKAGE="$PACKAGE
+                       libmysqlclient-dev
                        golang-go"
               REPOSITORY="ppa:longsleep/golang-backports"
               ;;
