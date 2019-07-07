@@ -94,12 +94,29 @@ case $(uname) in
     if [ -f "/etc/os-release" ] ; then
       os_release_id="$(grep -E '^ID=([a-zA-Z]*)' /etc/os-release | cut -d '=' -f 2)"
       os_version_id="$(grep -E '^VERSION_ID="([0-9\.]*)"' /etc/os-release | cut -d '=' -f 2 | tr -d '"')"
+      PIPmodule="Cython
+                 SciPy
+                 bottleneck
+                 h5py
+                 keras
+                 scipy
+                 matplotlib
+                 mycli
+                 mysqlclient
+                 numexpr
+                 numpy
+                 pandas
+                 pynvim
+                 Pygments
+                 python-language-server
+                 tensorflow
+                 yapf"
+
       case "$os_release_id" in
         "arch")
           OStype=arch
           ;;
-        "debian")
-          OStype=debian
+        "debian" | "ubuntu")
           ROOT_PERM="sudo"
           PKG_CMD_UPDATE="$ROOT_PERM apt-get update"
           PKG_CMD_INSTALL="$ROOT_PERM apt-get install -y"
@@ -113,71 +130,6 @@ case $(uname) in
                    g++
                    gettext
                    git
-                   htop
-                   irssi
-                   libbz2-dev
-                   libevent-dev
-                   liblzma-dev
-                   libmysqlclient-dev
-                   libncurses5-dev
-                   libpcre3-dev
-                   libreadline-dev
-                   libsqlite3-dev
-                   libssl-dev
-                   libtool
-                   libtool-bin
-                   llvm
-                   lynx
-                   make
-                   ninja-build
-                   openjdk-8-jre
-                   openjdk-8-jdk
-                   pkg-config
-                   python-dev
-                   python3-dev
-                   qemu-kvm
-                   ruby-dev
-                   tk-dev
-                   unzip
-                   wget
-                   xclip
-                   xz-utils
-                   zlib1g-dev
-                   zsh"
-          PIPmodule="Cython
-                     SciPy
-                     bottleneck
-                     h5py
-                     keras
-                     scipy
-                     matplotlib
-                     mycli
-                     mysqlclient
-                     neovim
-                     numexpr
-                     numpy
-                     pandas
-                     python-language-server
-                     tensorflow
-                     yapf"
-          ;;
-        "ubuntu")
-          OStype=ubuntu
-          ROOT_PERM="sudo"
-          PKG_CMD_UPDATE="$ROOT_PERM apt-get update"
-          PKG_CMD_INSTALL="$ROOT_PERM apt-get install -y"
-          PKG_CMD_REMOVE="$ROOT_PERM apt-get remove -y"
-          PKG_CMD_ADD_REPO="$ROOT_PERM add-apt-repository -y"
-          PACKAGE="autoconf
-                   automake
-                   build-essential
-                   cmake
-                   curl
-                   figlet
-                   g++
-                   gettext
-                   git
-                   golang-go
                    htop
                    irssi
                    libbz2-dev
@@ -210,24 +162,17 @@ case $(uname) in
                    xz-utils
                    zlib1g-dev
                    zsh"
-          REPOSITORY="ppa:longsleep/golang-backports"
-          PIPmodule="Cython
-                     SciPy
-                     bottleneck
-                     h5py
-                     keras
-                     scipy
-                     matplotlib
-                     mycli
-                     mysqlclient
-                     numexpr
-                     numpy
-                     pandas
-                     pynvim
-                     Pygments
-                     python-language-server
-                     tensorflow
-                     yapf"
+          case "$os_release_id" in
+            "debian")
+              OStype=debian
+              ;;
+            "ubuntu")
+              OStype=ubuntu
+              PACKAGE="$PACKAGE
+                       golang-go"
+              REPOSITORY="ppa:longsleep/golang-backports"
+              ;;
+          esac
           ;;
         "elementary")
           OStype=elementary
@@ -239,22 +184,6 @@ case $(uname) in
           PKG_CMD_INSTALL="$ROOT_PERM yum install -y"
           PKG_CMD_REMOVE="$ROOT_PERM yum remove -y"
           PACKAGE="mysql-devel"
-          PIPmodule="Cython
-                     SciPy
-                     bottleneck
-                     h5py
-                     keras
-                     scipy
-                     matplotlib
-                     mycli
-                     mysqlclient
-                     numexpr
-                     numpy
-                     pandas
-                     pynvim
-                     python-language-server
-                     tensorflow
-                     yapf"
           ;;
         "coreos")
           OStype=coreos
@@ -272,23 +201,6 @@ case $(uname) in
           PKG_CMD_INSTALL="$ROOT_PERM yum install -y"
           PKG_CMD_REMOVE="$ROOT_PERM yum remove -y"
           PACKAGE="mysql-devel"
-          PIPmodule="Cython
-                     SciPy
-                     bottleneck
-                     h5py
-                     java-1.8.0-openjdk
-                     keras
-                     scipy
-                     matplotlib
-                     mycli
-                     mysqlclient
-                     numexpr
-                     numpy
-                     pandas
-                     pynvim
-                     python-language-server
-                     tensorflow
-                     yapf"
           ;;
         "opensuse"|"tumbleweed")
           OStype=opensuse
@@ -305,22 +217,6 @@ case $(uname) in
           PKG_CMD_UPDATE="$ROOT_PERM apt-get update"
           PKG_CMD_INSTALL="$ROOT_PERM apt-get install -y"
           PKG_CMD_REMOVE="$ROOT_PERM apt-get remove -y"
-          PIPmodule="Cython
-                     SciPy
-                     bottleneck
-                     h5py
-                     keras
-                     scipy
-                     matplotlib
-                     mycli
-                     mysqlclient
-                     numexpr
-                     numpy
-                     pandas
-                     pynvim
-                     python-language-server
-                     tensorflow
-                     yapf"
           ;;
         *)
           ;;
