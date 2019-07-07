@@ -111,6 +111,7 @@ case $(uname) in
                  python-language-server
                  tensorflow
                  yapf"
+      SNAP_PACKAGE="hugo"
 
       case "$os_release_id" in
         "arch")
@@ -291,6 +292,7 @@ usage() {
   echo "  -rb,   --ruby       Installing ruby package"
   echo "  -rs,   --rust       Installing rust package"
   echo "  -sh,   --shell      Installing shell"
+  echo "  -sp,   --snap       Installing snap"
   echo "  -nvim, --neovim     Compiling neovim"
   echo "  -tmux,  --tmux      Compiling tmux"
   echo "  -ycm,  --ycmd       Compiling YouCompleteMe"
@@ -340,6 +342,7 @@ do
     -rb   | --ruby )         ruby=true;;
     -rs   | --rust )         rust=true;;
     -sh   | --shell )        shell=true;;
+    -sp   | --snap )         snap=true;;
     -nvim | --neovim )       neovim=true;;
     -tmux | --tmux )         tmux=true;;
     -ycm  | --ycmd )         ycmd=true;;
@@ -371,6 +374,7 @@ if [ -z "${all}" ] \
    && [ -z "${ruby}" ] \
    && [ -z "${rust}" ] \
    && [ -z "${shell}" ] \
+   && [ -z "${snap}" ] \
    && [ -z "${neovim}" ] \
    && [ -z "${tmux}" ] \
    && [ -z "${ycmd}" ] \
@@ -742,6 +746,22 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${shell}" ] ; then
   done
   echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
 fi
+
+###############################################################################
+#                           ____                                              #
+#                          / ___| _ __   __ _ _ __                            #
+#                          \___ \| '_ \ / _` | '_ \                           #
+#                           ___) | | | | (_| | |_) |                          #
+#                          |____/|_| |_|\__,_| .__/                           #
+#                                            |_|                              #
+#                                                                             #
+###############################################################################
+if [ -n "${all}" ] || [ -n "${snap}" ] ; then
+  echo "${txtbld}$(tput setaf 1)[-] Install the snap package$(tput sgr0)"
+  $ROOT_PERM snap install hugo
+  echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
+fi
+
 
 ###############################################################################
 #                               ____      _                                   #
