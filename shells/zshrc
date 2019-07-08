@@ -17,6 +17,7 @@ zstyle ':completion:*:*:git:*' script $HOME/.shells/git/git-completion.zsh
 
 # Add Path
 pathadd "/sbin"
+pathadd "/snap/bin"
 pathadd "$HOME/.go/bin/"
 export ANDROID_HOME=$HOME/Android/Sdk
 pathadd "$ANDROID_HOME/emulator"
