@@ -101,6 +101,7 @@ Plug 'vim-syntastic/syntastic'
 Plug 'w0rp/ale'
 
 " language
+Plug 'cespare/vim-toml'
 Plug 'chr4/nginx.vim'
 Plug 'elzr/vim-json'
 Plug 'fatih/vim-go'
