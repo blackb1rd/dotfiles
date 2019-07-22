@@ -759,7 +759,7 @@ fi
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${snap}" ] ; then
   echo "${txtbld}$(tput setaf 1)[-] Install the snap package$(tput sgr0)"
-  $ROOT_PERM snap install hugo
+  $ROOT_PERM snap install --channel=extended hugo
   echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
 fi
 
