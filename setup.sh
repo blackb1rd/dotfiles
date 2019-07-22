@@ -694,6 +694,7 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${ruby}" ] ; then
   rbenv shell $RUBY_VERSION
   rbenv global $RUBY_VERSION
   gem install neovim bundler
+  gem environment
   rbenv rehash
 fi
 
