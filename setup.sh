@@ -172,7 +172,8 @@ case $(uname) in
               PACKAGE="$PACKAGE
                        libmysqlclient-dev
                        golang-go"
-              REPOSITORY="ppa:longsleep/golang-backports"
+              REPOSITORY="ppa:longsleep/golang-backports
+                          ppa:neovim-ppa/unstable"
               ;;
           esac
           ;;
