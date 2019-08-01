@@ -122,6 +122,7 @@ case $(uname) in
           PKG_CMD_UPDATE="$ROOT_PERM apt-get update"
           PKG_CMD_INSTALL="$ROOT_PERM apt-get install -y"
           PKG_CMD_REMOVE="$ROOT_PERM apt-get remove -y"
+	  PKG_CMD_ADD_REPO="$ROOT_PERM add-apt-repository"
           PACKAGE="autoconf
                    automake
                    build-essential
