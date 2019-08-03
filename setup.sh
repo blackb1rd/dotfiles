@@ -122,6 +122,7 @@ case $(uname) in
           PKG_CMD_UPDATE="$ROOT_PERM apt-get update"
           PKG_CMD_INSTALL="$ROOT_PERM apt-get install -y"
           PKG_CMD_REMOVE="$ROOT_PERM apt-get remove -y"
+	  PKG_CMD_ADD_REPO="$ROOT_PERM add-apt-repository"
           PACKAGE="autoconf
                    automake
                    build-essential
@@ -171,7 +172,8 @@ case $(uname) in
               PACKAGE="$PACKAGE
                        libmysqlclient-dev
                        golang-go"
-              REPOSITORY="ppa:longsleep/golang-backports"
+              REPOSITORY="ppa:longsleep/golang-backports
+                          ppa:neovim-ppa/unstable"
               ;;
           esac
           ;;
@@ -694,6 +696,7 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${ruby}" ] ; then
   rbenv shell $RUBY_VERSION
   rbenv global $RUBY_VERSION
   gem install neovim bundler
+  gem environment
   rbenv rehash
 fi
 
@@ -758,7 +761,7 @@ fi
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${snap}" ] ; then
   echo "${txtbld}$(tput setaf 1)[-] Install the snap package$(tput sgr0)"
-  $ROOT_PERM snap install hugo
+  $ROOT_PERM snap install --channel=extended hugo
   echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
 fi
 

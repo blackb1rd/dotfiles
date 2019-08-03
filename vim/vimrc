@@ -65,6 +65,7 @@ Plug 'majutsushi/tagbar'
 Plug 'mbbill/undotree'
 Plug 'mhinz/vim-signify'
 Plug 'petRUShka/vim-opencl'
+Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
 Plug 'rking/ag.vim'
 Plug 'ryanoasis/vim-devicons'
 Plug 'scrooloose/nerdcommenter'

@@ -48,6 +48,9 @@ myupdate()
     githubUpdate "gpakosz/.tmux" "$HOME/.tmux" ".tmux"
     githubUpdate "sqlmapproject/sqlmap" "$HOME/github/sqlmap" "sqlmap"
     pip list --outdated --format=freeze | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip install -U
+    sudo gem install rubygems-update
+    sudo update_rubygems
+    sudo gem update --system
     go get -u all
 
     if [ -n "${development}" ] ; then
