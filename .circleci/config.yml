@@ -9,3 +9,8 @@ jobs:
       - run:
           name: Check Script
           command: shellcheck setup.sh
+workflows:
+  version: 2
+  component-lint:
+    jobs:
+      - lint
