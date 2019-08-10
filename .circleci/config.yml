@@ -8,7 +8,7 @@ jobs:
       - checkout
       - run:
           name: Check Script
-          command: shellcheck setup.sh
+          command: shellcheck *.sh
 workflows:
   version: 2
   component-lint:
