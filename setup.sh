@@ -122,16 +122,19 @@ case $(uname) in
           PKG_CMD_UPDATE="$ROOT_PERM apt-get update"
           PKG_CMD_INSTALL="$ROOT_PERM apt-get install -y"
           PKG_CMD_REMOVE="$ROOT_PERM apt-get remove -y"
-	  PKG_CMD_ADD_REPO="$ROOT_PERM add-apt-repository"
-          PACKAGE="autoconf
+          PKG_CMD_ADD_REPO="$ROOT_PERM add-apt-repository"
+          PACKAGE="apt-transport-https
+                   autoconf
                    automake
                    build-essential
+                   ca-certificates
                    cmake
                    curl
                    figlet
                    g++
                    gettext
                    git
+                   gnupg-agent
                    htop
                    irssi
                    libbz2-dev
@@ -155,6 +158,7 @@ case $(uname) in
                    python3-dev
                    qemu-kvm
                    ruby-dev
+                   software-properties-common
                    snapd
                    tk-dev
                    unzip
@@ -285,6 +289,7 @@ usage() {
   echo "  -a,    --all        Installing all setup"
   echo "  -b,    --basictool  Installing basic tool"
   echo "  -d,    --dot        Installing dotfiles"
+  echo "  -dk,   --docker     Installing docker"
   echo "  -f,    --fonts      Installing fonts"
   echo "  -l,    --latest     Compiling the latest ctags and VIM version"
   echo "  -go,   --golang     Installing golang package"
@@ -335,6 +340,7 @@ do
     -a    | --all )          all=true;;
     -b    | --basictool )    basictool=true;;
     -d    | --dot )          dot=true;;
+    -dk   | --docker )       docker=true;;
     -f    | --fonts )        fonts=true;;
     -l    | --latest )       latest=true;;
     -go   | --golang )       golang=true;;
@@ -368,6 +374,7 @@ fi
 if [ -z "${all}" ] \
    && [ -z "${basictool}" ] \
    && [ -z "${dot}" ] \
+   && [ -z "${docker}" ] \
    && [ -z "${fonts}" ] \
    && [ -z "${golang}" ] \
    && [ -z "${nodejs}" ] \
@@ -479,6 +486,25 @@ if [ -n "${all}" ] || [ -n "${dot}" ] ; then
   wget -P ~ git.io/.gdbinit
 
   echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
+fi
+
+###############################################################################
+#                        ____             _                                   #
+#                       |  _ \  ___   ___| | _____ _ __                       #
+#                       | | | |/ _ \ / __| |/ / _ \ '__|                      #
+#                       | |_| | (_) | (__|   <  __/ |                         #
+#                       |____/ \___/ \___|_|\_\___|_|                         #
+#                                                                             #
+###############################################################################
+if [ -n "${all}" ] || [ "${docker}" ] ; then
+  if [ $OStype != "android" ] ; then
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+    $ROOT_PERM add-apt-repository \
+               "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+               $(lsb_release -cs) \
+               stable"
+    $ROOT_PERM apt-get install docker-ce docker-ce-cli containerd.io
+  fi
 fi
 
 ###############################################################################
