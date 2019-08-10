@@ -1,0 +1,11 @@
+version: 2
+
+jobs:
+  lint:
+    docker:
+      - image: koalaman/shellcheck-alpine
+    steps:
+      - checkout
+      - run:
+          name: Check Script
+          command: shellcheck setup.sh
