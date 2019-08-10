@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/blackb1rd/dotfiles.svg?style=svg)](https://circleci.com/gh/blackb1rd/dotfiles)
+
 # blackb1rd's dotfiles
 
 My comprehensive repository of configured software.  After deployed, it
