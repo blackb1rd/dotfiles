@@ -1,6 +1,7 @@
 #!/bin/sh
 
-. shells/source/utility.sh
+# shellcheck disable=SC1091
+. "shells/source/utility.sh"
 
 GITHUB_RAW_URL='https://raw.githubusercontent.com'
 GITHUB_URL='https://github.com'
@@ -94,6 +95,7 @@ case $(uname) in
     if [ -f "/etc/os-release" ] ; then
       os_release_id="$(grep -E '^ID=([a-zA-Z]*)' /etc/os-release | cut -d '=' -f 2)"
       os_version_id="$(grep -E '^VERSION_ID="([0-9\.]*)"' /etc/os-release | cut -d '=' -f 2 | tr -d '"')"
+      echo "$os_version_id"
       PIPmodule="Cython
                  SciPy
                  bottleneck
@@ -112,6 +114,7 @@ case $(uname) in
                  tensorflow
                  yapf"
       SNAP_PACKAGE="hugo"
+      echo "$SNAP_PACKAGE"
 
       case "$os_release_id" in
         "arch")
@@ -364,7 +367,7 @@ done
 OStype=$(echo $OStype | awk '{print tolower($0)}')
 
 # Check the input of OStype
-if checkOStype $OStype ; then
+if checkOStype "$OStype" ; then
   echo "$OStype OS is not supported"
   echo ""
   usage
@@ -395,22 +398,23 @@ if [ -z "${all}" ] \
   exit 1
 fi
 
-if [ $OStype = "msys_nt" ] ; then
+if [ "$OStype" = "msys_nt" ] ; then
   export MSYS=winsymlinks:nativestrict
   export HOME=$USERPROFILE
 fi
 
 # Install program
 if [ -n "${all}" ] || [ -n "${basictool}" ] ; then
+  txtbld=$(tput bold)
   echo "${txtbld}$(tput setaf 1)[-] Install the basic tool$(tput sgr0)"
   if [ -n "${REPOSITORY}" ] ; then
     for repo in $REPOSITORY
     do
-      $PKG_CMD_ADD_REPO $repo
+      $PKG_CMD_ADD_REPO "$repo"
     done
   fi
   $PKG_CMD_UPDATE
-  $PKG_CMD_INSTALL $PACKAGE || { echo 'Failed to install program' ; exit 1; }
+  $PKG_CMD_INSTALL "$PACKAGE" || { echo 'Failed to install program' ; exit 1; }
 
   # if did not want to install latest version
   if [ ! "${latest}" ] && [ ! "${all}" ] ; then
@@ -433,12 +437,12 @@ if [ -n "${all}" ] || [ -n "${latest}" ] ; then
   $PKG_CMD_REMOVE silversearcher-ag
 
   # clone silversearcher-ag
-  git clone --depth 1 $GITHUB_URL/ggreer/the_silver_searcher $TEMP/the_silver_searcher
-  cd $TEMP/the_silver_searcher
+  git clone --depth 1 $GITHUB_URL/ggreer/the_silver_searcher "$TEMP/the_silver_searcher"
+  cd "$TEMP/the_silver_searcher" || exit
   ./build.sh
   make
   $ROOT_PERM make install
-  cd $current_dir && rm -rf "$TEMP/the_silver_searcher"
+  cd "$current_dir" && rm -rf "$TEMP/the_silver_searcher"
   echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
 fi
 
@@ -456,13 +460,13 @@ if [ -n "${all}" ] || [ -n "${latest}" ] ; then
   $PKG_CMD_REMOVE ctags
 
   # clone ctags
-  git clone --depth 1 $GITHUB_URL/universal-ctags/ctags $TEMP/ctags
-  cd $TEMP/ctags
+  git clone --depth 1 $GITHUB_URL/universal-ctags/ctags "$TEMP/ctags"
+  cd "$TEMP/ctags" || exit
   ./autogen.sh
-  ./configure --prefix=$USRPREFIX --enable-iconv
+  ./configure --prefix="$USRPREFIX" --enable-iconv
   make
   $ROOT_PERM make install
-  cd $current_dir && rm -rf "$TEMP/ctags"
+  cd "$current_dir" && rm -rf "$TEMP/ctags"
   echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
 fi
 
@@ -497,7 +501,7 @@ fi
 #                                                                             #
 ###############################################################################
 if [ -n "${all}" ] || [ "${docker}" ] ; then
-  if [ $OStype != "android" ] ; then
+  if [ "$OStype" != "android" ] ; then
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
     $ROOT_PERM add-apt-repository \
                "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
@@ -516,17 +520,17 @@ fi
 #                                                                             #
 ###############################################################################
 if [ -n "${all}" ] || [ "${fonts}" ] ; then
-  if [ $OStype != "android" ] ; then
+  if [ "$OStype" != "android" ] ; then
     echo "${txtbld}$(tput setaf 1)[-] Install the fonts$(tput sgr0)"
     # Install power line fonts
     git clone --depth 1 $GITHUB_URL/powerline/fonts.git "$TEMP/fonts"
     cd "$TEMP/fonts" && ./install.sh
-    cd $current_dir && rm -rf "$TEMP/fonts"
+    cd "$current_dir" && rm -rf "$TEMP/fonts"
 
     # Install nerd fonts
     git clone --depth 1 $GITHUB_URL/ryanoasis/nerd-fonts "$TEMP/fonts"
     cd "$TEMP/fonts" && ./install.sh
-    cd $current_dir && rm -rf "$TEMP/fonts"
+    cd "$current_dir" && rm -rf "$TEMP/fonts"
     echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
     # "DejaVu Sans Mono Nerd Font 12"
   fi
@@ -541,10 +545,10 @@ fi
 #                                                                              #
 ################################################################################
 if [ -n "${all}" ] || [ "${fonts}" ] ; then
-  if [ $OStype != "android" ] ; then
+  if [ "$OStype" != "android" ] ; then
     echo "${txtbld}$(tput setaf 1)[-] Install the Fzf$(tput sgr0)"
     git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-    $HOME/.fzf/install
+    "$HOME/.fzf/install"
     echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
   fi
 fi
@@ -584,7 +588,7 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${golang}" ] ; then
   go get -u gonum.org/v1/gonum/...
   go get -u gonum.org/v1/plot/...
   go get -u gonum.org/v1/hdf5/...
-  if [ $OStype != "android" ] ; then
+  if [ "$OStype" != "android" ] ; then
     TF_TYPE="cpu" # Change to "gpu" for GPU support
     TARGET_DIRECTORY='/usr/local'
     curl -L \
@@ -635,7 +639,7 @@ fi
 #                                                                             #
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${nodejs}" ] ; then
-  if [ $OStype != "android" ] ; then
+  if [ "$OStype" != "android" ] ; then
     curl -sL https://deb.nodesource.com/setup_11.x | $ROOT_PERM -E bash -
     curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | $ROOT_PERM apt-key add -
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
@@ -664,7 +668,7 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${python}" ] ; then
   echo "${txtbld}$(tput setaf 1)[-] Install the python$(tput sgr0)"
   installfile .pythonrc python/pythonrc
 
-  if [ $OStype != "android" ] ; then
+  if [ "$OStype" != "android" ] ; then
     # install pyenv
     curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash
 
@@ -683,12 +687,12 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${python}" ] ; then
 
     pyenv activate neovim2
     pip install --upgrade pip
-    pip $PIPoption $PIPmodule
+    pip "$PIPoption" "$PIPmodule"
 
     pyenv activate neovim3
   fi
   pip install --upgrade pip
-  pip $PIPoption $PIPmodule
+  pip "$PIPoption" "$PIPmodule"
 
   mkdirfolder .config/torrench
   wget "https://pastebin.com/raw/reymRHSL" \
@@ -710,9 +714,9 @@ fi
 #                                                                             #
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${ruby}" ] ; then
-  git clone $GITHUB_URL/rbenv/rbenv $HOME/.rbenv
-  cd $HOME/.rbenv && src/configure && make -C src
-  cd $current_dir
+  git clone "$GITHUB_URL/rbenv/rbenv" "$HOME/.rbenv"
+  cd "$HOME/.rbenv" && src/configure && make -C src
+  cd "$current_dir" || exit
   pathadd "$HOME/.rbenv/bin"
   curl -fsSL $GITHUB_URL/rbenv/rbenv-installer/raw/master/bin/rbenv-doctor | bash
   mkdir -p "$(rbenv root)"/plugins
@@ -749,7 +753,7 @@ fi
 if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${shell}" ] ; then
   echo "${txtbld}$(tput setaf 1)[-] Install the shell$(tput sgr0)"
   if [ ! -f "$HOME/.antigen.zsh" ]; then
-    curl -L git.io/antigen > $HOME/.antigen.zsh
+    curl -L git.io/antigen > "$HOME/.antigen.zsh"
     patch ~/.antigen.zsh patch/antigen_.antigen.zsh_locatiin.patch
   fi
 
@@ -820,21 +824,21 @@ fi
 if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${tmux}" ] ; then
   echo "${txtbld}$(tput setaf 1)[-] Install the tmux$(tput sgr0)"
   if [ ! -d "$HOME/.tmux" ] ; then
-    git clone $GITHUB_URL/gpakosz/.tmux.git $HOME/.tmux
+    git clone "$GITHUB_URL/gpakosz/.tmux.git" "$HOME/.tmux"
   else
     git -C "$HOME/.tmux" pull
   fi
 
   if [ -n "${all}" ] || [ -n "${latest}" ] || [ -n "${tmux}" ] ; then
-    if [ $OStype != "android" ] ; then
+    if [ "$OStype" != "android" ] ; then
       # clone tmux
-      git clone --depth 1 $GITHUB_URL/tmux/tmux $TEMP/tmux
-      cd $TEMP/tmux
+      git clone --depth 1 "$GITHUB_URL/tmux/tmux" "$TEMP/tmux"
+      cd "$TEMP/tmux" || exit
       sh autogen.sh
-      ./configure --prefix=$USRPREFIX
+      ./configure --prefix="$USRPREFIX"
       make
       $ROOT_PERM make install
-      cd $current_dir && rm -rf "$TEMP/tmux"
+      cd "$current_dir" && rm -rf "$TEMP/tmux"
     fi
   fi
 
@@ -858,7 +862,7 @@ if [ -n "${all}" ] \
    || [ -n "${dot}" ] ; then
   echo "${txtbld}$(tput setaf 1)[-] Install the vim$(tput sgr0)"
   if [ -n "${all}" ] || [ -n "${latest}" ] || [ -n "${neovim}" ] ; then
-    if [ $OStype != "android" ] ; then
+    if [ "$OStype" != "android" ] ; then
       # Install latest vim version
       $PKG_CMD_REMOVE vim
 
@@ -870,12 +874,12 @@ if [ -n "${all}" ] \
         git -C "$HOME/github/neovim/" pull
       fi
 
-      cd "$HOME/github/neovim/"
+      cd "$HOME/github/neovim/" || exit
       rm -rf build
       make clean
       make CMAKE_BUILD_TYPE=Release
       $ROOT_PERM make install
-      cd $current_dir && $ROOT_PERM rm -rf "$HOME/github/neovim/"
+      cd "$current_dir" && $ROOT_PERM rm -rf "$HOME/github/neovim/"
     fi
   fi
   if [ -n "${all}" ] || [ -n "${dot}" ] ; then
@@ -913,14 +917,14 @@ if [ -n "${all}" ] \
   fi
   if [ -n "${all}" ] || [ -n "${ycmd}" ] ; then
     echo "${txtbld}$(tput setaf 1)[-] Install YouCompleteMe$(tput sgr0)"
-    cd "$HOME/.vim/bundle/YouCompleteMe"
+    cd "$HOME/.vim/bundle/YouCompleteMe" || exit
     git pull
     git submodule update --init --recursive
-    cd "$current_dir/vim/bundle/YouCompleteMe"
-    if [ $OStype != "android" ] ; then
+    cd "$current_dir/vim/bundle/YouCompleteMe" || exit
+    if [ "$OStype" != "android" ] ; then
       EXTRA_CMAKE_ARGS="-DPYTHON_INCLUDE_DIR=$HOME/.pyenv/versions/$PYTHON3_VERSION/include/python${PYTHON3_MAJOR_VERSION}m -DPYTHON_LIBRARY=$HOME/.pyenv/versions/$PYTHON3_VERSION/lib/libpython${PYTHON3_MAJOR_VERSION}m.so"
     fi
-    echo $EXTRA_CMAKE_ARGS
+    echo "$EXTRA_CMAKE_ARGS"
     python3 install.py --go-completer --ts-completer
   fi
   echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
