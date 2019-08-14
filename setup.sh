@@ -8,7 +8,6 @@ GITHUB_URL='https://github.com'
 TEMP="/tmp"
 ROOT_PERM=""
 USRPREFIX="/usr/local"
-PYTHON2_VERSION="2.7.15"
 PYTHON3_VERSION="3.7.2"
 PYTHON3_MAJOR_VERSION=$(echo $PYTHON3_VERSION | cut -c 1-3)
 PIPoption="install --user --upgrade"
@@ -53,7 +52,6 @@ case $(uname) in
              mingw-w64-i686-pcre
              mingw-w64-i686-perl
              mingw-w64-i686-pkg-config
-             mingw-w64-i686-python2
              mingw-w64-i686-unibilium
              mingw-w64-i686-xz
              mingw-w64-x86_64-cmake
@@ -67,11 +65,9 @@ case $(uname) in
              mingw-w64-x86_64-pcre
              mingw-w64-x86_64-perl
              mingw-w64-x86_64-pkg-config
-             mingw-w64-x86_64-python2
              mingw-w64-x86_64-unibilium
              mingw-w64-x86_64-xz
              pkg-config
-             python2
              python3
              ruby
              unzip
@@ -157,7 +153,6 @@ case $(uname) in
                    openjdk-8-jre
                    openjdk-8-jdk
                    pkg-config
-                   python-dev
                    python3-dev
                    qemu-kvm
                    ruby-dev
@@ -677,12 +672,10 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${python}" ] ; then
     pyenv update
 
     export PYTHON_CONFIGURE_OPTS="--enable-shared"
-    pyenv install -s $PYTHON2_VERSION
     pyenv install -s $PYTHON3_VERSION
 
     eval "$(pyenv init -)"
     eval "$(pyenv virtualenv-init -)"
-    pyenv virtualenv $PYTHON2_VERSION neovim2
     pyenv virtualenv $PYTHON3_VERSION neovim3
 
     pyenv activate neovim2
