@@ -91,6 +91,7 @@ case $(uname) in
     if [ -f "/etc/os-release" ] ; then
       os_release_id="$(grep -E '^ID=([a-zA-Z]*)' /etc/os-release | cut -d '=' -f 2)"
       os_version_id="$(grep -E '^VERSION_ID="([0-9\.]*)"' /etc/os-release | cut -d '=' -f 2 | tr -d '"')"
+      is_wsl="$(uname -a | grep -E 'Microsoft')"
       echo "$os_version_id"
       PIPmodule="Cython
                  SciPy
@@ -109,8 +110,13 @@ case $(uname) in
                  python-language-server
                  tensorflow
                  yapf"
-      SNAP_PACKAGE="hugo"
-      echo "$SNAP_PACKAGE"
+      if [ -n "${is_wsl}" ] ; then
+        SCOOP_PACKAGE="hugo-extended"
+        echo "Scoop package : $SCOOP_PACKAGE"
+      else
+        SNAP_PACKAGE="hugo"
+        echo "Snap package : $SNAP_PACKAGE"
+      fi
 
       case "$os_release_id" in
         "arch")
@@ -297,6 +303,7 @@ usage() {
   echo "  -rb,   --ruby       Installing ruby package"
   echo "  -rs,   --rust       Installing rust package"
   echo "  -sh,   --shell      Installing shell"
+  echo "  -sc,   --scoop      Installing scoop"
   echo "  -sp,   --snap       Installing snap"
   echo "  -nvim, --neovim     Compiling neovim"
   echo "  -tmux,  --tmux      Compiling tmux"
@@ -348,6 +355,7 @@ do
     -rb   | --ruby )         ruby=true;;
     -rs   | --rust )         rust=true;;
     -sh   | --shell )        shell=true;;
+    -sc   | --scoop )        scoop=true;;
     -sp   | --snap )         snap=true;;
     -nvim | --neovim )       neovim=true;;
     -tmux | --tmux )         tmux=true;;
@@ -381,6 +389,7 @@ if [ -z "${all}" ] \
    && [ -z "${ruby}" ] \
    && [ -z "${rust}" ] \
    && [ -z "${shell}" ] \
+   && [ -z "${scoop}" ] \
    && [ -z "${snap}" ] \
    && [ -z "${neovim}" ] \
    && [ -z "${tmux}" ] \
@@ -774,6 +783,21 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${shell}" ] ; then
 fi
 
 ###############################################################################
+#                         ____                                                #
+#                        / ___|  ___ ___   ___  _ __                          #
+#                        \___ \ / __/ _ \ / _ \| '_ \                         #
+#                         ___) | (_| (_) | (_) | |_) |                        #
+#                        |____/ \___\___/ \___/| .__/                         #
+#                                              |_|                            #
+#                                                                             #
+###############################################################################
+if [ -n "${is_wsl}" ] && [ -n "${all}" ] || [ -n "${scoop}" ] ; then
+  echo "${txtbld}$(tput setaf 1)[-] Install the snap package$(tput sgr0)"
+  scoop install $SCOOP_PACKAGE
+  echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
+fi
+
+###############################################################################
 #                           ____                                              #
 #                          / ___| _ __   __ _ _ __                            #
 #                          \___ \| '_ \ / _` | '_ \                           #
@@ -782,9 +806,9 @@ fi
 #                                            |_|                              #
 #                                                                             #
 ###############################################################################
-if [ -n "${all}" ] || [ -n "${snap}" ] ; then
+if [ -z ${is_wsl} ] && [ -n "${all}" ] || [ -n "${snap}" ] ; then
   echo "${txtbld}$(tput setaf 1)[-] Install the snap package$(tput sgr0)"
-  $ROOT_PERM snap install --channel=extended hugo
+  $ROOT_PERM snap install --channel=extended $SNAP_PACKAGE
   echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
 fi
 
