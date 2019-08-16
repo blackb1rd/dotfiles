@@ -92,7 +92,7 @@ case $(uname) in
       os_release_id="$(grep -E '^ID=([a-zA-Z]*)' /etc/os-release | cut -d '=' -f 2)"
       os_version_id="$(grep -E '^VERSION_ID="([0-9\.]*)"' /etc/os-release | cut -d '=' -f 2 | tr -d '"')"
       is_wsl="$(uname -a | grep -E 'Microsoft')"
-      echo "$os_version_id"
+      echo "os version : $os_version_id"
       PIPmodule="Cython
                  SciPy
                  bottleneck
@@ -806,7 +806,7 @@ fi
 #                                            |_|                              #
 #                                                                             #
 ###############################################################################
-if [ -z ${is_wsl} ] && [ -n "${all}" ] || [ -n "${snap}" ] ; then
+if [ -z "${is_wsl}" ] && [ -n "${all}" ] || [ -n "${snap}" ] ; then
   echo "${txtbld}$(tput setaf 1)[-] Install the snap package$(tput sgr0)"
   $ROOT_PERM snap install --channel=extended $SNAP_PACKAGE
   echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
