@@ -687,10 +687,6 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${python}" ] ; then
     eval "$(pyenv virtualenv-init -)"
     pyenv virtualenv $PYTHON3_VERSION neovim3
 
-    pyenv activate neovim2
-    pip install --upgrade pip
-    pip "$PIPoption" "$PIPmodule"
-
     pyenv activate neovim3
   fi
   pip install --upgrade pip
