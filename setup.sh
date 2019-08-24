@@ -8,7 +8,7 @@ GITHUB_URL='https://github.com'
 TEMP="/tmp"
 ROOT_PERM=""
 USRPREFIX="/usr/local"
-PYTHON3_VERSION="3.7.2"
+PYTHON3_VERSION="3.7.4"
 PYTHON3_MAJOR_VERSION=$(echo $PYTHON3_VERSION | cut -c 1-3)
 PIPoption="install --user --upgrade"
 RUBY_VERSION="2.6.3"
@@ -181,7 +181,8 @@ case $(uname) in
                        libmysqlclient-dev
                        golang-go"
               REPOSITORY="ppa:longsleep/golang-backports
-                          ppa:neovim-ppa/unstable"
+                          ppa:neovim-ppa/unstable
+                          deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
               ;;
           esac
           ;;
@@ -410,6 +411,12 @@ fi
 # Install program
 if [ -n "${all}" ] || [ -n "${basictool}" ] ; then
   txtbld=$(tput bold)
+  if [ "$OStype" != "android" ] ; then
+    echo "${txtbld}$(tput setaf 1)[-] Install the GPG key$(tput sgr0)"
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+    curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | $ROOT_PERM apt-key add -
+  fi
+
   echo "${txtbld}$(tput setaf 1)[-] Install the basic tool$(tput sgr0)"
   if [ -n "${REPOSITORY}" ] ; then
     for repo in $REPOSITORY
@@ -506,11 +513,6 @@ fi
 ###############################################################################
 if [ -n "${all}" ] || [ "${docker}" ] ; then
   if [ "$OStype" != "android" ] ; then
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-    $ROOT_PERM add-apt-repository \
-               "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
-               $(lsb_release -cs) \
-               stable"
     $ROOT_PERM apt-get install docker-ce docker-ce-cli containerd.io
   fi
 fi
@@ -645,7 +647,6 @@ fi
 if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${nodejs}" ] ; then
   if [ "$OStype" != "android" ] ; then
     curl -sL https://deb.nodesource.com/setup_11.x | $ROOT_PERM -E bash -
-    curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | $ROOT_PERM apt-key add -
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
     $PKG_CMD_INSTALL -y nodejs yarn
 
@@ -686,10 +687,6 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${python}" ] ; then
     eval "$(pyenv init -)"
     eval "$(pyenv virtualenv-init -)"
     pyenv virtualenv $PYTHON3_VERSION neovim3
-
-    pyenv activate neovim2
-    pip install --upgrade pip
-    pip "$PIPoption" "$PIPmodule"
 
     pyenv activate neovim3
   fi
