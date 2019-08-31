@@ -435,6 +435,44 @@ if [ -n "${all}" ] || [ -n "${basictool}" ] ; then
 fi
 
 ###############################################################################
+#                             ____  _          _ _                            #
+#                            / ___|| |__   ___| | |                           #
+#                            \___ \| '_ \ / _ \ | |                           #
+#                             ___) | | | |  __/ | |                           #
+#                            |____/|_| |_|\___|_|_|                           #
+#                                                                             #
+###############################################################################
+if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${shell}" ] ; then
+  echo "${txtbld}$(tput setaf 1)[-] Install the shell$(tput sgr0)"
+  if [ ! -f "$HOME/.antigen.zsh" ]; then
+    curl -L git.io/antigen > "$HOME/.antigen.zsh"
+    patch ~/.antigen.zsh patch/antigen_.antigen.zsh_locatiin.patch
+  fi
+
+  antigen update
+
+  installfile .zshrc shells/zshrc
+  installfile .bashrc shells/bashrc
+
+  # source external programs
+  mkdirfolder .shells
+  mkdirfolder .shells/git
+
+  for shell in bash zsh
+  do
+    mkdirfolder .shells/$shell
+
+    wget "$GITHUB_RAW_URL/git/git/master/contrib/completion/git-completion.$shell" \
+         -O "$HOME/.shells/git/git-completion.$shell"
+
+
+    installfile .shells/$shell/transmission.sh shells/source/transmission.sh
+    installfile .shells/$shell/utility.sh shells/source/utility.sh
+  done
+  echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
+fi
+
+###############################################################################
 #                                    _                                        #
 #                                   / \   __ _                                #
 #                                  / _ \ / _` |                               #
@@ -739,44 +777,6 @@ fi
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${rust}" ] ; then
   curl https://sh.rustup.rs -sSf | sh
-fi
-
-###############################################################################
-#                             ____  _          _ _                            #
-#                            / ___|| |__   ___| | |                           #
-#                            \___ \| '_ \ / _ \ | |                           #
-#                             ___) | | | |  __/ | |                           #
-#                            |____/|_| |_|\___|_|_|                           #
-#                                                                             #
-###############################################################################
-if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${shell}" ] ; then
-  echo "${txtbld}$(tput setaf 1)[-] Install the shell$(tput sgr0)"
-  if [ ! -f "$HOME/.antigen.zsh" ]; then
-    curl -L git.io/antigen > "$HOME/.antigen.zsh"
-    patch ~/.antigen.zsh patch/antigen_.antigen.zsh_locatiin.patch
-  fi
-
-  antigen update
-
-  installfile .zshrc shells/zshrc
-  installfile .bashrc shells/bashrc
-
-  # source external programs
-  mkdirfolder .shells
-  mkdirfolder .shells/git
-
-  for shell in bash zsh
-  do
-    mkdirfolder .shells/$shell
-
-    wget "$GITHUB_RAW_URL/git/git/master/contrib/completion/git-completion.$shell" \
-         -O "$HOME/.shells/git/git-completion.$shell"
-
-
-    installfile .shells/$shell/transmission.sh shells/source/transmission.sh
-    installfile .shells/$shell/utility.sh shells/source/utility.sh
-  done
-  echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
 fi
 
 ###############################################################################
