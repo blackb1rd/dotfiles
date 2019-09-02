@@ -164,6 +164,7 @@ case $(uname) in
                    ruby-dev
                    software-properties-common
                    snapd
+                   sqlite3
                    tk-dev
                    unzip
                    wget
@@ -179,7 +180,9 @@ case $(uname) in
               OStype=ubuntu
               PACKAGE="$PACKAGE
                        libmysqlclient-dev
-                       golang-go"
+                       golang-go
+                       nmap
+                       zenmap"
               REPOSITORY="ppa:longsleep/golang-backports
                           ppa:neovim-ppa/unstable
                           deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
