@@ -111,7 +111,6 @@ case $(uname) in
                  sciPy
                  tensorflow
                  yapf"
-      echo "PIP module : $PIPmodule"
       if [ -n "${is_wsl}" ] ; then
         SCOOP_PACKAGE="hugo-extended"
         echo "Scoop package : $SCOOP_PACKAGE"
@@ -937,12 +936,11 @@ if [ -n "${all}" ] \
     cd "$HOME/.vim/bundle/YouCompleteMe" || exit
     git pull
     git submodule update --init --recursive
-    cd "$current_dir/vim/bundle/YouCompleteMe" || exit
     if [ "$OStype" != "android" ] ; then
       EXTRA_CMAKE_ARGS="-DPYTHON_INCLUDE_DIR=$HOME/.pyenv/versions/$PYTHON3_VERSION/include/python${PYTHON3_MAJOR_VERSION}m -DPYTHON_LIBRARY=$HOME/.pyenv/versions/$PYTHON3_VERSION/lib/libpython${PYTHON3_MAJOR_VERSION}m.so"
     fi
     echo "$EXTRA_CMAKE_ARGS"
-    python3 install.py --go-completer --ts-completer
+    python3 install.py --go-completer
   fi
   echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
 fi
