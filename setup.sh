@@ -94,12 +94,11 @@ case $(uname) in
       os_version_id="$(grep -E '^VERSION_ID="([0-9\.]*)"' /etc/os-release | cut -d '=' -f 2 | tr -d '"')"
       is_wsl="$(uname -a | grep -E 'Microsoft')"
       echo "os version : $os_version_id"
-      PIPmodule="Cython
-                 SciPy
-                 bottleneck
+      PIPmodule="bottleneck
+                 Cython
                  h5py
+                 jedi
                  keras
-                 scipy
                  matplotlib
                  mycli
                  mysqlclient
@@ -109,8 +108,10 @@ case $(uname) in
                  pynvim
                  Pygments
                  python-language-server
+                 sciPy
                  tensorflow
                  yapf"
+      echo "PIP module : $PIPmodule"
       if [ -n "${is_wsl}" ] ; then
         SCOOP_PACKAGE="hugo-extended"
         echo "Scoop package : $SCOOP_PACKAGE"
@@ -429,7 +430,8 @@ if [ -n "${all}" ] || [ -n "${basictool}" ] ; then
     done
   fi
   $PKG_CMD_UPDATE
-  $PKG_CMD_INSTALL "$PACKAGE" || { echo 'Failed to install program' ; exit 1; }
+  # shellcheck disable=SC2086
+  $PKG_CMD_INSTALL $PACKAGE || { echo 'Failed to install program' ; exit 1; }
 
   # if did not want to install latest version
   if [ ! "${latest}" ] && [ ! "${all}" ] ; then
@@ -729,15 +731,12 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${python}" ] ; then
     eval "$(pyenv init -)"
     eval "$(pyenv virtualenv-init -)"
     pyenv virtualenv $PYTHON3_VERSION neovim3
-
     pyenv activate neovim3
   fi
-  pip install --upgrade pip
-  pip "$PIPoption" "$PIPmodule"
 
-  mkdirfolder .config/torrench
-  wget "https://pastebin.com/raw/reymRHSL" \
-   -O "$HOME/.config/torrench/config.ini"
+  pip install --upgrade pip
+  # shellcheck disable=SC2086
+  pip $PIPoption $PIPmodule
 
   # set pyenv to system
   pyenv shell $PYTHON3_VERSION
