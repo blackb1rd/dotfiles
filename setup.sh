@@ -12,6 +12,7 @@ PYTHON3_VERSION="3.7.4"
 PYTHON3_MAJOR_VERSION=$(echo $PYTHON3_VERSION | cut -c 1-3)
 PIPoption="install --user --upgrade"
 RUBY_VERSION="2.6.3"
+TENSORFLOW_VERSION="1.14.0"
 
 case $(uname) in
   Darwin)
@@ -639,7 +640,7 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${golang}" ] ; then
     TF_TYPE="cpu" # Change to "gpu" for GPU support
     TARGET_DIRECTORY='/usr/local'
     curl -L \
-      "https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-${TF_TYPE}-$(go env GOOS)-x86_64-1.7.0-rc1.tar.gz" |
+      "https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-${TF_TYPE}-$(go env GOOS)-x86_64-${TENSORFLOW_VERSION}.tar.gz" |
     $ROOT_PERM tar -C $TARGET_DIRECTORY -xz
     $ROOT_PERM ldconfig
     go get -u github.com/tensorflow/tensorflow/tensorflow/go
