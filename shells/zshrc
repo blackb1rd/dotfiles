@@ -90,8 +90,10 @@ case $(uname) in
           esac
           ;;
         "debian")
-          export GOROOT=/usr/local/go/
-          pathadd "/usr/local/go/bin"
+          if [ -d "/usr/local/go" ] ; then
+            export GOROOT=/usr/local/go/
+            pathadd "/usr/local/go/bin"
+          fi
       esac
     fi
     ;;
