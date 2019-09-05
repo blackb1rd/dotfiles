@@ -12,6 +12,7 @@ PYTHON3_VERSION="3.7.4"
 PYTHON3_MAJOR_VERSION=$(echo $PYTHON3_VERSION | cut -c 1-3)
 PIPoption="install --user --upgrade"
 RUBY_VERSION="2.6.3"
+TENSORFLOW_VERSION="1.14.0"
 
 case $(uname) in
   Darwin)
@@ -93,12 +94,11 @@ case $(uname) in
       os_version_id="$(grep -E '^VERSION_ID="([0-9\.]*)"' /etc/os-release | cut -d '=' -f 2 | tr -d '"')"
       is_wsl="$(uname -a | grep -E 'Microsoft')"
       echo "os version : $os_version_id"
-      PIPmodule="Cython
-                 SciPy
-                 bottleneck
+      PIPmodule="bottleneck
+                 Cython
                  h5py
+                 jedi
                  keras
-                 scipy
                  matplotlib
                  mycli
                  mysqlclient
@@ -108,6 +108,7 @@ case $(uname) in
                  pynvim
                  Pygments
                  python-language-server
+                 sciPy
                  tensorflow
                  yapf"
       if [ -n "${is_wsl}" ] ; then
@@ -164,6 +165,7 @@ case $(uname) in
                    ruby-dev
                    software-properties-common
                    snapd
+                   sqlite3
                    tk-dev
                    unzip
                    wget
@@ -179,7 +181,9 @@ case $(uname) in
               OStype=ubuntu
               PACKAGE="$PACKAGE
                        libmysqlclient-dev
-                       golang-go"
+                       golang-go
+                       nmap
+                       zenmap"
               REPOSITORY="ppa:longsleep/golang-backports
                           ppa:neovim-ppa/unstable
                           deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
@@ -425,7 +429,8 @@ if [ -n "${all}" ] || [ -n "${basictool}" ] ; then
     done
   fi
   $PKG_CMD_UPDATE
-  $PKG_CMD_INSTALL "$PACKAGE" || { echo 'Failed to install program' ; exit 1; }
+  # shellcheck disable=SC2086
+  $PKG_CMD_INSTALL $PACKAGE || { echo 'Failed to install program' ; exit 1; }
 
   # if did not want to install latest version
   if [ ! "${latest}" ] && [ ! "${all}" ] ; then
@@ -636,7 +641,7 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${golang}" ] ; then
     TF_TYPE="cpu" # Change to "gpu" for GPU support
     TARGET_DIRECTORY='/usr/local'
     curl -L \
-      "https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-${TF_TYPE}-$(go env GOOS)-x86_64-1.7.0-rc1.tar.gz" |
+      "https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-${TF_TYPE}-$(go env GOOS)-x86_64-${TENSORFLOW_VERSION}.tar.gz" |
     $ROOT_PERM tar -C $TARGET_DIRECTORY -xz
     $ROOT_PERM ldconfig
     go get -u github.com/tensorflow/tensorflow/tensorflow/go
@@ -725,15 +730,12 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${python}" ] ; then
     eval "$(pyenv init -)"
     eval "$(pyenv virtualenv-init -)"
     pyenv virtualenv $PYTHON3_VERSION neovim3
-
     pyenv activate neovim3
   fi
-  pip install --upgrade pip
-  pip "$PIPoption" "$PIPmodule"
 
-  mkdirfolder .config/torrench
-  wget "https://pastebin.com/raw/reymRHSL" \
-   -O "$HOME/.config/torrench/config.ini"
+  pip install --upgrade pip
+  # shellcheck disable=SC2086
+  pip $PIPoption $PIPmodule
 
   # set pyenv to system
   pyenv shell $PYTHON3_VERSION
@@ -934,12 +936,11 @@ if [ -n "${all}" ] \
     cd "$HOME/.vim/bundle/YouCompleteMe" || exit
     git pull
     git submodule update --init --recursive
-    cd "$current_dir/vim/bundle/YouCompleteMe" || exit
     if [ "$OStype" != "android" ] ; then
       EXTRA_CMAKE_ARGS="-DPYTHON_INCLUDE_DIR=$HOME/.pyenv/versions/$PYTHON3_VERSION/include/python${PYTHON3_MAJOR_VERSION}m -DPYTHON_LIBRARY=$HOME/.pyenv/versions/$PYTHON3_VERSION/lib/libpython${PYTHON3_MAJOR_VERSION}m.so"
     fi
     echo "$EXTRA_CMAKE_ARGS"
-    python3 install.py --go-completer --ts-completer
+    python3 install.py --go-completer
   fi
   echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
 fi

@@ -34,6 +34,7 @@
 	d  = difftool
 	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
 	purr = pull --rebase
+	p = push origin master
 	st = status -sb
 	sub = submodule
 	subpull = submodule -q foreach git pull -q origin master --verbose
