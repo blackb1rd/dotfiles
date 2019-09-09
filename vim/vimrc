@@ -23,6 +23,11 @@ elseif has("win64") || has("win32")
     set rtp+=$HOME/.vim
 endif
 
+if has('nvim')
+    let g:loaded_python_provider = 0
+    let g:python3_host_prog = '/home/r4v3n/.pyenv/versions/neovim3/bin/python3'
+endif
+
 function! BuildComposerVimMarkdown(info)
     if a:info.status != 'unchanged' || a:info.force
         if has('nvim')
