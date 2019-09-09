@@ -185,7 +185,7 @@ case $(uname) in
                        nmap
                        zenmap"
               REPOSITORY="ppa:longsleep/golang-backports
-                          ppa:neovim-ppa/unstable
+                          ppa:neovim-ppa/stable
                           deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
               ;;
           esac
@@ -729,8 +729,8 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${python}" ] ; then
 
     eval "$(pyenv init -)"
     eval "$(pyenv virtualenv-init -)"
-    pyenv virtualenv $PYTHON3_VERSION neovim3
-    pyenv activate neovim3
+    pyenv virtualenv $PYTHON3_VERSION py3nvim
+    pyenv activate py3nvim
   fi
 
   pip install --upgrade pip
