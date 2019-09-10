@@ -689,7 +689,7 @@ fi
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${nodejs}" ] ; then
   if [ "$OStype" != "android" ] ; then
-    curl -sL https://deb.nodesource.com/setup_11.x | $ROOT_PERM -E bash -
+    curl -sL https://deb.nodesource.com/setup_12.x | $ROOT_PERM -E bash -
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
     $PKG_CMD_INSTALL -y nodejs yarn
 
