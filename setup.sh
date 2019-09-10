@@ -630,6 +630,7 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${golang}" ] ; then
   go get -u github.com/beevik/ntp
   go get -u github.com/cenkalti/backoff
   go get -u github.com/derekparker/delve/cmd/dlv
+  go get -u github.com/FiloSottile/mkcert
   go get -u github.com/go-sql-driver/mysql
   go get -u github.com/golang/dep/cmd/dep
   go get -u github.com/mattn/go-sqlite3
