@@ -879,7 +879,7 @@ if [ -n "${all}" ] \
    || [ -n "${dot}" ] ; then
   echo "${txtbld}$(tput setaf 1)[-] Install the vim$(tput sgr0)"
   if [ -n "${all}" ] || [ -n "${latest}" ] || [ -n "${neovim}" ] ; then
-    if [ "$OStype" != "android" ] ; then
+    if [ "$OStype" != "android" ] && [ -n "${latest}" ] ; then
       # Install latest vim version
       $PKG_CMD_REMOVE vim
 
