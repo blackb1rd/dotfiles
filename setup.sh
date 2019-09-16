@@ -156,6 +156,7 @@ case $(uname) in
                    llvm
                    lynx
                    make
+                   nasm
                    ninja-build
                    openjdk-8-jre
                    openjdk-8-jdk
