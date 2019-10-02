@@ -701,6 +701,7 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${nodejs}" ] ; then
                                react            \
                                redux            \
                                mobx             \
+                               netlify-cms      \
                                neovim
   fi
 fi
