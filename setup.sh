@@ -450,12 +450,12 @@ fi
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${shell}" ] ; then
   echo "${txtbld}$(tput setaf 1)[-] Install the shell$(tput sgr0)"
-  if [ ! -f "$HOME/.antigen.zsh" ]; then
-    curl -L git.io/antigen > "$HOME/.antigen.zsh"
-    patch ~/.antigen.zsh patch/antigen_.antigen.zsh_locatiin.patch
+  if [ -x "$(command -v antibody)" ] ; then
+    curl -sfL git.io/antibody | $ROOT_PERM sh -s - -b /usr/local/bin
   fi
 
-  antigen update
+  installfile .zsh_plugins.txt shells/zsh_plugins.txt
+  antibody bundle < "$HOME/.zsh_plugins.txt" > "$HOME/.zsh_plugins.sh"
 
   installfile .zshrc shells/zshrc
   installfile .bashrc shells/bashrc
@@ -470,7 +470,6 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${shell}" ] ; then
 
     wget "$GITHUB_RAW_URL/git/git/master/contrib/completion/git-completion.$shell" \
          -O "$HOME/.shells/git/git-completion.$shell"
-
 
     installfile .shells/$shell/transmission.sh shells/source/transmission.sh
     installfile .shells/$shell/utility.sh shells/source/utility.sh

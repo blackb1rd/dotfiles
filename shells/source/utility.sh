@@ -8,6 +8,7 @@ pathadd() {
 }
 
 githubUpdate () {
+    txtbld=$(tput bold)
     echo "${txtbld}$(tput setaf 1)[-] Updating $3, please wait...$(tput sgr0)"
     CurrentDir=${PWD}
     if [ ! -d "$2" ]; then
@@ -16,7 +17,7 @@ githubUpdate () {
       cd "$2" && git pull -v
     fi
     wait
-    cd $CurrentDir
+    cd "$CurrentDir" || exit 1
     echo "${txtbld}$(tput setaf 4)[>] $3 updated successfully!$(tput sgr0)"
   }
 
@@ -44,7 +45,6 @@ myupdate()
     sudo snap refresh
     nvim +PlugInstall +qall
     nvim +PlugUpdate +qall
-    antigen update
     githubUpdate "gpakosz/.tmux" "$HOME/.tmux" ".tmux"
     githubUpdate "sqlmapproject/sqlmap" "$HOME/github/sqlmap" "sqlmap"
     githubUpdate "yyuu/pyenv" "$HOME/.pyenv" "pyenv"
@@ -59,6 +59,8 @@ myupdate()
       flutter upgrade
       flutter update-packages
     fi
+    antibody update
+    antibody bundle < "$HOME/.zsh_plugins.txt" > "$HOME/.zsh_plugins.sh"
   fi
 }
 

@@ -121,7 +121,7 @@ zsh_custom_ip(){
   echo -n "%{$color%}$ip"
 }
 
-POWERLEVEL9K_INSTALLATION_PATH=$ANTIGEN_BUNDLES/bhilburn/powerlevel9k
+export ANTIBODY_HOME="$HOME/.cache/antibody"
 POWERLEVEL9K_MODE='nerdfont-complete'
 POWERLEVEL9K_DIR_HOME_SUBFOLDER_BACKGROUND='green'
 POWERLEVEL9K_DIR_SHORTEN_LENGTH=2
@@ -137,40 +137,10 @@ POWERLEVEL9K_TIME_BACKGROUND=cyan
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(os_icon dir dir_writable vcs)
 POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(time custom_ip background_jobs ram pyenv rbenv)
 DEFAULT_USER=`whoami`
-source $HOME/.antigen.zsh
 
-# Load the oh-my-zsh's library
-antigen use oh-my-zsh
-
-antigen bundle adb
-antigen bundle colored-man-pages
-antigen bundle colorize
-antigen bundle command-not-found
-antigen bundle docker
-antigen bundle fzf
-antigen bundle git
-antigen bundle golang
-antigen bundle nmap
-antigen bundle npm
-antigen bundle pip
-antigen bundle pyenv
-antigen bundle python
-antigen bundle react-native
-antigen bundle rsync
-antigen bundle screen
-antigen bundle systemd
-antigen bundle tmux
-antigen bundle wd
-antigen bundle yarn
-antigen bundle zsh-users/zsh-autosuggestions
-antigen bundle zsh-users/zsh-completions
-antigen bundle zsh-users/zsh-history-substring-search
-antigen bundle zsh-users/zsh-syntax-highlighting
-
-# Load the theme
-antigen theme bhilburn/powerlevel9k powerlevel9k
-
-# Tell antigen that you're done
-antigen apply
+DISABLE_AUTO_UPDATE=true
+ZSH="$ANTIBODY_HOME/https-COLON--SLASH--SLASH-github.com-SLASH-robbyrussell-SLASH-oh-my-zsh"
+source $HOME/.zsh_plugins.sh
+zstyle ':completion:*' menu select
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
