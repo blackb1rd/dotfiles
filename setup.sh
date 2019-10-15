@@ -450,7 +450,7 @@ fi
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${shell}" ] ; then
   echo "${txtbld}$(tput setaf 1)[-] Install the shell$(tput sgr0)"
-  if [ -x "$(command -v antibody)" ] ; then
+  if ! [ -x "$(command -v antibody)" ] ; then
     curl -sfL git.io/antibody | $ROOT_PERM sh -s - -b /usr/local/bin
   fi
 
