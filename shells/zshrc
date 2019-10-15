@@ -13,6 +13,24 @@ do
   source $file
 done
 
+autoload -Uz compinit
+typeset -i updated_at=$(date +'%j' -r ~/.zcompdump 2>/dev/null || stat -f '%Sm' -t '%j' ~/.zcompdump 2>/dev/null)
+if [ $(date +'%j') != $updated_at ]; then
+  compinit -i
+else
+  compinit -C -i
+fi
+zmodload -i zsh/complist
+HISTFILE=$HOME/.zsh_history
+HISTSIZE=100000
+SAVEHIST=$HISTSIZE
+setopt hist_ignore_all_dups # remove older duplicate entries from history
+setopt hist_reduce_blanks # remove superfluous blanks from history items
+setopt inc_append_history # save history entries as soon as they are entered
+setopt share_history # share history between different instances of the shell
+
+zstyle ':completion:*' menu select
+zstyle ':completion:*' group-name ''
 zstyle ':completion:*:*:git:*' script $HOME/.shells/git/git-completion.zsh
 
 # Add Path
@@ -142,6 +160,5 @@ DISABLE_AUTO_UPDATE=true
 ZSH="$ANTIBODY_HOME/https-COLON--SLASH--SLASH-github.com-SLASH-robbyrussell-SLASH-oh-my-zsh"
 ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 source $HOME/.zsh_plugins.sh
-zstyle ':completion:*' menu select
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
