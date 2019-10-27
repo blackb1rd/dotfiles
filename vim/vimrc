@@ -344,6 +344,9 @@ vnoremap <Space> zf
 nnoremap <F5>   :make<CR>
 nnoremap <S-F6> :!./"%"<CR>
 
+" exit from terminal mode
+tnoremap <Esc> <C-\><C-n>
+
 " PLUGINS CONFIG {{{1
 " ----------------------------
 
