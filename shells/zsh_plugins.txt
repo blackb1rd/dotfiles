@@ -22,8 +22,9 @@ robbyrussell/oh-my-zsh path:plugins/wd
 robbyrussell/oh-my-zsh path:plugins/yarn
 zsh-users/zsh-autosuggestions
 zsh-users/zsh-completions
-zsh-users/zsh-history-substring-search
 zsh-users/zsh-syntax-highlighting
+trapd00r/zsh-syntax-highlighting-filetypes
+zsh-users/zsh-history-substring-search
 
 # Load the theme
 bhilburn/powerlevel9k

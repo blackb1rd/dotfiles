@@ -29,7 +29,23 @@ setopt hist_reduce_blanks # remove superfluous blanks from history items
 setopt inc_append_history # save history entries as soon as they are entered
 setopt share_history # share history between different instances of the shell
 
+eval $( dircolors -b $HOME/.dircolors )
+LS_OPTIONS="--color=auto"
+
+# aliases
+alias ls='ls $LS_OPTIONS'
+alias dir='ls -l'
+alias ll='ls -l'
+alias la='ls -la'
+alias l='ls -alF'
+alias d='ls -l -L'
+
+zstyle ':completion::complete:*' use-cache on
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
+zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
 zstyle ':completion:*' menu select
+zstyle ':completion:*:*:kill:*' menu select=1 _complete _ignored _approximate
 zstyle ':completion:*' group-name ''
 zstyle ':completion:*:*:git:*' script $HOME/.shells/git/git-completion.zsh
 
