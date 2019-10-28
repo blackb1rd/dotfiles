@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # shellcheck disable=SC1091
 . "shells/source/utility.sh"
@@ -128,7 +128,7 @@ case $(uname) in
           PKG_CMD_UPDATE="$ROOT_PERM apt-get update"
           PKG_CMD_INSTALL="$ROOT_PERM apt-get install -y"
           PKG_CMD_REMOVE="$ROOT_PERM apt-get remove -y"
-          PKG_CMD_ADD_REPO="$ROOT_PERM add-apt-repository"
+          PKG_CMD_ADD_REPO="$ROOT_PERM add-apt-repository -y"
           PACKAGE="apt-transport-https
                    autoconf
                    automake
@@ -157,6 +157,7 @@ case $(uname) in
                    lynx
                    make
                    nasm
+                   net-tools
                    ninja-build
                    openjdk-8-jre
                    openjdk-8-jdk
@@ -185,9 +186,9 @@ case $(uname) in
                        golang-go
                        nmap
                        zenmap"
-              REPOSITORY="ppa:longsleep/golang-backports
-                          ppa:neovim-ppa/stable
-                          deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+              REPOSITORY=("ppa:longsleep/golang-backports"
+                          "ppa:neovim-ppa/stable"
+                          "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable")
               ;;
           esac
           ;;
@@ -424,7 +425,7 @@ if [ -n "${all}" ] || [ -n "${basictool}" ] ; then
 
   echo "${txtbld}$(tput setaf 1)[-] Install the basic tool$(tput sgr0)"
   if [ -n "${REPOSITORY}" ] ; then
-    for repo in $REPOSITORY
+    for repo in "${REPOSITORY[@]}"
     do
       $PKG_CMD_ADD_REPO "$repo"
     done
@@ -571,14 +572,9 @@ fi
 if [ -n "${all}" ] || [ "${fonts}" ] ; then
   if [ "$OStype" != "android" ] ; then
     echo "${txtbld}$(tput setaf 1)[-] Install the fonts$(tput sgr0)"
-    # Install power line fonts
-    git clone --depth 1 $GITHUB_URL/powerline/fonts.git "$TEMP/fonts"
-    cd "$TEMP/fonts" && ./install.sh
-    cd "$current_dir" && rm -rf "$TEMP/fonts"
-
     # Install nerd fonts
     git clone --depth 1 $GITHUB_URL/ryanoasis/nerd-fonts "$TEMP/fonts"
-    cd "$TEMP/fonts" && ./install.sh
+    cd "$TEMP/fonts" && ./install.sh "DejaVuSansMono"
     cd "$current_dir" && rm -rf "$TEMP/fonts"
     echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
     # "DejaVu Sans Mono Nerd Font 12"
