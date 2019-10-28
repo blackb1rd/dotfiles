@@ -25,7 +25,7 @@ endif
 
 if has('nvim')
     let g:loaded_python_provider = 0
-    let g:python3_host_prog = '/home/r4v3n/.pyenv/versions/neovim3/bin/python3'
+    let g:python3_host_prog = '/home/r4v3n/.pyenv/versions/py3nvim/bin/python3'
 endif
 
 function! BuildComposerVimMarkdown(info)
