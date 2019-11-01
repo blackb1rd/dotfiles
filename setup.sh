@@ -169,6 +169,7 @@ case $(uname) in
                    snapd
                    sqlite3
                    tk-dev
+                   tor
                    unzip
                    wget
                    xclip
