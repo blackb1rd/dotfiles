@@ -734,14 +734,13 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${python}" ] ; then
     pyenv virtualenv $PYTHON3_VERSION py3nvim
     pyenv activate py3nvim
   fi
+  # set pyenv to system
+  pyenv shell $PYTHON3_VERSION
+  pyenv global $PYTHON3_VERSION
 
   pip install --upgrade pip
   # shellcheck disable=SC2086
   pip $PIPoption $PIPmodule
-
-  # set pyenv to system
-  pyenv shell $PYTHON3_VERSION
-  pyenv global $PYTHON3_VERSION
   echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
 fi
 
