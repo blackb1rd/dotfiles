@@ -455,6 +455,9 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${shell}" ] ; then
     curl -sfL git.io/antibody | $ROOT_PERM sh -s - -b /usr/local/bin
   fi
 
+  # for dircolor
+  wget "https://raw.github.com/trapd00r/LS_COLORS/master/LS_COLORS" -O "$HOME/.dircolors"
+
   installfile .zsh_plugins.txt shells/zsh_plugins.txt
   antibody bundle < "$HOME/.zsh_plugins.txt" > "$HOME/.zsh_plugins.sh"
 
