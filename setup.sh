@@ -114,9 +114,6 @@ case $(uname) in
       if [ -n "${is_wsl}" ] ; then
         SCOOP_PACKAGE="hugo-extended"
         echo "Scoop package : $SCOOP_PACKAGE"
-      else
-        SNAP_PACKAGE="hugo"
-        echo "Snap package : $SNAP_PACKAGE"
       fi
 
       case "$os_release_id" in
@@ -425,7 +422,7 @@ if [ -n "${all}" ] || [ -n "${basictool}" ] ; then
   fi
 
   echo "${txtbld}$(tput setaf 1)[-] Install the basic tool$(tput sgr0)"
-  if [ -n "${REPOSITORY}" ] ; then
+  if [ -n "${REPOSITORY[*]}" ] ; then
     for repo in "${REPOSITORY[@]}"
     do
       $PKG_CMD_ADD_REPO "$repo"
@@ -808,7 +805,8 @@ fi
 ###############################################################################
 if [ -z "${is_wsl}" ] && [ -n "${all}" ] || [ -n "${snap}" ] ; then
   echo "${txtbld}$(tput setaf 1)[-] Install the snap package$(tput sgr0)"
-  $ROOT_PERM snap install --channel=extended $SNAP_PACKAGE
+  $ROOT_PERM snap install --channel=extended hugo
+  $ROOT_PERM snap install --channel=edge shellcheck
   echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
 fi
 
