@@ -417,6 +417,7 @@ if [ -n "${all}" ] || [ -n "${basictool}" ] ; then
   txtbld=$(tput bold)
   if [ "$OStype" != "android" ] ; then
     echo "${txtbld}$(tput setaf 1)[-] Install the GPG key$(tput sgr0)"
+    $PKG_CMD_INSTALL curl
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
     curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | $ROOT_PERM apt-key add -
   fi
