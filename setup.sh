@@ -156,8 +156,8 @@ case $(uname) in
                    nasm
                    net-tools
                    ninja-build
-                   openjdk-8-jre
-                   openjdk-8-jdk
+                   openjdk-11-jre
+                   openjdk-11-jdk
                    pkg-config
                    python3-dev
                    qemu-kvm
