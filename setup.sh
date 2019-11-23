@@ -160,7 +160,6 @@ case $(uname) in
                    openjdk-11-jdk
                    pkg-config
                    python3-dev
-                   qemu-kvm
                    ruby-dev
                    software-properties-common
                    snapd
@@ -183,6 +182,7 @@ case $(uname) in
                        libmysqlclient-dev
                        golang-go
                        nmap
+                       qemu-kvm
                        zenmap"
               REPOSITORY=("ppa:longsleep/golang-backports"
                           "ppa:neovim-ppa/stable"
