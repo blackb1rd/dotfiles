@@ -117,6 +117,7 @@ Plug 'groenewege/vim-less'
 Plug 'hail2u/vim-css3-syntax'
 Plug 'othree/html5-syntax.vim'
 Plug 'pbrisbin/html-template-syntax'
+Plug 'dart-lang/dart-vim-plugin'
 
 " javascript
 Plug 'pangloss/vim-javascript'
