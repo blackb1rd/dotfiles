@@ -8,11 +8,11 @@ GITHUB_URL='https://github.com'
 TEMP="/tmp"
 ROOT_PERM=""
 USRPREFIX="/usr/local"
-PYTHON3_VERSION="3.7.4"
+PYTHON3_VERSION="3.7.7"
 PYTHON3_MAJOR_VERSION=$(echo $PYTHON3_VERSION | cut -c 1-3)
 PIPoption="install --user --upgrade"
-RUBY_VERSION="2.6.3"
-TENSORFLOW_VERSION="1.14.0"
+RUBY_VERSION="2.6.2"
+TENSORFLOW_VERSION="1.15.0"
 
 case $(uname) in
   Darwin)
