@@ -1,3 +1,5 @@
+#!/bin/sh
+
 pathadd() {
   if [ -d "$1" ]; then
     case ":$PATH:" in

@@ -1,3 +1,5 @@
+#!/bin/sh
+
 TR_OPTS="-n transmission:transmission"
 
 TsmDaemonStart()  { sudo service transmission-daemon start;}

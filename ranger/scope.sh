@@ -23,7 +23,7 @@ width="$2"   # Width of the preview pane (number of fitting characters)
 height="$3"  # Height of the preview pane (number of fitting characters)
 
 have() { type -P "$1" > /dev/null; }
-trim() { head -n ${1:-$height}; }
+trim() { head -n "${1:-$height}"; }
 
 success() {
   case ${PIPESTATUS[0]} in
@@ -36,45 +36,45 @@ extension="${path##*.}"
 case "$extension" in
   7z|a|ace|alz|arc|arj|bz|bz2|cab|cpio|deb|gz|jar|lha|lz|lzh|lzma|lzo|\
   rar|rpm|rz|t7z|tar|tbz|tbz2|tgz|tlz|txz|tZ|tzo|war|xpi|xz|Z|zip)
-    als "$path" | trim
-    success && exit 0 || acat "$path" | trim && exit 3
+    als "$path" | trim "$@"
+    success && exit 0 || acat "$path" | trim "$@" && exit 3
     exit 1;;
 
   pdf)
-    pdftotext -l 10 -nopgbrk -q "$path" - | trim | fmt -s -w $width
+    pdftotext -l 10 -nopgbrk -q "$path" - | trim "$@" | fmt -s -w "$width"
     success && exit 0 || exit 1;;
 
   doc)
-    catdoc "$path" | trim | fmt -s -w $width
+    catdoc "$path" | trim "$@" | fmt -s -w "$width"
     success && exit 0 || exit 1;;
 
   odt|odp)
-    odt2txt "$path" | trim | fmt -s -w $width
+    odt2txt "$path" | trim "$@" | fmt -s -w "$width"
     success && exit 0 || exit 1;;
 
   torrent)
-    transmission-show "$path" | trim && exit 3
+    transmission-show "$path" | trim "$@" && exit 3
     success && exit 5 || exit 1;;
 
   htm|html|xhtml)
-    have w3m    && w3m    -dump "$path" | trim | fmt -s -w $width && exit 4
-    have lynx   && lynx   -dump "$path" | trim | fmt -s -w $width && exit 4
-    have elinks && elinks -dump "$path" | trim | fmt -s -w $width && exit 4
+    have w3m    && w3m    -dump "$path" | trim "$@" | fmt -s -w "$width" && exit 4
+    have lynx   && lynx   -dump "$path" | trim "$@" | fmt -s -w "$width" && exit 4
+    have elinks && elinks -dump "$path" | trim "$@" | fmt -s -w "$width" && exit 4
     ;; # fall back to highlight/cat if theres no lynx/elinks
 esac
 
 mimetype=$(file --mime-type -Lb "$path")
 case "$mimetype" in
   text/x-makefile)
-    highlight --out-format=ansi --src-lang=make "$path" | trim
+    highlight --out-format=ansi --src-lang=make "$path" | trim "$@"
     success && exit 5 || exit 2;;
 
   text/plain)
-    trim < "$path"
+    trim "$@" < "$path"
     success && exit 5 || exit 2;;
 
   text/*|*/xml)
-    highlight --out-format=ansi "$path" | trim
+    highlight --out-format=ansi "$path" | trim "$@"
     success && exit 5 || exit 2;;
 
   image/*)

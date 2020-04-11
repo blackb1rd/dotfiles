@@ -1,3 +1,5 @@
+#!/bin/sh
+
 # Add Path
 pathadd "/sbin"
 pathadd "/snap/bin"
@@ -35,7 +37,7 @@ case $(uname) in
       fi
       pyenv activate py3nvim 2> /dev/null
       if [ -n "$VIRTUAL_ENV" ] && [ -e "${VIRTUAL_ENV}/bin/activate" ]; then
-        # shellcheck source=$HOME/.pyenv/versions/3.7.7/envs/py3nvim/bin/activate
+        # shellcheck disable=SC1090
         . "${VIRTUAL_ENV}/bin/activate"
       fi
     fi
