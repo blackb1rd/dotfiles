@@ -8,12 +8,12 @@ case $- in
       *) return;;
 esac
 
-for file in $HOME/.shells/bash/*
-do
-  source $file
-done
+# sources external in folder .shells
+. "$HOME/.shells/source/utility.sh"
+. "$HOME/.shells/source/transmission.sh"
+. "$HOME/.shells/source/path.sh"
 
-source $HOME/.shells/git/git-completion.bash
+source "$HOME"/.shells/git/git-completion.bash
 
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
@@ -84,7 +84,7 @@ esac
 
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
-    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+  test -r ~/.dircolors && (eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)")
     alias ls='ls --color=auto'
     #alias dir='dir --color=auto'
     #alias vdir='vdir --color=auto'
@@ -123,46 +123,7 @@ if ! shopt -oq posix; then
   fi
 fi
 
-# Add PATH for scripting
-case $(uname) in
-  CYGWIN_NT-* | MSYS_NT-* )
-    export EDITOR=vim
-    pathadd "/mingw64/bin"
-    export GOROOT=/mingw64/lib/go
-    export GOPATH=/mingw64
-    ;;
-  * )
-    pathadd "/sbin"
-    if [ -d "$HOME/.go" ] ; then
-      export GOPATH=$HOME/.go
-      pathadd $HOME/.go/bin
-    fi
-    
-    if [ -d "$HOME/.pyenv" ] ; then
-      export PYENV_ROOT=$HOME/.pyenv
-      if [ -d "$PYENV_ROOT/bin" ] ; then
-        pathadd "$PYENV_ROOT/bin"
-      else
-        pathadd "$PYENV_ROOT/shims"
-      fi
-      if command -v pyenv > /dev/null 2>&1; then
-        eval "$(pyenv init - --no-rehash)"
-        eval "$(pyenv virtualenv-init -)"
-      fi
-      pyenv activate neovim3 2> /dev/null
-      if [[ -n $VIRTUAL_ENV && -e "${VIRTUAL_ENV}/bin/activate" ]]; then
-        source "${VIRTUAL_ENV}/bin/activate"
-      fi
-    fi
-
-    if [ -d "$HOME/.rbenv" ] ; then
-      pathadd "$HOME/.rbenv/bin"
-      eval "$(rbenv init -)"
-    fi
-esac
-
 alias tmux="TERM=screen-256color tmux"
-export PYTHONSTARTUP=$HOME/.pythonrc
 
 # Custom bash prompt
 PS1="\[\e[01;32m\][\[\e[m\]\[\e[01;31m\]─=≡Σ((( つ•̀ω•́)つ\[\e[m\]\[\e[01;36m\]\h\[\e[m\]\[\e[01;31m\]:\[\e[m\]\[\e[01;36m\]\w\[\e[m\]\[\e[01;32m\]]\$(__git_ps1)\\$ \[\e[m\]"

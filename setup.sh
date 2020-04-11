@@ -469,14 +469,17 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${shell}" ] ; then
 
   for shell in bash zsh
   do
-    mkdirfolder .shells/$shell
+    mkdirfolder ".shells/$shell"
 
     wget "$GITHUB_RAW_URL/git/git/master/contrib/completion/git-completion.$shell" \
          -O "$HOME/.shells/git/git-completion.$shell"
-
-    installfile .shells/$shell/transmission.sh shells/source/transmission.sh
-    installfile .shells/$shell/utility.sh shells/source/utility.sh
   done
+
+  mkdirfolder ".shells/source"
+  installfile ".shells/source/transmission.sh" "shells/source/transmission.sh"
+  installfile ".shells/source/utility.sh" "shells/source/utility.sh"
+  installfile ".shells/source/path.sh" "shells/source/path.sh"
+
   echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
 fi
 
