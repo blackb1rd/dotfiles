@@ -21,9 +21,6 @@ AddCurrentUserPath() {
       export GOPATH=/mingw64
       ;;
     * )
-      if [ -d "$HOME/.go" ] ; then
-        export GOPATH=$HOME/.go
-      fi
 
       if [ -d "$HOME/.pyenv" ] ; then
         export PYENV_ROOT=$HOME/.pyenv
@@ -58,6 +55,12 @@ AddCurrentUserPath() {
         export EDITOR=vim
       fi
 
+      if [ -d "$HOME/.go" ] ; then
+        export GOPATH=$HOME/.go
+      elif [ -d "$HOME/go" ] ; then
+        export GOPATH=$HOME/go
+      fi
+
       if [ -d "/usr/local/go/bin" ] ; then
         pathadd "/usr/local/go/bin"
       elif [ -f "/etc/os-release" ] ; then
@@ -71,8 +74,8 @@ AddCurrentUserPath() {
                 pathadd "/usr/lib/go-1.14/bin"
               ;;
               *)
-                export GOROOT=/usr/lib/go-1.10/
-                pathadd "/usr/lib/go-1.10/bin"
+                export GOROOT=/usr/lib/go/
+                pathadd "/usr/lib/go/bin"
               ;;
             esac
             ;;
