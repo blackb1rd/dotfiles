@@ -4,14 +4,15 @@
 . "shells/source/utility.sh"
 
 GITHUB_RAW_URL='https://raw.githubusercontent.com'
+GITHUB_FOLDER="$HOME/github"
 GITHUB_URL='https://github.com'
 TEMP="/tmp"
 ROOT_PERM=""
 USRPREFIX="/usr/local"
-PYTHON3_VERSION="3.7.7"
+PYTHON3_VERSION="3.8.2"
 PYTHON3_MAJOR_VERSION=$(echo $PYTHON3_VERSION | cut -c 1-3)
 PIPoption="install --user --upgrade"
-RUBY_VERSION="2.6.2"
+RUBY_VERSION="2.6.3"
 TENSORFLOW_VERSION="1.15.0"
 
 case $(uname) in
@@ -99,9 +100,11 @@ case $(uname) in
                  h5py
                  jedi
                  keras
+                 kikit
                  matplotlib
                  mycli
                  mysqlclient
+                 neovim
                  numexpr
                  numpy
                  pandas
@@ -302,6 +305,7 @@ usage() {
   echo "  -f,    --fonts      Installing fonts"
   echo "  -l,    --latest     Compiling the latest ctags and VIM version"
   echo "  -go,   --golang     Installing golang package"
+  echo "  -ki,   --kicad      Installing KiCad Plugin"
   echo "  -node, --nodejs     Installing nodejs package"
   echo "  -pl,   --perl       Installing perl package"
   echo "  -py,   --python     Installing python package"
@@ -354,6 +358,7 @@ do
     -f    | --fonts )        fonts=true;;
     -l    | --latest )       latest=true;;
     -go   | --golang )       golang=true;;
+    -ki   | --kicad )        kicad=true;;
     -node | --nodejs )       nodejs=true;;
     -pl   | --perl )         perl=true;;
     -py   | --python )       python=true;;
@@ -388,6 +393,7 @@ if [ -z "${all}" ] \
    && [ -z "${docker}" ] \
    && [ -z "${fonts}" ] \
    && [ -z "${golang}" ] \
+   && [ -z "${kicad}" ] \
    && [ -z "${nodejs}" ] \
    && [ -z "${perl}" ] \
    && [ -z "${python}" ] \
@@ -652,6 +658,21 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${golang}" ] ; then
 fi
 
 ###############################################################################
+#                             _   _ _                                         #
+#                            | | | | |_ ___  _ __                             #
+#                            | |_| | __/ _ \| '_ \                            #
+#                            |  _  | || (_) | |_) |                           #
+#                            |_| |_|\__\___/| .__/                            #
+#                                           |_|                               #
+#                                                                             #
+###############################################################################
+if [ -n "${all}" ] || [ -n "${dot}" ] ; then
+  echo "${txtbld}$(tput setaf 1)[-] Install the htop$(tput sgr0)"
+  installfile .htoprc htop/htoprc
+  echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
+fi
+
+###############################################################################
 #                              ___              _                             #
 #                             |_ _|_ __ ___ ___(_)                            #
 #                              | || '__/ __/ __| |                            #
@@ -666,17 +687,44 @@ if [ -n "${all}" ] || [ -n "${dot}" ] ; then
 fi
 
 ###############################################################################
-#                             _   _ _                                         #
-#                            | | | | |_ ___  _ __                             #
-#                            | |_| | __/ _ \| '_ \                            #
-#                            |  _  | || (_) | |_) |                           #
-#                            |_| |_|\__\___/| .__/                            #
-#                                           |_|                               #
+#                           _  ___  ____          _                           #
+#                          | |/ (_)/ ___|__ _  __| |                          #
+#                          | ' /| | |   / _` |/ _` |                          #
+#                          | . \| | |__| (_| | (_| |                          #
+#                          |_|\_\_|\____\__,_|\__,_|                          #
 #                                                                             #
 ###############################################################################
-if [ -n "${all}" ] || [ -n "${dot}" ] ; then
-  echo "${txtbld}$(tput setaf 1)[-] Install the htop$(tput sgr0)"
-  installfile .htoprc htop/htoprc
+if [ -n "${all}" ] || [ -n "${kicad}" ] ; then
+  echo "${txtbld}$(tput setaf 1)[-] Install KiCad Plugin$(tput sgr0)"
+  KICAD_GITHUB_PLUGIN_FOLDER="KiCad/plugins"
+  mkdir -p "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER"
+  git clone "$GITHUB_URL/NilujePerchut/kicad_scripts.git" "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER/teardrops"
+  git clone "$GITHUB_URL/easyw/RF-tools-KiCAD.git" "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER/RF-tools-KiCAD"
+  git clone "$GITHUB_URL/easyw/kicad-action-tools.git" "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER/easyw-kicad-action-tools"
+  git clone "$GITHUB_URL/stimulu/kicad-round-tracks.git" "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER/kicad-round-tracks"
+  git clone "$GITHUB_URL/jsreynaud/kicad-action-scripts.git" "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER/jsreynaud-kicad-action-scripts"
+  git clone "$GITHUB_URL/xesscorp/WireIt.git" "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER/WireIt"
+
+  if [ -n "${is_wsl}" ] ; then
+    # cannot create symlink
+    KICAD_PLUGIN_FOLDER="/mnt/c/Program Files/KiCad/share/kicad/scripting/plugins"
+    cp -r "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER/teardrops/teardrops" "$KICAD_PLUGIN_FOLDER/"
+    cp -r "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER/RF-tools-KiCAD" "$KICAD_PLUGIN_FOLDER/"
+    cp -r "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER/easyw-kicad-action-tools" "$KICAD_PLUGIN_FOLDER/"
+    cp -r "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER/jsreynaud-kicad-action-scripts/ViaStitching" "$KICAD_PLUGIN_FOLDER/"
+    cp -r "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER/jsreynaud-kicad-action-scripts/CircularZone" "$KICAD_PLUGIN_FOLDER/"
+    cp -r "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER/WireIt" "$KICAD_PLUGIN_FOLDER/"
+
+  else
+    KICAD_PLUGIN_FOLDER="$HOME/.kicad/scripting/plugins"
+    ln -s "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER/teardrops/teardrops" "$KICAD_PLUGIN_FOLDER/teardrops"
+    ln -s "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER/RF-tools-KiCAD" "$KICAD_PLUGIN_FOLDER/RF-tools-KiCAD"
+    ln -s "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER/easyw-kicad-action-tools" "$KICAD_PLUGIN_FOLDER/easyw-kicad-action-tools"
+    ln -s "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER/jsreynaud-kicad-action-scripts/ViaStitching" "$KICAD_PLUGIN_FOLDER/ViaStitching"
+    ln -s "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER/jsreynaud-kicad-action-scripts/CircularZone" "$KICAD_PLUGIN_FOLDER/CircularZone"
+    ln -s "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER/WireIt" "$KICAD_PLUGIN_FOLDER/WireIt"
+  fi
+
   echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
 fi
 
