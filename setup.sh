@@ -782,11 +782,13 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${python}" ] ; then
 
     eval "$(pyenv init -)"
     eval "$(pyenv virtualenv-init -)"
+    pyenv virtualenv-delete -f py3nvim
     pyenv virtualenv $PYTHON3_VERSION py3nvim
     pyenv activate py3nvim
   fi
   # set pyenv to system
   pyenv shell $PYTHON3_VERSION
+  pyenv local $PYTHON3_VERSION
   pyenv global $PYTHON3_VERSION
 
   pip install --upgrade pip
