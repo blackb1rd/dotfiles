@@ -300,6 +300,7 @@ usage() {
   echo "Options:"
   echo "  -a,    --all        Installing all setup"
   echo "  -b,    --basictool  Installing basic tool"
+  echo "  -dart  --dart       Installing dart"
   echo "  -d,    --dot        Installing dotfiles"
   echo "  -dk,   --docker     Installing docker"
   echo "  -f,    --fonts      Installing fonts"
@@ -353,6 +354,7 @@ do
   case $1 in
     -a    | --all )          all=true;;
     -b    | --basictool )    basictool=true;;
+    -dart | --dart )         dart=true;;
     -d    | --dot )          dot=true;;
     -dk   | --docker )       docker=true;;
     -f    | --fonts )        fonts=true;;
@@ -389,6 +391,7 @@ fi
 
 if [ -z "${all}" ] \
    && [ -z "${basictool}" ] \
+   && [ -z "${dart}" ] \
    && [ -z "${dot}" ] \
    && [ -z "${docker}" ] \
    && [ -z "${fonts}" ] \
@@ -533,6 +536,30 @@ if [ -n "${all}" ] || [ -n "${latest}" ] ; then
   make
   $ROOT_PERM make install
   cd "$current_dir" && rm -rf "$TEMP/ctags"
+  echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
+fi
+
+###############################################################################
+#                             ____             _                              #
+#                            |  _ \  __ _ _ __| |_                            #
+#                            | | | |/ _` | '__| __|                           #
+#                            | |_| | (_| | |  | |_                            #
+#                            |____/ \__,_|_|   \__|                           #
+#                                                                             #
+###############################################################################
+if [ -n "${all}" ] || [ -n "${dart}" ] ; then
+  echo "${txtbld}$(tput setaf 1)[-] Install the dart$(tput sgr0)"
+  $ROOT_PERM sh -c 'wget -qO- https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -'
+  $ROOT_PERM sh -c 'wget -qO- https://storage.googleapis.com/download.dartlang.org/linux/debian/dart_stable.list > /etc/apt/sources.list.d/dart_stable.list'
+
+  $ROOT_PERM apt-get update
+  $ROOT_PERM apt-get install dart
+  echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
+
+  echo "${txtbld}$(tput setaf 1)[-] Install the flutter$(tput sgr0)"
+  mkdir "$HOME/development"
+  cd "$HOME/development" || exit
+  git clone https://github.com/flutter/flutter.git -b stable --depth 1
   echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
 fi
 
