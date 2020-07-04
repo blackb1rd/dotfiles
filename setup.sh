@@ -12,7 +12,7 @@ USRPREFIX="/usr/local"
 PYTHON3_VERSION="3.8.2"
 PYTHON3_MAJOR_VERSION=$(echo $PYTHON3_VERSION | cut -c 1-3)
 PIPoption="install --user --upgrade"
-RUBY_VERSION="2.6.2"
+RUBY_VERSION="2.7.1"
 TENSORFLOW_VERSION="1.15.0"
 
 case $(uname) in
