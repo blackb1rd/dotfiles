@@ -263,6 +263,7 @@ case $(uname) in
                  llvm
                  lynx
                  make
+                 ncurses-utils
                  nodejs
                  openssh
                  pkg-config
