@@ -264,6 +264,7 @@ case $(uname) in
                  lynx
                  make
                  nodejs
+                 openssh
                  pkg-config
                  python
                  ruby
