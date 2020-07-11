@@ -257,16 +257,16 @@ case $(uname) in
                  git
                  htop
                  irssi
-                 libbz2-dev
-                 libevent-dev
+                 libbz2
+                 libevent
                  libtool
                  llvm
                  lynx
                  make
                  nodejs
                  pkg-config
-                 python-dev
-                 ruby-dev
+                 python
+                 ruby
                  unzip
                  wget
                  xz-utils
