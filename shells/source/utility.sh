@@ -47,6 +47,7 @@ myupdate()
     sudo snap refresh
     nvim +PlugInstall +qall
     nvim +PlugUpdate +qall
+    curl -sfL git.io/antibody | sh -s - -b /usr/local/bin
     githubUpdate "gpakosz/.tmux" "$HOME/.tmux" ".tmux"
     githubUpdate "sqlmapproject/sqlmap" "$HOME/github/sqlmap" "sqlmap"
     githubUpdate "yyuu/pyenv" "$HOME/.pyenv" "pyenv"
