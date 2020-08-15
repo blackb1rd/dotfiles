@@ -28,6 +28,19 @@ if has('nvim')
     let g:python3_host_prog = "$HOME/.pyenv/shims/python"
 endif
 
+function! BuildYCM(info)
+  " info is a dictionary with 3 fields
+  " - name:   name of the plugin
+  " - status: 'installed', 'updated', or 'unchanged'
+  " - force:  set on PlugInstall! or PlugUpdate!
+  if a:info.status == 'installed' || a:info.force
+    "!rustup toolchain install nightly
+    "!rustup default nightly
+    "!rustup component add rls rust-analysis rust-src
+    !./install.py --all
+  endif
+endfunction
+
 function! BuildComposerVimMarkdown(info)
     if a:info.status != 'unchanged' || a:info.force
         if has('nvim')
@@ -51,7 +64,7 @@ Plug 'AndrewRadev/switch.vim'
 Plug 'Shougo/vimproc'
 Plug 'Shougo/vinarise.vim'
 Plug 'SirVer/ultisnips'
-Plug 'ycm-core/YouCompleteMe'
+Plug 'ycm-core/YouCompleteMe', { 'do': function('BuildYCM') }
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'blackb1rd/taglist.vim'
 "Plug 'blackb1rd/vim-easytags'
