@@ -110,6 +110,7 @@ Plug 'w0rp/ale'
 " language
 Plug 'cespare/vim-toml'
 Plug 'chr4/nginx.vim'
+Plug 'dart-lang/dart-vim-plugin'
 Plug 'elzr/vim-json'
 Plug 'fatih/vim-go'
 Plug 'go-delve/delve'
@@ -117,7 +118,7 @@ Plug 'groenewege/vim-less'
 Plug 'hail2u/vim-css3-syntax'
 Plug 'othree/html5-syntax.vim'
 Plug 'pbrisbin/html-template-syntax'
-Plug 'dart-lang/dart-vim-plugin'
+Plug 'rust-lang/rust.vim'
 
 " javascript
 Plug 'pangloss/vim-javascript'
