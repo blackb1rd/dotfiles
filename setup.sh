@@ -9,7 +9,7 @@ GITHUB_URL='https://github.com'
 TEMP="/tmp"
 ROOT_PERM=""
 USRPREFIX="/usr/local"
-PYTHON3_VERSION="3.8.2"
+PYTHON3_VERSION="3.8.5"
 PYTHON3_MAJOR_VERSION=$(echo $PYTHON3_VERSION | cut -c 1-3)
 PIPoption="install --user --upgrade"
 RUBY_VERSION="2.7.1"
@@ -1017,37 +1017,37 @@ if [ -n "${all}" ] \
     # download all plugin
     nvim +slient +VimEnter +PlugInstall +qall
   fi
-  if [ -n "${all}" ] || [ -n "${ycmd}" ] ; then
-    echo "${txtbld}$(tput setaf 1)[-] Install YouCompleteMe$(tput sgr0)"
-    cd "$HOME/.vim/bundle/YouCompleteMe" || exit
-    git pull
-    git submodule update --init --recursive
-    if [ "$OStype" != "android" ] ; then
-      EXTRA_CMAKE_ARGS="-DPYTHON_INCLUDE_DIR=$HOME/.pyenv/versions/$PYTHON3_VERSION/include/python${PYTHON3_MAJOR_VERSION}m -DPYTHON_LIBRARY=$HOME/.pyenv/versions/$PYTHON3_VERSION/lib/libpython${PYTHON3_MAJOR_VERSION}m.so"
-    fi
+  # if [ -n "${all}" ] || [ -n "${ycmd}" ] ; then
+  #   echo "${txtbld}$(tput setaf 1)[-] Install YouCompleteMe$(tput sgr0)"
+  #   cd "$HOME/.vim/bundle/YouCompleteMe" || exit
+  #   git pull
+  #   git submodule update --init --recursive
+  #   if [ "$OStype" != "android" ] ; then
+  #     EXTRA_CMAKE_ARGS="-DPYTHON_INCLUDE_DIR=$HOME/.pyenv/versions/$PYTHON3_VERSION/include/python${PYTHON3_MAJOR_VERSION}m -DPYTHON_LIBRARY=$HOME/.pyenv/versions/$PYTHON3_VERSION/lib/libpython${PYTHON3_MAJOR_VERSION}m.so"
+  #   fi
 
-    # go-completer
-    echo "install go-completer component"
-    GO111MODULE=on
-    GOPATH=$PWD/third_party/ycmd/third_party/go
-    GOBIN=$PWD/third_party/ycmd/third_party/go/bin
-    echo "$GO111MODULE"
-    echo "$GOBIN"
-    go get golang.org/x/tools/gopls@v0.4.3
+  #   # go-completer
+  #   echo "install go-completer component"
+  #   GO111MODULE=on
+  #   GOPATH=$PWD/third_party/ycmd/third_party/go
+  #   GOBIN=$PWD/third_party/ycmd/third_party/go/bin
+  #   echo "$GO111MODULE"
+  #   echo "$GOBIN"
+  #   go get golang.org/x/tools/gopls@v0.4.3
 
-    # js-completer
-    cd "$HOME/.vim/bundle/YouCompleteMe/third_party/ycmd" || exit
-    npm install -g --prefix third_party/tsserver typescript
-    cd "$HOME/.vim/bundle/YouCompleteMe" || exit
+  #   # js-completer
+  #   cd "$HOME/.vim/bundle/YouCompleteMe/third_party/ycmd" || exit
+  #   npm install -g --prefix third_party/tsserver typescript
+  #   cd "$HOME/.vim/bundle/YouCompleteMe" || exit
 
-    # rust-completer
-    echo "install rust-completer component"
-    rustup toolchain install nightly
-    rustup default nightly
-    rustup component add rls rust-analysis rust-src
+  #   # rust-completer
+  #   echo "install rust-completer component"
+  #   rustup toolchain install nightly
+  #   rustup default nightly
+  #   rustup component add rls rust-analysis rust-src
 
-    echo "$EXTRA_CMAKE_ARGS"
-    python3 install.py --all
-  fi
-  echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
+  #   echo "$EXTRA_CMAKE_ARGS"
+  #   python3 install.py --all
+  # fi
+  # echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
 fi
