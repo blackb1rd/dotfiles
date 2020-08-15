@@ -134,6 +134,7 @@ case $(uname) in
                    automake
                    build-essential
                    ca-certificates
+                   clang
                    cmake
                    curl
                    figlet
@@ -145,6 +146,7 @@ case $(uname) in
                    irssi
                    libbz2-dev
                    libevent-dev
+                   libffi-dev
                    liblzma-dev
                    libncurses5-dev
                    libpcre3-dev
@@ -1023,8 +1025,29 @@ if [ -n "${all}" ] \
     if [ "$OStype" != "android" ] ; then
       EXTRA_CMAKE_ARGS="-DPYTHON_INCLUDE_DIR=$HOME/.pyenv/versions/$PYTHON3_VERSION/include/python${PYTHON3_MAJOR_VERSION}m -DPYTHON_LIBRARY=$HOME/.pyenv/versions/$PYTHON3_VERSION/lib/libpython${PYTHON3_MAJOR_VERSION}m.so"
     fi
+
+    # go-completer
+    echo "install go-completer component"
+    GO111MODULE=on
+    GOPATH=$PWD/third_party/ycmd/third_party/go
+    GOBIN=$PWD/third_party/ycmd/third_party/go/bin
+    echo "$GO111MODULE"
+    echo "$GOBIN"
+    go get golang.org/x/tools/gopls@v0.4.3
+
+    # js-completer
+    cd "$HOME/.vim/bundle/YouCompleteMe/third_party/ycmd" || exit
+    npm install -g --prefix third_party/tsserver typescript
+    cd "$HOME/.vim/bundle/YouCompleteMe" || exit
+
+    # rust-completer
+    echo "install rust-completer component"
+    rustup toolchain install nightly
+    rustup default nightly
+    rustup component add rls rust-analysis rust-src
+
     echo "$EXTRA_CMAKE_ARGS"
-    python3 install.py --go-completer
+    python3 install.py --all
   fi
   echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
 fi

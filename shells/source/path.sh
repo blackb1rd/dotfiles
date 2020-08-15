@@ -46,6 +46,9 @@ AddCurrentUserPath() {
         eval "$(rbenv init -)"
       fi
 
+      if [ -d "$HOME/.rustup" ] ; then
+        export RUSTUP_HOME=$HOME/.rustup
+      fi
 
       export PYTHONSTARTUP=$HOME/.pythonrc
       if [ -x "$(command -v nvim)" ] ; then
