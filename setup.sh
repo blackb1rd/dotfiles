@@ -159,6 +159,7 @@ case $(uname) in
                    lynx
                    make
                    nasm
+                   neovim
                    net-tools
                    ninja-build
                    openjdk-11-jre
@@ -189,7 +190,6 @@ case $(uname) in
                        nmap
                        qemu-kvm"
               REPOSITORY=("ppa:longsleep/golang-backports"
-                          "ppa:neovim-ppa/stable"
                           "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable")
               ;;
           esac
