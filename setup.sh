@@ -332,13 +332,13 @@ mkdirfolder () {
 
 installfile () {
   if [ ! -f "$HOME/$1" ] ; then
-    ln -s "$current_dir/$2" "$HOME/$1"
+    ln -s -f "$current_dir/$2" "$HOME/$1"
   fi
 }
 
 installfolder () {
   if [ ! -d "$HOME/.$1" ] ; then
-    ln -s "$current_dir/$1" "$HOME/.$1"
+    ln -s -f "$current_dir/$1" "$HOME/.$1"
   fi
 }
 
@@ -1014,7 +1014,8 @@ if [ -n "${all}" ] \
     installfolder config/nvim/ycm
 
     # download all plugin
-    nvim +slient +VimEnter +PlugInstall +qall
+    nvim +PlugInstall +qall
+    nvim +PlugUpdate +qall
   fi
   # if [ -n "${all}" ] || [ -n "${ycmd}" ] ; then
   #   echo "${txtbld}$(tput setaf 1)[-] Install YouCompleteMe$(tput sgr0)"
