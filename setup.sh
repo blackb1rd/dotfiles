@@ -187,8 +187,7 @@ case $(uname) in
                        libmysqlclient-dev
                        golang-go
                        nmap
-                       qemu-kvm
-                       zenmap"
+                       qemu-kvm"
               REPOSITORY=("ppa:longsleep/golang-backports"
                           "ppa:neovim-ppa/stable"
                           "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable")
