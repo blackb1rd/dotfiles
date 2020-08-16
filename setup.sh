@@ -634,7 +634,7 @@ if [ -n "${all}" ] || [ "${fonts}" ] ; then
   if [ "$OStype" != "android" ] ; then
     echo "${txtbld}$(tput setaf 1)[-] Install the Fzf$(tput sgr0)"
     git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-    "$HOME/.fzf/install"
+    "$HOME/.fzf/install --all"
     echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
   fi
 fi
