@@ -65,7 +65,7 @@ Plug 'Shougo/vimproc'
 Plug 'Shougo/vinarise.vim'
 Plug 'SirVer/ultisnips'
 Plug 'ycm-core/YouCompleteMe', { 'do': function('BuildYCM') }
-Plug 'Xuyuanp/nerdtree-git-plugin'
+" Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'blackb1rd/taglist.vim'
 "Plug 'blackb1rd/vim-easytags'
 Plug 'chrisbra/csv.vim'
