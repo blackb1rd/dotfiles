@@ -118,7 +118,7 @@ Plug 'godlygeek/tabular'
 Plug 'google/yapf', { 'rtp': 'plugins/vim', 'for': 'python' }
 Plug 'junegunn/vim-easy-align'
 Plug 'vim-syntastic/syntastic'
-Plug 'w0rp/ale'
+Plug 'dense-analysis/ale'
 
 " language
 Plug 'cespare/vim-toml'
@@ -410,6 +410,10 @@ let g:ale_sign_warning = 'W>'
 let g:airline#extensions#ale#enabled = 1
 let g:ale_open_list = 1
 let g:ale_keep_list_window_open = 1
+let g:ale_lint_on_save = 1
+
+" BUG https://github.com/dense-analysis/ale/issues/1968
+let g:ale_linters = {'rust': []}
 
 let g:go_fmt_command = "goimports"
 
@@ -419,6 +423,8 @@ let g:rustfmt_autosave = 1
 " syntastic
 let g:syntastic_error_symbol = "\u2717"
 let g:syntastic_warning_symbol = "\u26A0"
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 
 " pandoc config
