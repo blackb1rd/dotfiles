@@ -61,8 +61,10 @@ AddCurrentUserPath() {
 
       if [ -d "$HOME/.go" ] ; then
         export GOPATH=$HOME/.go
+        pathadd "$GOPATH/bin"
       elif [ -d "$HOME/go" ] ; then
         export GOPATH=$HOME/go
+        pathadd "$GOPATH/bin"
       fi
 
       if [ -d "/usr/local/go/bin" ] ; then
