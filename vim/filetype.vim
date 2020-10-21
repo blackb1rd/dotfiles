@@ -39,3 +39,7 @@ au FileType c                   setl omnifunc=ccomplete#Complete
 au FileType gitcommit,mail setl spell et fo+=ct
 au FileType plaintex,pod   setl spell et fo+=ct
 au FileType pandoc,tex     setl spell et sw=2 ts=2 fo+=ct
+
+" PARENTHESE {{{1
+" ----------------------------
+au VimEnter * RainbowParentheses

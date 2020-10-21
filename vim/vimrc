@@ -79,6 +79,7 @@ Plug 'honza/vim-snippets'
 Plug 'jaxbot/browserlink.vim'
 Plug 'jodosha/vim-godebug'
 Plug 'juneedahamed/vc.vim'
+Plug 'junegunn/rainbow_parentheses.vim'
 Plug 'majutsushi/tagbar'
 Plug 'mbbill/undotree'
 Plug 'mhinz/vim-signify'
@@ -431,6 +432,10 @@ let g:syntastic_check_on_open = 1
 let g:pandoc_no_empty_implicits = 1
 let g:pandoc_no_folding         = 1
 let g:pandoc_use_hard_wraps     = 1
+
+" rainbow parentheses
+let g:rainbow#max_level = 16
+let g:rainbow#pairs = [['(', ')'], ['[', ']'], ['{', '}'], ['<', '>']]
 
 " utilsnips config
 if has ("win64") || has("win32")
