@@ -4,7 +4,7 @@
 . "shells/source/utility.sh"
 
 GITHUB_RAW_URL='https://raw.githubusercontent.com'
-GITHUB_FOLDER="$HOME/github"
+GITHUB_FOLDER="$HOME/git/github"
 GITHUB_URL='https://github.com'
 TEMP="/tmp"
 ROOT_PERM=""
@@ -167,7 +167,6 @@ case $(uname) in
                    pkg-config
                    python3-dev
                    ruby-dev
-                   shellcheck
                    software-properties-common
                    snapd
                    sqlite3
@@ -331,13 +330,13 @@ mkdirfolder () {
 
 installfile () {
   if [ ! -f "$HOME/$1" ] ; then
-    ln -s -f "$current_dir/$2" "$HOME/$1"
+    ln -snf "$current_dir/$2" "$HOME/$1"
   fi
 }
 
 installfolder () {
   if [ ! -d "$HOME/.$1" ] ; then
-    ln -s -f "$current_dir/$1" "$HOME/.$1"
+    ln -snf "$current_dir/$1" "$HOME/.$1"
   fi
 }
 
@@ -429,7 +428,7 @@ if [ -n "${all}" ] || [ -n "${basictool}" ] ; then
   if [ "$OStype" != "android" ] ; then
     echo "${txtbld}$(tput setaf 1)[-] Install the GPG key$(tput sgr0)"
     $PKG_CMD_INSTALL curl
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | $ROOT_PERM apt-key add -
     curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | $ROOT_PERM apt-key add -
   fi
 
@@ -609,7 +608,7 @@ fi
 #                          |_|  \___/|_| |_|\__|___/                          #
 #                                                                             #
 ###############################################################################
-if [ -n "${all}" ] || [ "${fonts}" ] ; then
+if [ "${fonts}" ] ; then
   if [ "$OStype" != "android" ] ; then
     echo "${txtbld}$(tput setaf 1)[-] Install the fonts$(tput sgr0)"
     # Install nerd fonts
@@ -663,7 +662,7 @@ fi
 if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${golang}" ] ; then
   echo "${txtbld}$(tput setaf 1)[-] Install the go$(tput sgr0)"
   wget "https://golang.org/dl/go$GOLANG_VERSION.linux-amd64.tar.gz"
-  tar -C /usr/local -xzf "go$GOLANG_VERSION.linux-amd64.tar.gz"
+  $ROOT_PERM tar -C /usr/local -xzf "go$GOLANG_VERSION.linux-amd64.tar.gz"
   rm "go$GOLANG_VERSION.linux-amd64.tar.gz"
   go get -u github.com/PuerkitoBio/goquery
   go get -u github.com/beevik/ntp
@@ -749,12 +748,12 @@ if [ -n "${all}" ] || [ -n "${kicad}" ] ; then
 
   else
     KICAD_PLUGIN_FOLDER="$HOME/.kicad/scripting/plugins"
-    ln -s "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER/teardrops/teardrops" "$KICAD_PLUGIN_FOLDER/teardrops"
-    ln -s "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER/RF-tools-KiCAD" "$KICAD_PLUGIN_FOLDER/RF-tools-KiCAD"
-    ln -s "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER/easyw-kicad-action-tools" "$KICAD_PLUGIN_FOLDER/easyw-kicad-action-tools"
-    ln -s "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER/jsreynaud-kicad-action-scripts/ViaStitching" "$KICAD_PLUGIN_FOLDER/ViaStitching"
-    ln -s "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER/jsreynaud-kicad-action-scripts/CircularZone" "$KICAD_PLUGIN_FOLDER/CircularZone"
-    ln -s "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER/WireIt" "$KICAD_PLUGIN_FOLDER/WireIt"
+    ln -snf "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER/teardrops/teardrops" "$KICAD_PLUGIN_FOLDER/teardrops"
+    ln -snf "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER/RF-tools-KiCAD" "$KICAD_PLUGIN_FOLDER/RF-tools-KiCAD"
+    ln -snf "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER/easyw-kicad-action-tools" "$KICAD_PLUGIN_FOLDER/easyw-kicad-action-tools"
+    ln -snf "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER/jsreynaud-kicad-action-scripts/ViaStitching" "$KICAD_PLUGIN_FOLDER/ViaStitching"
+    ln -snf "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER/jsreynaud-kicad-action-scripts/CircularZone" "$KICAD_PLUGIN_FOLDER/CircularZone"
+    ln -snf "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER/WireIt" "$KICAD_PLUGIN_FOLDER/WireIt"
   fi
 
   echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
@@ -773,7 +772,7 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${nodejs}" ] ; then
   if [ "$OStype" != "android" ] ; then
     $PKG_CMD_REMOVE cmdtest
     curl -sL https://deb.nodesource.com/setup_12.x | $ROOT_PERM -E bash -
-    echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+    echo "deb https://dl.yarnpkg.com/debian/ stable main" | $ROOT_PERM tee /etc/apt/sources.list.d/yarn.list
     $PKG_CMD_INSTALL -y nodejs yarn
 
     $ROOT_PERM yarn global add async            \
