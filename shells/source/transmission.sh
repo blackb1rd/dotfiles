@@ -8,7 +8,12 @@ tsmdaemonreload() { sudo service transmission-daemon reload;}
 tsmstart()         { transmission-remote "${TR_OPTS}" -t "$1" -s;}
 tsmstop()          { transmission-remote "${TR_OPTS}" -t "$1" -s;}
 tsmadd()           { transmission-remote "${TR_OPTS}" -a "$1";}
-tsmremove()        { transmission-remote "${TR_OPTS}" -t "$1" -r;}
+tsmremove()        {
+	for number in "$@"
+	do
+		transmission-remote "${TR_OPTS}" -t "$number" -r;
+	done
+}
 tsmlist()          { transmission-remote "${TR_OPTS}" -l;}
 tsminfo()          { transmission-remote "${TR_OPTS}" -t "$1" -i;}
 tsmbasicstats()    { transmission-remote "${TR_OPTS}" -st;}
