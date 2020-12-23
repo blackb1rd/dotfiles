@@ -664,6 +664,7 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${golang}" ] ; then
   wget "https://golang.org/dl/go$GOLANG_VERSION.linux-amd64.tar.gz"
   $ROOT_PERM tar -C /usr/local -xzf "go$GOLANG_VERSION.linux-amd64.tar.gz"
   rm "go$GOLANG_VERSION.linux-amd64.tar.gz"
+  pathadd "/usr/local/go/bin"
   go get -u github.com/PuerkitoBio/goquery
   go get -u github.com/beevik/ntp
   go get -u github.com/cenkalti/backoff
