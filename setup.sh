@@ -554,7 +554,7 @@ if [ -n "${all}" ] || [ -n "${dart}" ] ; then
   $ROOT_PERM sh -c 'wget -qO- https://storage.googleapis.com/download.dartlang.org/linux/debian/dart_stable.list > /etc/apt/sources.list.d/dart_stable.list'
 
   $ROOT_PERM apt-get update
-  $ROOT_PERM apt-get install dart
+  $PKG_CMD_INSTALL dart
   echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
 
   echo "${txtbld}$(tput setaf 1)[-] Install the flutter$(tput sgr0)"
@@ -596,7 +596,7 @@ fi
 ###############################################################################
 if [ -n "${all}" ] || [ "${docker}" ] ; then
   if [ "$OStype" != "android" ] ; then
-    $ROOT_PERM apt-get install docker-ce docker-ce-cli containerd.io
+    $PKG_CMD_INSTALL docker-ce docker-ce-cli containerd.io
   fi
 fi
 
