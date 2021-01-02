@@ -58,7 +58,7 @@ myupdate()
     sudo gem install rubygems-update
     sudo update_rubygems
     sudo gem update --system
-    go get -u all
+    go get -v -u all
 
     if [ -n "${development}" ] ; then
       flutter upgrade
