@@ -81,7 +81,7 @@ AddCurrentUserPath() {
               ;;
               *)
                 export GOROOT=/snap/go/current
-                pathadd "/usr/lib/go/bin"
+                pathadd "$HOME/go/bin"
               ;;
             esac
             ;;
