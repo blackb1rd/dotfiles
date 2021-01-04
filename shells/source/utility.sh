@@ -49,7 +49,7 @@ myupdate()
     nvim +PlugUpdate +qall
     curl -sfL git.io/antibody | sh -s - -b /usr/local/bin
     githubUpdate "gpakosz/.tmux" "$HOME/.tmux" ".tmux"
-    githubUpdate "sqlmapproject/sqlmap" "$HOME/github/sqlmap" "sqlmap"
+    githubUpdate "sqlmapproject/sqlmap" "$HOME/git/github/sqlmap" "sqlmap"
     githubUpdate "yyuu/pyenv" "$HOME/.pyenv" "pyenv"
     githubUpdate "rbenv/rbenv" "$HOME/.rbenv" "rbenv"
     githubUpdate "rbenv/ruby-build" "$HOME/.rbenv/plugins/ruby-build" "ruby-build"
