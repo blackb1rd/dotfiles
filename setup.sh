@@ -9,10 +9,10 @@ GITHUB_URL='https://github.com'
 TEMP="/tmp"
 ROOT_PERM=""
 USRPREFIX="/usr/local"
-GOLANG_VERSION="1.15.6"
-PYTHON3_VERSION="3.8.5"
+GOLANG_VERSION="1.16.0"
+PYTHON3_VERSION="3.9.1"
 PIPoption="install --user --upgrade"
-RUBY_VERSION="2.7.1"
+RUBY_VERSION="3.0.0"
 TENSORFLOW_VERSION="1.15.0"
 
 case $(uname) in
