@@ -54,6 +54,7 @@ myupdate()
     githubUpdate "rbenv/rbenv" "$HOME/.rbenv" "rbenv"
     githubUpdate "rbenv/ruby-build" "$HOME/.rbenv/plugins/ruby-build" "ruby-build"
     pip list --outdated --format=freeze | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip install -U
+    sudo yarn global upgrade
     rustup update
     sudo gem install rubygems-update
     sudo update_rubygems
