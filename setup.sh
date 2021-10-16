@@ -9,11 +9,11 @@ GITHUB_URL='https://github.com'
 TEMP="/tmp"
 ROOT_PERM=""
 USRPREFIX="/usr/local"
-GOLANG_VERSION="1.16"
-PYTHON3_VERSION="3.9.1"
+GOLANG_VERSION="1.17.2"
+PYTHON3_VERSION="3.9.7"
 PIPoption="install --user --upgrade"
-RUBY_VERSION="3.0.0"
-TENSORFLOW_VERSION="1.15.0"
+RUBY_VERSION="3.0.2"
+GO_TENSORFLOW_VERSION="2.6.0"
 
 case $(uname) in
   Darwin)
@@ -681,7 +681,7 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${golang}" ] ; then
     TF_TYPE="cpu" # Change to "gpu" for GPU support
     TARGET_DIRECTORY='/usr/local'
     curl -L \
-      "https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-${TF_TYPE}-$(go env GOOS)-x86_64-${TENSORFLOW_VERSION}.tar.gz" |
+      "https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-${TF_TYPE}-$(go env GOOS)-x86_64-${GO_TENSORFLOW_VERSION}.tar.gz" |
     $ROOT_PERM tar -C $TARGET_DIRECTORY -xz
     $ROOT_PERM ldconfig
     go get -u github.com/tensorflow/tensorflow/tensorflow/go
@@ -895,6 +895,7 @@ if [ -z "${is_wsl}" ] && [ -n "${all}" ] || [ -n "${snap}" ] ; then
   echo "${txtbld}$(tput setaf 1)[-] Install the snap package$(tput sgr0)"
   $ROOT_PERM snap install --channel=extended hugo
   $ROOT_PERM snap install --channel=edge shellcheck
+  $ROOT_PERM snap install --beta nvim --classic
   echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
 fi
 
