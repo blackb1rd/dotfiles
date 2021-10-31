@@ -85,6 +85,12 @@ zsh_custom_ip(){
 }
 
 export ANTIBODY_HOME="$HOME/.cache/antibody"
+if type "pyenv" > /dev/null; then
+  PYENV=pyenv
+fi
+if type "rbenv" > /dev/null; then
+  RBENV=rbenv
+fi
 POWERLEVEL9K_MODE='nerdfont-complete'
 POWERLEVEL9K_DIR_HOME_SUBFOLDER_BACKGROUND='green'
 POWERLEVEL9K_DIR_SHORTEN_LENGTH=2
@@ -98,7 +104,7 @@ POWERLEVEL9K_CUSTOM_IP_BACKGROUND=green
 POWERLEVEL9K_TIME_FORMAT="\uf017 %D{%H:%M} \uf073 %D{%d.%m.%y}"
 POWERLEVEL9K_TIME_BACKGROUND=cyan
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(os_icon dir dir_writable vcs)
-POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(time custom_ip background_jobs ram pyenv rbenv)
+POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(time custom_ip background_jobs ram $PYENV $RBENV)
 DEFAULT_USER=`whoami`
 
 DISABLE_AUTO_UPDATE=true
@@ -118,6 +124,8 @@ pastefinish() {
 zstyle :bracketed-paste-magic paste-init pasteinit
 zstyle :bracketed-paste-magic paste-finish pastefinish
 ### Fix slowness of pastes
-eval "$(pyenv init -)"
+if type "pyenv" > /dev/null; then
+  eval "$(pyenv init -)"
+fi
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
