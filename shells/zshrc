@@ -73,12 +73,8 @@ zsh_custom_ip(){
       ip=$(route print 2>&1 | grep -P "^ +0.0.0.0 +0.0.0.0 +" | awk '{print $4}')
       ;;
     *)
-      if [[ -n $(ifconfig 2>/dev/null | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*') ]] ; then
-        ip=$(ifconfig 2>/dev/null | \
-          grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | \
-          grep -Eo '([0-9]*\.){3}[0-9]*' | \
-          grep -v '127.0.0.1' | \
-          awk 'FNR==1{print $1}')
+      if [[ -n $(hostname -I | cut -d' ' -f1 2>/dev/null) ]] ; then
+        ip=$(hostname -I | cut -d' ' -f1)
       else
         ip=$(route 2>&1 | awk 'FNR==3{print $1}')
       fi
