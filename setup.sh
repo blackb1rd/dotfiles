@@ -253,6 +253,7 @@ case $(uname) in
                  cmake
                  curl
                  figlet
+		 fzf
                  git
                  htop
                  irssi
@@ -263,11 +264,14 @@ case $(uname) in
                  lynx
                  make
                  ncurses-utils
+		 neovim
                  nodejs
                  openssh
                  pkg-config
                  python
                  ruby
+		 silversearcher-ag
+		 tmux
                  unzip
                  wget
                  xz-utils
@@ -305,6 +309,7 @@ usage() {
   echo "  -d,    --dot        Installing dotfiles"
   echo "  -dk,   --docker     Installing docker"
   echo "  -f,    --fonts      Installing fonts"
+  echo "  -fzf,  --fzf        Installing fzf"
   echo "  -l,    --latest     Compiling the latest ctags and VIM version"
   echo "  -go,   --golang     Installing golang package"
   echo "  -ki,   --kicad      Installing KiCad Plugin"
@@ -359,6 +364,7 @@ do
     -d    | --dot )          dot=true;;
     -dk   | --docker )       docker=true;;
     -f    | --fonts )        fonts=true;;
+    -fzf  | --fzf )          fzf=true;;
     -l    | --latest )       latest=true;;
     -go   | --golang )       golang=true;;
     -ki   | --kicad )        kicad=true;;
@@ -396,6 +402,7 @@ if [ -z "${all}" ] \
    && [ -z "${dot}" ] \
    && [ -z "${docker}" ] \
    && [ -z "${fonts}" ] \
+   && [ -z "${fzf}" ] \
    && [ -z "${golang}" ] \
    && [ -z "${kicad}" ] \
    && [ -z "${nodejs}" ] \
@@ -628,7 +635,7 @@ fi
 #                                |_|  /___|_|                                  #
 #                                                                              #
 ################################################################################
-if [ -n "${all}" ] || [ "${fonts}" ] ; then
+if [ -n "${all}" ] || [ "${fzf}" ] ; then
   if [ "$OStype" != "android" ] ; then
     echo "${txtbld}$(tput setaf 1)[-] Install the Fzf$(tput sgr0)"
     git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
@@ -659,7 +666,7 @@ fi
 #                                 \____|\___/                                 #
 #                                                                             #
 ###############################################################################
-if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${golang}" ] ; then
+if [ -n "${all}" ] || [ -n "${golang}" ] ; then
   echo "${txtbld}$(tput setaf 1)[-] Install the go$(tput sgr0)"
   wget "https://golang.org/dl/go$GOLANG_VERSION.linux-amd64.tar.gz"
   $ROOT_PERM tar -C /usr/local -xzf "go$GOLANG_VERSION.linux-amd64.tar.gz"
@@ -863,7 +870,7 @@ fi
 #                            |_| \_\\__,_|___/\__|                            #
 #                                                                             #
 ###############################################################################
-if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${rust}" ] ; then
+if [ -n "${all}" ] || [ -n "${rust}" ] ; then
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 fi
 
@@ -895,7 +902,7 @@ if [ -z "${is_wsl}" ] && [ -n "${all}" ] || [ -n "${snap}" ] ; then
   echo "${txtbld}$(tput setaf 1)[-] Install the snap package$(tput sgr0)"
   $ROOT_PERM snap install --channel=extended hugo
   $ROOT_PERM snap install --channel=edge shellcheck
-  $ROOT_PERM snap install --beta nvim --classic
+  $ROOT_PERM snap install nvim --classic
   echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
 fi
 
