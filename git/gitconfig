@@ -37,6 +37,7 @@
 	p = !git push origin `git branch --show-current`
 	st = status -sb
 	sub = submodule
+	subinit = !git submodule update --init
 	subpull = !git submodule -q foreach git pull -q origin `git branch --show-current` --verbose
 	ignored = ls-files --others -i --exclude-standard
 	re = reset --hard HEAD
