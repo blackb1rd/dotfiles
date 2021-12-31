@@ -806,7 +806,7 @@ fi
 #                            |___/                                            #
 #                                                                             #
 ###############################################################################
-if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${python}" ] ; then
+if [ -n "${all}" ] || [ -n "${python}" ] ; then
   echo "${txtbld}$(tput setaf 1)[-] Install the python$(tput sgr0)"
   installfile .pythonrc python/pythonrc
 
@@ -847,7 +847,7 @@ fi
 #                                             |___/                           #
 #                                                                             #
 ###############################################################################
-if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${ruby}" ] ; then
+if [ -n "${all}" ] || [ -n "${ruby}" ] ; then
   git clone "$GITHUB_URL/rbenv/rbenv" "$HOME/.rbenv"
   cd "$HOME/.rbenv" && src/configure && make -C src
   cd "$current_dir" || exit
