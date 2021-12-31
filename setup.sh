@@ -477,8 +477,10 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${shell}" ] ; then
   installfile .zsh_plugins.txt shells/zsh_plugins.txt
   antibody bundle < "$HOME/.zsh_plugins.txt" > "$HOME/.zsh_plugins.sh"
 
-  installfile .zshrc shells/zshrc
+  installfile .profile shells/profile
   installfile .bashrc shells/bashrc
+  installfile .zshrc shells/zshrc
+  installfile .zprofile shells/zprofile
 
   # source external programs
   mkdirfolder .shells

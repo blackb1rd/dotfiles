@@ -124,8 +124,15 @@ if ! shopt -oq posix; then
 fi
 
 alias tmux="TERM=screen-256color tmux"
+export PATH="$HOME/bin:$PATH:$HOME/.cabal/bin"
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init --path)"
+. "$HOME/.cargo/env"
+export FLUTTER_GIT_URL="ssh://git@github.com/flutter/flutter.git"
 
 # Custom bash prompt
 PS1="\[\e[01;32m\][\[\e[m\]\[\e[01;31m\]─=≡Σ((( つ•̀ω•́)つ\[\e[m\]\[\e[01;36m\]\h\[\e[m\]\[\e[01;31m\]:\[\e[m\]\[\e[01;36m\]\w\[\e[m\]\[\e[01;32m\]]\$(__git_ps1)\\$ \[\e[m\]"
 EDITOR="vim"
 
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
