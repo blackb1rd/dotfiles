@@ -23,6 +23,8 @@ elseif has("win64") || has("win32")
     set rtp+=$HOME/.vim
 endif
 
+set tags=$HOME/tags,tags;
+
 if has('nvim')
     let g:loaded_python_provider = 0
     let g:python3_host_prog = "$HOME/.pyenv/shims/python"

@@ -68,6 +68,8 @@ myupdate()
     antibody update
     antibody bundle < "$HOME/.zsh_plugins.txt" > "$HOME/.zsh_plugins.sh"
   fi
+  # gen tags
+  ctags -R --c++-kinds=+p --fields=+iaS --extras=+q /usr/include
 }
 
 myupdateusage() {
