@@ -9,11 +9,11 @@ GITHUB_URL='https://github.com'
 TEMP="/tmp"
 ROOT_PERM=""
 USRPREFIX="/usr/local"
-GOLANG_VERSION="1.17.5"
-PYTHON3_VERSION="3.9.7"
+GOLANG_VERSION="1.18.0"
+PYTHON3_VERSION="3.10.3"
 PIPoption="install --user --upgrade"
-RUBY_VERSION="3.0.2"
-GO_TENSORFLOW_VERSION="2.6.0"
+RUBY_VERSION="3.1.1"
+GO_TENSORFLOW_VERSION="2.8.0"
 
 case $(uname) in
   Darwin)
