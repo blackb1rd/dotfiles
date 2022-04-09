@@ -674,18 +674,18 @@ if [ -n "${all}" ] || [ -n "${golang}" ] ; then
   $ROOT_PERM tar -C /usr/local -xzf "go$GOLANG_VERSION.linux-amd64.tar.gz"
   rm "go$GOLANG_VERSION.linux-amd64.tar.gz"
   pathadd "/usr/local/go/bin"
-  go install -u github.com/PuerkitoBio/goquery
-  go install -u github.com/beevik/ntp
-  go install -u github.com/cenkalti/backoff
-  go install -u github.com/derekparker/delve/cmd/dlv
-  go install -u github.com/FiloSottile/mkcert
-  go install -u github.com/go-sql-driver/mysql
-  go install -u github.com/golang/dep/cmd/dep
-  go install -u github.com/mattn/go-sqlite3
-  go install -u github.com/mmcdole/gofeed
-  go install -u gonum.org/v1/gonum/...
-  go install -u gonum.org/v1/plot/...
-  go install -u gonum.org/v1/hdf5/...
+  go install  github.com/PuerkitoBio/goquery
+  go install  github.com/beevik/ntp
+  go install  github.com/cenkalti/backoff
+  go install  github.com/derekparker/delve/cmd/dlv
+  go install  github.com/FiloSottile/mkcert
+  go install  github.com/go-sql-driver/mysql
+  go install  github.com/golang/dep/cmd/dep
+  go install  github.com/mattn/go-sqlite3
+  go install  github.com/mmcdole/gofeed
+  go install  gonum.org/v1/gonum/...
+  go install  gonum.org/v1/plot/...
+  go install gonum.org/v1/hdf5/...
   if [ "$OStype" != "android" ] ; then
     TF_TYPE="cpu" # Change to "gpu" for GPU support
     TARGET_DIRECTORY='/usr/local'
@@ -693,7 +693,7 @@ if [ -n "${all}" ] || [ -n "${golang}" ] ; then
       "https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-${TF_TYPE}-$(go env GOOS)-x86_64-${GO_TENSORFLOW_VERSION}.tar.gz" |
     $ROOT_PERM tar -C $TARGET_DIRECTORY -xz
     $ROOT_PERM ldconfig
-    go install -u github.com/tensorflow/tensorflow/tensorflow/go
+    go install github.com/tensorflow/tensorflow/tensorflow/go
   fi
   echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
 fi
