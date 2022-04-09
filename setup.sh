@@ -781,9 +781,9 @@ fi
 if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${nodejs}" ] ; then
   if [ "$OStype" != "android" ] ; then
     $PKG_CMD_REMOVE cmdtest
-    curl -sL https://deb.nodesource.com/setup_16.x | $ROOT_PERM -E bash -
+    $ROOT_PERM snap install node --classic
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | $ROOT_PERM tee /etc/apt/sources.list.d/yarn.list
-    $PKG_CMD_INSTALL -y nodejs yarn
+    $PKG_CMD_INSTALL -y yarn
 
     $ROOT_PERM yarn global add async            \
                                expo-cli         \
