@@ -54,3 +54,5 @@
 	insteadOf = https://github.com/
 
 # vim: set ft=gitconfig noet:
+[url "git@github.com:"]
+	insteadOf = git://github.com/
