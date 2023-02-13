@@ -29,4 +29,4 @@ trapd00r/zsh-syntax-highlighting-filetypes
 zsh-users/zsh-history-substring-search
 
 # Load the theme
-bhilburn/powerlevel9k
+romkatv/powerlevel10k

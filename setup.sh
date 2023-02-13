@@ -17,6 +17,7 @@ GO_TENSORFLOW_VERSION="2.8.0"
 
 case $(uname) in
   Darwin)
+    current_dir="$( cd "$( dirname "$0" )" && pwd )"
     OStype=Darwin
     ;;
   CYGWIN_NT-*)
@@ -253,7 +254,7 @@ case $(uname) in
                  cmake
                  curl
                  figlet
-		 fzf
+                 fzf
                  git
                  htop
                  irssi
@@ -264,14 +265,14 @@ case $(uname) in
                  lynx
                  make
                  ncurses-utils
-		 neovim
+                 neovim
                  nodejs
                  openssh
                  pkg-config
                  python
                  ruby
-		 silversearcher-ag
-		 tmux
+                 silversearcher-ag
+                 tmux
                  unzip
                  wget
                  xz-utils
@@ -350,6 +351,7 @@ checkOStype () {
     debian|ubuntu ) return 1 ;;
           android ) return 1 ;;
           msys_nt ) return 1 ;;
+           darwin ) return 1 ;;
                 * ) return 0 ;;
   esac
 }
@@ -472,7 +474,7 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${shell}" ] ; then
   fi
 
   # for dircolor
-  wget "https://raw.github.com/trapd00r/LS_COLORS/master/LS_COLORS" -O "$HOME/.dircolors"
+  wget "https://raw.github.com/trapd00r/LS_COLORS/master/lscolors.sh" -O "$HOME/.lscolors.sh"
 
   installfile .zsh_plugins.txt shells/zsh_plugins.txt
   antibody bundle < "$HOME/.zsh_plugins.txt" > "$HOME/.zsh_plugins.sh"
@@ -778,7 +780,7 @@ fi
 #                                             |__/                            #
 #                                                                             #
 ###############################################################################
-if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${nodejs}" ] ; then
+if [ -n "${all}" ] || [ -n "${nodejs}" ] ; then
   if [ "$OStype" != "android" ] ; then
     $PKG_CMD_REMOVE cmdtest
     $ROOT_PERM snap install node --classic

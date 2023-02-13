@@ -10,7 +10,9 @@ AddCurrentUserPath() {
   pathadd "$ANDROID_HOME/tools"
   pathadd "$ANDROID_HOME/tools/bin"
   pathadd "$ANDROID_HOME/platform-tools"
-  pathadd "$(yarn global bin)"
+  if [ -x "$(command -v yarn)" ] ; then
+    pathadd "$(yarn global bin)"
+  fi
   pathadd "/usr/lib/dart/bin"
   pathadd "$HOME/development/flutter/bin"
 

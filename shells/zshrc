@@ -32,8 +32,15 @@ setopt hist_ignore_all_dups # remove older duplicate entries from history
 setopt hist_reduce_blanks # remove superfluous blanks from history items
 setopt inc_append_history # save history entries as soon as they are entered
 setopt share_history # share history between different instances of the shell
-
-eval $( dircolors -b $HOME/.dircolors )
+source "$HOME/.lscolors.sh"
+zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
+if [ -x "$(command -v dircolors)" ] ; then
+  export LS_COLORS
+  alias ls='ls --color'
+else
+  export CLICOLOR=1
+  LSCOLORS=${LS_COLORS}
+fi
 LS_OPTIONS="--color=auto"
 
 # aliases
@@ -129,10 +136,14 @@ if type "pyenv" > /dev/null; then
 fi
 
 export PATH="$HOME/bin:$PATH:$HOME/.cabal/bin"
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init --path)"
-. "$HOME/.cargo/env"
+if [ -x "$(command -v pyenv)" ] ; then
+  export PYENV_ROOT="$HOME/.pyenv"
+  export PATH="$PYENV_ROOT/bin:$PATH"
+  eval "$(pyenv init --path)"
+fi
+if [ -x "$(command -v rust)" ] ; then
+  . "$HOME/.cargo/env"
+fi
 export FLUTTER_GIT_URL="ssh://git@github.com/flutter/flutter.git"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

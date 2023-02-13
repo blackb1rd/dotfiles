@@ -135,4 +135,4 @@ export FLUTTER_GIT_URL="ssh://git@github.com/flutter/flutter.git"
 PS1="\[\e[01;32m\][\[\e[m\]\[\e[01;31m\]─=≡Σ((( つ•̀ω•́)つ\[\e[m\]\[\e[01;36m\]\h\[\e[m\]\[\e[01;31m\]:\[\e[m\]\[\e[01;36m\]\w\[\e[m\]\[\e[01;32m\]]\$(__git_ps1)\\$ \[\e[m\]"
 EDITOR="vim"
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
