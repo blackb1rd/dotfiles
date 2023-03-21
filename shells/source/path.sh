@@ -5,7 +5,7 @@ AddCurrentUserPath() {
   pathadd "/sbin"
   pathadd "/snap/bin"
   pathadd "$HOME/.go/bin/"
-  export ANDROID_HOME=$HOME/Android/Sdk
+  export ANDROID_HOME="$HOME/Android/Sdk"
   pathadd "$ANDROID_HOME/emulator"
   pathadd "$ANDROID_HOME/tools"
   pathadd "$ANDROID_HOME/tools/bin"
@@ -13,8 +13,16 @@ AddCurrentUserPath() {
   if [ -x "$(command -v yarn)" ] ; then
     pathadd "$(yarn global bin)"
   fi
-  pathadd "/usr/lib/dart/bin"
-  pathadd "$HOME/development/flutter/bin"
+  case $(uname) in
+    Darwin)
+      ;;
+    *)
+      pathadd "/usr/lib/dart/bin"
+      pathadd "$HOME/development/flutter/bin"
+      ;;
+  esac
+
+
 
   case $(uname) in
     CYGWIN_NT-* | MSYS_NT-* )
