@@ -23,6 +23,9 @@ case $(uname) in
   CYGWIN_NT-*)
     OStype=CYGWIN_NT
     ;;
+  MINGW64_NT-*)
+    OStype=MSYS_NT
+    ;;
   MSYS_NT-*)
     current_dir="$(cygpath -a .)"
     OStype=MSYS_NT

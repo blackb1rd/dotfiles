@@ -27,7 +27,11 @@ set tags=$HOME/tags,tags;
 
 if has('nvim')
     let g:loaded_python_provider = 0
-    let g:python3_host_prog = "$HOME/.pyenv/shims/python"
+    if has("unix")
+        let g:python3_host_prog = "$HOME/.pyenv/shims/python"
+    elseif has("win64") || has("win32")
+        let g:python3_host_prog = "$HOME/.pyenv/pyenv-win/shims/python"
+    endif
 endif
 
 function! BuildYCM(info)
