@@ -424,6 +424,7 @@ let g:ale_c_parse_makefile = 1
 let g:ale_linters = {'rust': []}
 
 let g:go_fmt_command = "goimports"
+let g:go_metalinter_command = "golangci-lint"
 
 " rust
 let g:rustfmt_autosave = 1

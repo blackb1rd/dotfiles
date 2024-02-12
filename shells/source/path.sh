@@ -15,6 +15,7 @@ AddCurrentUserPath() {
   fi
   case $(uname) in
     Darwin)
+      pathadd "$HOME/development/flutter/bin"
       ;;
     *)
       pathadd "/usr/lib/dart/bin"
@@ -34,7 +35,7 @@ AddCurrentUserPath() {
     * )
 
       if [ -d "$HOME/.pyenv" ] ; then
-        export PYENV_ROOT=$HOME/.pyenv
+        export PYENV_ROOT="$HOME/.pyenv"
         if [ -d "$PYENV_ROOT/bin" ] ; then
           pathadd "$PYENV_ROOT/bin"
         else
@@ -57,10 +58,10 @@ AddCurrentUserPath() {
       fi
 
       if [ -d "$HOME/.rustup" ] ; then
-        export RUSTUP_HOME=$HOME/.rustup
+        export RUSTUP_HOME="$HOME/.rustup"
       fi
 
-      export PYTHONSTARTUP=$HOME/.pythonrc
+      export PYTHONSTARTUP="$HOME/.pythonrc"
       if [ -x "$(command -v nvim)" ] ; then
         export EDITOR=nvim
         alias vim="nvim"
@@ -70,10 +71,10 @@ AddCurrentUserPath() {
       fi
 
       if [ -d "$HOME/.go" ] ; then
-        export GOPATH=$HOME/.go
+        export GOPATH="$HOME/.go"
         pathadd "$GOPATH/bin"
       elif [ -d "$HOME/go" ] ; then
-        export GOPATH=$HOME/go
+        export GOPATH="$HOME/go"
         pathadd "$GOPATH/bin"
       fi
 

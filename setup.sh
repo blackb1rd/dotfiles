@@ -391,7 +391,7 @@ do
 done
 
 # Make string as lower case
-OStype=$(echo $OStype | awk '{print tolower($0)}')
+OStype=$(echo "$OStype" | awk '{print tolower($0)}')
 
 # Check the input of OStype
 if checkOStype "$OStype" ; then
@@ -892,7 +892,7 @@ fi
 ###############################################################################
 if [ -n "${is_wsl}" ] && [ -n "${all}" ] || [ -n "${scoop}" ] ; then
   echo "${txtbld}$(tput setaf 1)[-] Install the snap package$(tput sgr0)"
-  scoop install $SCOOP_PACKAGE
+  scoop install "$SCOOP_PACKAGE"
   echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
 fi
 
