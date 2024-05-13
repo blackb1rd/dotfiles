@@ -9,11 +9,12 @@ GITHUB_URL='https://github.com'
 TEMP="/tmp"
 ROOT_PERM=""
 USRPREFIX="/usr/local"
-GOLANG_VERSION="1.18"
-PYTHON3_VERSION="3.10.9"
+
+# version
+GOLANG_VERSION="1.22.2"
+PYTHON3_VERSION="3.12.3"
 PIPoption="install --user --upgrade"
-RUBY_VERSION="3.1.1"
-GO_TENSORFLOW_VERSION="2.8.0"
+RUBY_VERSION="3.3.1"
 
 case $(uname) in
   Darwin)
@@ -454,6 +455,7 @@ if [ -n "${all}" ] || [ -n "${basictool}" ] ; then
   $PKG_CMD_UPDATE
   # shellcheck disable=SC2086
   $PKG_CMD_INSTALL $PACKAGE || { echo 'Failed to install program' ; exit 1; }
+  $PKG_CMD_REMOVE cmdtest
 
   # if did not want to install latest version
   if [ ! "${latest}" ] && [ ! "${all}" ] ; then
@@ -691,15 +693,6 @@ if [ -n "${all}" ] || [ -n "${golang}" ] ; then
   go install  gonum.org/v1/gonum/...@latest
   go install  gonum.org/v1/plot/...@latest
   go install gonum.org/v1/hdf5/...@latest
-  if [ "$OStype" != "android" ] ; then
-    TF_TYPE="cpu" # Change to "gpu" for GPU support
-    TARGET_DIRECTORY='/usr/local'
-    curl -L \
-      "https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-${TF_TYPE}-$(go env GOOS)-x86_64-${GO_TENSORFLOW_VERSION}.tar.gz" |
-    $ROOT_PERM tar -C $TARGET_DIRECTORY -xz
-    $ROOT_PERM ldconfig
-    go install github.com/tensorflow/tensorflow/tensorflow/go@latest
-  fi
   echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
 fi
 
