@@ -10,11 +10,10 @@ on:
 jobs:
   shellcheck:
     runs-on: ubuntu-latest
-    container:
-      image: koalaman/shellcheck:v0.9.0
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: shellcheck
-        run: |
-          shellcheck setup.sh
+        uses: docker://koalaman/shellcheck-alpine:v0.9.0
+        with:
+          args: shellcheck setup.sh
