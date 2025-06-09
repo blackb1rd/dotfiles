@@ -474,15 +474,14 @@ fi
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${shell}" ] ; then
   echo "${txtbld}$(tput setaf 1)[-] Install the shell$(tput sgr0)"
-  if ! [ -x "$(command -v antibody)" ] ; then
-    curl -sfL git.io/antibody | $ROOT_PERM sh -s - -b /usr/local/bin
+  if ! [ -x "$(command -v zinit)" ] ; then
+    bash -c "$(curl --fail --show-error --silent --location https://raw.githubusercontent.com/zdharma-continuum/zinit/HEAD/scripts/install.sh)"
   fi
 
   # for dircolor
   wget "https://raw.github.com/trapd00r/LS_COLORS/master/lscolors.sh" -O "$HOME/.lscolors.sh"
 
-  installfile .zsh_plugins.txt shells/zsh_plugins.txt
-  antibody bundle < "$HOME/.zsh_plugins.txt" > "$HOME/.zsh_plugins.sh"
+  installfile .p10k.zsh shells/p10k.zsh
 
   installfile .profile shells/profile
   installfile .bashrc shells/bashrc
