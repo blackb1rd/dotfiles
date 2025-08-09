@@ -217,15 +217,12 @@ let g:ag_prg="ag --vimgrep"
 scriptencoding utf-8
 if has("multi_byte")
     set encoding=utf-8
-    if &termencoding == ""
-        let &termencoding = &encoding
-    endif
     set fileencodings=ucs-bom,utf-8,latin1
     let &listchars="tab:\u25B8 ,eol:\u00AC,trail:\u00b7,nbsp:\u2423"
 endif
 set list
 set nrformats+=alpha
-set pastetoggle=<leader>p
+" set pastetoggle=<leader>p
 
 " folding
 set foldenable

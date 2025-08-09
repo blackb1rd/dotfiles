@@ -107,20 +107,7 @@ fi
 if type "rbenv" > /dev/null; then
   RBENV=rbenv
 fi
-POWERLEVEL10K_MODE='nerdfont-complete'
-POWERLEVEL10K_DIR_HOME_SUBFOLDER_BACKGROUND='green'
-POWERLEVEL10K_DIR_SHORTEN_LENGTH=2
-POWERLEVEL10K_DIR_SHORTEN_STRATEGY="truncate_from_right"
-POWERLEVEL10K_PROMPT_ON_NEWLINE=true
-POWERLEVEL10K_RPROMPT_ON_NEWLINE=true
-POWERLEVEL10K_MULTILINE_FIRST_PROMPT_PREFIX="%K{green}%k"
-POWERLEVEL9K_MULTILINE_LAST_PROMPT_PREFIX="%K{028}%F{black}%f%F{028}%k%f "
-POWERLEVEL10K_CUSTOM_IP="zsh_custom_ip"
-POWERLEVEL10K_CUSTOM_IP_BACKGROUND=green
-POWERLEVEL10K_TIME_FORMAT="\uf017 %D{%H:%M} \uf073 %D{%d.%m.%y}"
-POWERLEVEL10K_TIME_BACKGROUND=cyan
-POWERLEVEL10K_LEFT_PROMPT_ELEMENTS=(os_icon dir dir_writable vcs)
-POWERLEVEL10K_RIGHT_PROMPT_ELEMENTS=(time custom_ip background_jobs ram $PYENV $RBENV)
+
 DEFAULT_USER=`whoami`
 
 DISABLE_AUTO_UPDATE=true
@@ -154,7 +141,7 @@ fi
 export FLUTTER_GIT_URL="ssh://git@github.com/flutter/flutter.git"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-export PATH="/opt/homebrew/:opt/mozjpeg/bin:/opt/homebrew/share/vcpkg:$PATH"
+export PATH="/opt/homebrew/:opt/mozjpeg/bin:$PATH"
 
 ### Added by Zinit's installer
 if [[ ! -f $HOME/.local/share/zinit/zinit.git/zinit.zsh ]]; then

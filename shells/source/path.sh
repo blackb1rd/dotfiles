@@ -10,20 +10,12 @@ AddCurrentUserPath() {
   pathadd "$ANDROID_HOME/tools"
   pathadd "$ANDROID_HOME/tools/bin"
   pathadd "$ANDROID_HOME/platform-tools"
+  pathadd "$HOME/development/flutter/bin"
+  export VCPKG_ROOT="$HOME/development/vcpkg"
+  pathadd "$VCPKG_ROOT"
   if [ -x "$(command -v yarn)" ] ; then
     pathadd "$(yarn global bin)"
   fi
-  case $(uname) in
-    Darwin)
-      pathadd "$HOME/development/flutter/bin"
-      ;;
-    *)
-      pathadd "/usr/lib/dart/bin"
-      pathadd "$HOME/development/flutter/bin"
-      ;;
-  esac
-
-
 
   case $(uname) in
     CYGWIN_NT-* | MSYS_NT-* )
