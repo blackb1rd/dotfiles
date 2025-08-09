@@ -154,7 +154,7 @@ fi
 export FLUTTER_GIT_URL="ssh://git@github.com/flutter/flutter.git"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-export PATH="/opt/homebrew/opt/mozjpeg/bin:$PATH"
+export PATH="/opt/homebrew/:opt/mozjpeg/bin:/opt/homebrew/share/vcpkg:$PATH"
 
 ### Added by Zinit's installer
 if [[ ! -f $HOME/.local/share/zinit/zinit.git/zinit.zsh ]]; then
