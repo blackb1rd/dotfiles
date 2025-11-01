@@ -36,7 +36,7 @@ else
 fi
 zmodload -i zsh/complist
 HISTFILE=$HOME/.zsh_history
-HISTSIZE=100000
+HISTSIZE=1000000
 SAVEHIST=$HISTSIZE
 setopt hist_ignore_all_dups # remove older duplicate entries from history
 setopt hist_reduce_blanks # remove superfluous blanks from history items
@@ -101,9 +101,6 @@ zsh_custom_ip(){
   echo -n "%{$color%}$ip"
 }
 
-if type "pyenv" > /dev/null; then
-  PYENV=pyenv
-fi
 if type "rbenv" > /dev/null; then
   RBENV=rbenv
 fi
@@ -125,15 +122,12 @@ pastefinish() {
 zstyle :bracketed-paste-magic paste-init pasteinit
 zstyle :bracketed-paste-magic paste-finish pastefinish
 ### Fix slowness of pastes
-if type "pyenv" > /dev/null; then
-  eval "$(pyenv init -)"
-fi
 
 export PATH="$HOME/bin:$PATH:$HOME/.cabal/bin"
-if [ -x "$(command -v pyenv)" ] ; then
+if [ -d $PYENV_ROOT/bin ] ; then
   export PYENV_ROOT="$HOME/.pyenv"
   export PATH="$PYENV_ROOT/bin:$PATH"
-  eval "$(pyenv init --path)"
+  eval "$(pyenv init - zsh)"
 fi
 if [ -x "$(command -v rust)" ] ; then
   . "$HOME/.cargo/env"

@@ -5,37 +5,30 @@ AddCurrentUserPath() {
   pathadd "/sbin"
   pathadd "/snap/bin"
   pathadd "$HOME/.go/bin/"
-  export ANDROID_HOME="$HOME/Android/Sdk"
-  pathadd "$ANDROID_HOME/emulator"
-  pathadd "$ANDROID_HOME/tools"
-  pathadd "$ANDROID_HOME/tools/bin"
-  pathadd "$ANDROID_HOME/platform-tools"
-  pathadd "$HOME/development/flutter/bin"
-  export VCPKG_ROOT="$HOME/development/vcpkg"
-  pathadd "$VCPKG_ROOT"
-  if [ -x "$(command -v yarn)" ] ; then
-    pathadd "$(yarn global bin)"
-  fi
 
   case $(uname) in
     CYGWIN_NT-* | MSYS_NT-* )
+      export ANDROID_HOME="$HOME/Android/Sdk"
       export EDITOR=vim
       pathadd "/mingw64/bin"
       export GOROOT=/mingw64/lib/go
       export GOPATH=/mingw64
       ;;
     * )
-
+      case $(uname) in
+        Darwin* )
+          export ANDROID_HOME="$HOME/Library/Android/sdk"
+          ;;
+        * )
+          export ANDROID_HOME="$HOME/Android/Sdk"
+          ;;
+      esac
       if [ -d "$HOME/.pyenv" ] ; then
         export PYENV_ROOT="$HOME/.pyenv"
         if [ -d "$PYENV_ROOT/bin" ] ; then
           pathadd "$PYENV_ROOT/bin"
         else
           pathadd "$PYENV_ROOT/shims"
-        fi
-        if command -v pyenv > /dev/null 2>&1; then
-          eval "$(pyenv init - --no-rehash)"
-          eval "$(pyenv virtualenv-init -)"
         fi
         pyenv activate py3nvim 2> /dev/null
         if [ -n "$VIRTUAL_ENV" ] && [ -e "${VIRTUAL_ENV}/bin/activate" ]; then
@@ -97,4 +90,15 @@ AddCurrentUserPath() {
       fi
       ;;
   esac
+
+  pathadd "$ANDROID_HOME/emulator"
+  pathadd "$ANDROID_HOME/tools"
+  pathadd "$ANDROID_HOME/tools/bin"
+  pathadd "$ANDROID_HOME/platform-tools"
+  pathadd "$HOME/development/flutter/bin"
+  export VCPKG_ROOT="$HOME/development/vcpkg"
+  pathadd "$VCPKG_ROOT"
+  if [ -x "$(command -v yarn)" ] ; then
+    pathadd "$(yarn global bin)"
+  fi
 }
