@@ -20,6 +20,7 @@ esac
 # sources external in folder .shells
 source "$HOME/.shells/source/utility.sh"
 source "$HOME/.shells/source/transmission.sh"
+source "$HOME/.shells/source/environment.sh"
 source "$HOME/.shells/source/path.sh"
 
 # add path generic
@@ -122,20 +123,11 @@ pastefinish() {
 zstyle :bracketed-paste-magic paste-init pasteinit
 zstyle :bracketed-paste-magic paste-finish pastefinish
 ### Fix slowness of pastes
-
-export PATH="$HOME/bin:$PATH:$HOME/.cabal/bin"
-if [ -d $PYENV_ROOT/bin ] ; then
-  export PYENV_ROOT="$HOME/.pyenv"
-  export PATH="$PYENV_ROOT/bin:$PATH"
-  eval "$(pyenv init - zsh)"
-fi
 if [ -x "$(command -v rust)" ] ; then
   . "$HOME/.cargo/env"
 fi
-export FLUTTER_GIT_URL="ssh://git@github.com/flutter/flutter.git"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-export PATH="/opt/homebrew/:opt/mozjpeg/bin:$PATH"
 
 ### Added by Zinit's installer
 if [[ ! -f $HOME/.local/share/zinit/zinit.git/zinit.zsh ]]; then
@@ -195,3 +187,8 @@ source <(ng completion script)
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# OpenClaw Completion
+[ -f "$HOME/.openclaw/completions/openclaw.zsh" ] && source "$HOME/.openclaw/completions/openclaw.zsh"

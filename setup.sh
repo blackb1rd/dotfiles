@@ -501,9 +501,13 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${shell}" ] ; then
   done
 
   mkdirfolder ".shells/source"
+  mkdirfolder ".config"
+  mkdirfolder ".config/environment.d"
   installfile ".shells/source/transmission.sh" "shells/source/transmission.sh"
   installfile ".shells/source/utility.sh" "shells/source/utility.sh"
+  installfile ".shells/source/environment.sh" "shells/source/environment.sh"
   installfile ".shells/source/path.sh" "shells/source/path.sh"
+  installfile ".config/environment.d/env.conf" "systemd/environment.d/env.conf"
 
   echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
 fi

@@ -21,6 +21,10 @@ Do the setup dotfiles.
 ./setup.sh --os linux
 ```
 
+GUI apps such as VS Code now pick up shared environment variables from
+`~/.config/environment.d/10-dotfiles.conf`, so restart the user session after
+installing shell dotfiles if you need those changes outside the terminal.
+
 For the update git all submodules after do the setup:
 ```
 git subpull

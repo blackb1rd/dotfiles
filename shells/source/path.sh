@@ -1,10 +1,14 @@
 #!/bin/sh
 
 AddCurrentUserPath() {
-  # Add Path
-  pathadd "/sbin"
-  pathadd "/snap/bin"
-  pathadd "$HOME/.go/bin/"
+  # Static paths/vars are already set via environment.d/env.conf (sourced by
+  # environment.sh and read directly by systemd). Only dynamic/conditional
+  # logic that requires a running shell belongs here.
+
+  # yarn global bin (runtime command)
+  if [ -x "$(command -v yarn)" ] ; then
+    pathadd "$(yarn global bin)"
+  fi
 
   case $(uname) in
     CYGWIN_NT-* | MSYS_NT-* )
@@ -15,20 +19,18 @@ AddCurrentUserPath() {
       export GOPATH=/mingw64
       ;;
     * )
+      # Darwin uses a different Android SDK path than env.conf default
       case $(uname) in
         Darwin* )
           export ANDROID_HOME="$HOME/Library/Android/sdk"
           ;;
-        * )
-          export ANDROID_HOME="$HOME/Android/Sdk"
-          ;;
       esac
+
+      # pyenv: init hooks must be eval'd in the shell
       if [ -d "$HOME/.pyenv" ] ; then
-        export PYENV_ROOT="$HOME/.pyenv"
-        if [ -d "$PYENV_ROOT/bin" ] ; then
-          pathadd "$PYENV_ROOT/bin"
-        else
-          pathadd "$PYENV_ROOT/shims"
+        if command -v pyenv > /dev/null 2>&1; then
+          eval "$(pyenv init - --no-rehash)"
+          eval "$(pyenv virtualenv-init -)"
         fi
         pyenv activate py3nvim 2> /dev/null
         if [ -n "$VIRTUAL_ENV" ] && [ -e "${VIRTUAL_ENV}/bin/activate" ]; then
@@ -37,68 +39,46 @@ AddCurrentUserPath() {
         fi
       fi
 
+      # rbenv: init hook must be eval'd in the shell
       if [ -d "$HOME/.rbenv" ] ; then
-        pathadd "$HOME/.rbenv/bin"
         eval "$(rbenv init -)"
       fi
 
-      if [ -d "$HOME/.rustup" ] ; then
-        export RUSTUP_HOME="$HOME/.rustup"
-      fi
-
-      export PYTHONSTARTUP="$HOME/.pythonrc"
+      # nvim aliases (shell-only)
       if [ -x "$(command -v nvim)" ] ; then
-        export EDITOR=nvim
         alias vim="nvim"
         alias vimdiff='nvim -d'
-      else
-        export EDITOR=vim
       fi
 
-      if [ -d "$HOME/.go" ] ; then
-        export GOPATH="$HOME/.go"
-        pathadd "$GOPATH/bin"
-      elif [ -d "$HOME/go" ] ; then
-        export GOPATH="$HOME/go"
-        pathadd "$GOPATH/bin"
-      fi
-
-      if [ -d "/usr/local/go/bin" ] ; then
-        pathadd "/usr/local/go/bin"
-      elif [ -f "/etc/os-release" ] ; then
-        os_release_id="$(grep -E '^ID=([a-zA-Z]*)' /etc/os-release | cut -d '=' -f 2)"
-        os_version_id="$(grep -E '^VERSION_ID="([0-9\.]*)"' /etc/os-release | cut -d '=' -f 2 | tr -d '"')"
-        case "$os_release_id" in
-          "ubuntu")
-            case "$os_version_id" in
-              "16.04" | "18.04" | "18.10")
-                export GOROOT=/usr/lib/go-1.14/
-                pathadd "/usr/lib/go-1.14/bin"
+      # Go: detect installation path if not already set by env.conf
+      if [ -z "$GOROOT" ] ; then
+        if [ -d "/usr/local/go/bin" ] ; then
+          export GOROOT=/usr/local/go
+          pathadd "/usr/local/go/bin"
+        elif [ -f "/etc/os-release" ] ; then
+          os_release_id="$(grep -E '^ID=([a-zA-Z]*)' /etc/os-release | cut -d '=' -f 2)"
+          os_version_id="$(grep -E '^VERSION_ID="([0-9\.]*)"' /etc/os-release | cut -d '=' -f 2 | tr -d '"')"
+          case "$os_release_id" in
+            "ubuntu")
+              case "$os_version_id" in
+                "16.04" | "18.04" | "18.10")
+                  export GOROOT=/usr/lib/go-1.14/
+                  pathadd "/usr/lib/go-1.14/bin"
+                ;;
+                *)
+                  export GOROOT=/snap/go/current
+                  pathadd "$HOME/go/bin"
+                ;;
+              esac
               ;;
-              *)
-                export GOROOT=/snap/go/current
-                pathadd "$HOME/go/bin"
-              ;;
-            esac
-            ;;
-          "debian")
-            if [ -d "/usr/local/go" ] ; then
-              export GOROOT=/usr/local/go/
-              pathadd "/usr/local/go/bin"
-            fi
-        esac
+            "debian")
+              if [ -d "/usr/local/go" ] ; then
+                export GOROOT=/usr/local/go/
+                pathadd "/usr/local/go/bin"
+              fi
+          esac
+        fi
       fi
       ;;
   esac
-
-  pathadd "$ANDROID_HOME/emulator"
-  pathadd "$ANDROID_HOME/tools"
-  pathadd "$ANDROID_HOME/tools/bin"
-  pathadd "$ANDROID_HOME/platform-tools"
-  pathadd "$HOME/development/flutter/bin"
-  export VCPKG_ROOT="$HOME/development/vcpkg"
-  pathadd "$VCPKG_ROOT"
-  if [ -x "$(command -v yarn)" ] ; then
-    pathadd "$(yarn global bin)"
-  fi
 }
