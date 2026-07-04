@@ -20,7 +20,7 @@ esac
 # sources external in folder .shells
 source "$HOME/.shells/source/utility.sh"
 source "$HOME/.shells/source/transmission.sh"
-source "$HOME/.shells/source/environment.sh"
+[ -f "$HOME/.shells/source/environment.sh" ] && source "$HOME/.shells/source/environment.sh"
 source "$HOME/.shells/source/path.sh"
 
 # add path generic
@@ -44,7 +44,6 @@ setopt hist_reduce_blanks # remove superfluous blanks from history items
 setopt inc_append_history # save history entries as soon as they are entered
 setopt share_history # share history between different instances of the shell
 source "$HOME/.lscolors.sh"
-zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 if [ -x "$(command -v dircolors)" ] ; then
   export LS_COLORS
   alias ls='ls --color'
@@ -111,79 +110,66 @@ DEFAULT_USER=`whoami`
 DISABLE_AUTO_UPDATE=true
 ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 
-### Fix slowness of pastes with zsh-syntax-highlighting.zsh
-pasteinit() {
-  OLD_SELF_INSERT=${${(s.:.)widgets[self-insert]}[2,3]}
-  zle -N self-insert url-quote-magic # I wonder if you'd need `.url-quote-magic`?
-}
-
-pastefinish() {
-  zle -N self-insert $OLD_SELF_INSERT
-}
-zstyle :bracketed-paste-magic paste-init pasteinit
-zstyle :bracketed-paste-magic paste-finish pastefinish
-### Fix slowness of pastes
-if [ -x "$(command -v rust)" ] ; then
-  . "$HOME/.cargo/env"
+PYENV_ROOT="$HOME/.pyenv"
+if [ -d $PYENV_ROOT/bin ] ; then
+  export PATH="$PYENV_ROOT/bin:$PATH"
+  eval "$(pyenv init - zsh)"
 fi
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+[ -d "/opt/homebrew/opt/mozjpeg/bin" ] && export PATH="/opt/homebrew/opt/mozjpeg/bin:$PATH"
 
-### Added by Zinit's installer
-if [[ ! -f $HOME/.local/share/zinit/zinit.git/zinit.zsh ]]; then
-    print -P "%F{33} %F{220}Installing %F{33}ZDHARMA-CONTINUUM%F{220} Initiative Plugin Manager (%F{33}zdharma-continuum/zinit%F{220})…%f"
-    command mkdir -p "$HOME/.local/share/zinit" && command chmod g-rwX "$HOME/.local/share/zinit"
-    command git clone https://github.com/zdharma-continuum/zinit "$HOME/.local/share/zinit/zinit.git" && \
-        print -P "%F{33} %F{34}Installation successful.%f%b" || \
-        print -P "%F{160} The clone has failed.%f%b"
+### Zinit plugin manager. Installed once by setup.sh ("./setup.sh --shell").
+### Load it (and its plugins) only when present, so the shell still works on a
+### machine where setup has not been run yet.
+ZINIT_HOME="$HOME/.local/share/zinit/zinit.git"
+if [[ -f "$ZINIT_HOME/zinit.zsh" ]]; then
+  source "$ZINIT_HOME/zinit.zsh"
+  autoload -Uz _zinit
+  (( ${+_comps} )) && _comps[zinit]=_zinit
+
+  zinit ice depth=1
+  zinit light romkatv/powerlevel10k
+
+  # Load a few important annexes, without Turbo
+  # (this is currently required for annexes)
+  zinit light-mode for \
+      zdharma-continuum/zinit-annex-as-monitor \
+      zdharma-continuum/zinit-annex-bin-gem-node \
+      zdharma-continuum/zinit-annex-patch-dl \
+      zdharma-continuum/zinit-annex-rust \
+      zsh-users/zsh-autosuggestions \
+      zsh-users/zsh-completions \
+      zsh-users/zsh-syntax-highlighting \
+      zsh-users/zsh-history-substring-search
+
+  zinit wait lucid for \
+    OMZP::aws \
+    OMZP::brew \
+    OMZP::colored-man-pages \
+    OMZP::colorize \
+    OMZP::command-not-found \
+    OMZP::docker \
+    OMZP::dotenv \
+    OMZP::fzf \
+    OMZP::git \
+    OMZP::golang \
+    OMZP::nmap \
+    OMZP::npm \
+    OMZP::pip \
+    OMZP::pyenv \
+    OMZP::python \
+    OMZP::rsync \
+    OMZP::rust \
+    OMZP::screen \
+    OMZP::systemd \
+    OMZP::tmux
 fi
 
-source "$HOME/.local/share/zinit/zinit.git/zinit.zsh"
-autoload -Uz _zinit
-(( ${+_comps} )) && _comps[zinit]=_zinit
-
-zinit ice depth=1
-zinit light romkatv/powerlevel10k
-
-# Load a few important annexes, without Turbo
-# (this is currently required for annexes)
-zinit light-mode for \
-    zdharma-continuum/zinit-annex-as-monitor \
-    zdharma-continuum/zinit-annex-bin-gem-node \
-    zdharma-continuum/zinit-annex-patch-dl \
-    zdharma-continuum/zinit-annex-rust \
-    zsh-users/zsh-autosuggestions \
-    zsh-users/zsh-completions \
-    zsh-users/zsh-syntax-highlighting \
-    zsh-users/zsh-history-substring-search
-
-zinit wait lucid for \
-  OMZP::aws \
-  OMZP::brew \
-  OMZP::colored-man-pages \
-  OMZP::colorize \
-  OMZP::command-not-found \
-  OMZP::docker \
-  OMZP::dotenv \
-  OMZP::fzf \
-  OMZP::git \
-  OMZP::golang \
-  OMZP::nmap \
-  OMZP::npm \
-  OMZP::pip \
-  OMZP::pyenv \
-  OMZP::python \
-  OMZP::rsync \
-  OMZP::rust \
-  OMZP::screen \
-  OMZP::systemd \
-  OMZP::tmux
-
-
-### End of Zinit's installer chunk
-
-# Load Angular CLI autocompletion.
-source <(ng completion script)
+# Load Angular CLI autocompletion (only if the CLI is installed).
+if command -v ng > /dev/null 2>&1 ; then
+  source <(ng completion script)
+fi
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
@@ -192,3 +178,22 @@ source <(ng completion script)
 
 # OpenClaw Completion
 [ -f "$HOME/.openclaw/completions/openclaw.zsh" ] && source "$HOME/.openclaw/completions/openclaw.zsh"
+
+# macOS-only developer environment (Java, Antigravity IDE, high fd limit).
+if [ "$(uname)" = "Darwin" ] ; then
+  if [ -x /usr/libexec/java_home ] ; then
+    JAVA_HOME="$(/usr/libexec/java_home -v 17 2>/dev/null)"
+    [ -n "$JAVA_HOME" ] && export JAVA_HOME
+  fi
+
+  # Raise open-file limit (kernel still caps per process at kern.maxfilesperproc).
+  ulimit -n 1048576 2>/dev/null
+
+  export DART_VM_OPTIONS="--max-old-space-size=4096"
+
+  # Added by Antigravity / Antigravity IDE
+  for _ag in "$HOME/.antigravity/antigravity/bin" \
+             "$HOME/.antigravity-ide/antigravity-ide/bin" ; do
+    [ -d "$_ag" ] && export PATH="$_ag:$PATH"
+  done
+fi

@@ -1,4 +1,5 @@
 name: CI
+
 on:
   push:
     branches:
@@ -6,14 +7,116 @@ on:
     tags:
       - v*.*.*
   pull_request:
+  workflow_dispatch:
 
 jobs:
-  shellcheck:
+  lint:
+    name: Lint & syntax
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: shellcheck
-        uses: docker://koalaman/shellcheck-alpine:v0.9.0
-        with:
-          args: shellcheck setup.sh
+
+      - name: Install shellcheck + zsh
+        run: sudo apt-get update && sudo apt-get install -y shellcheck zsh
+
+      - name: ShellCheck
+        run: |
+          shellcheck setup.sh
+          shellcheck -e SC1091 shells/source/*.sh
+
+      - name: Syntax parse (bash / sh / zsh)
+        run: |
+          bash -n setup.sh
+          bash -n shells/bashrc
+          sh   -n shells/profile
+          for f in shells/source/*.sh ; do sh -n "$f" ; done
+          zsh  -n shells/zshrc
+          zsh  -n shells/zprofile
+
+      - name: CLI behaviour (help works, bad args exit non-zero)
+        run: |
+          ./setup.sh --help | grep -q "Usage:"
+          if ./setup.sh         > /dev/null 2>&1 ; then echo "no-arg must fail"  ; exit 1 ; fi
+          if ./setup.sh --bogus > /dev/null 2>&1 ; then echo "bad flag must fail" ; exit 1 ; fi
+
+  run-setup:
+    name: Run setup.sh --shell (${{ matrix.os }})
+    needs: lint
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install prerequisites (wget)
+        run: |
+          if [ "$RUNNER_OS" = "Linux" ] ; then
+            sudo apt-get update && sudo apt-get install -y wget
+          else
+            brew list wget > /dev/null 2>&1 || brew install wget
+          fi
+
+      - name: Run "setup.sh --shell" into a sandbox HOME
+        run: |
+          set -eux
+          SANDBOX="$(mktemp -d)"
+          # Pre-satisfy the zinit guard so the network installer is skipped:
+          # this job verifies setup.sh's own symlink logic, not zinit's installer.
+          mkdir -p "$SANDBOX/.local/share/zinit/zinit.git"
+          : > "$SANDBOX/.local/share/zinit/zinit.git/zinit.zsh"
+          HOME="$SANDBOX" ./setup.sh --shell
+          echo "SANDBOX=$SANDBOX" >> "$GITHUB_ENV"
+
+      - name: Verify dotfiles were symlinked
+        run: |
+          set -eu
+          fail=0
+          for f in \
+            .bashrc .zshrc .profile .zprofile .p10k.zsh \
+            .shells/source/path.sh \
+            .shells/source/utility.sh \
+            .shells/source/environment.sh \
+            .shells/source/transmission.sh ; do
+            if [ -L "$SANDBOX/$f" ] ; then
+              echo "ok:   $f -> $(readlink "$SANDBOX/$f")"
+            else
+              echo "MISS: $f is not a symlink"
+              fail=1
+            fi
+          done
+          [ "$fail" -eq 0 ] || { echo "::error::dotfile verification failed" ; exit 1 ; }
+
+  full-install:
+    # End-to-end package install (Homebrew on macOS, apt on Ubuntu). This is
+    # slow and network-heavy, so it is opt-in: trigger it manually from the
+    # Actions tab ("Run workflow"). It does not run on pushes or PRs.
+    name: Full install --basictool (${{ matrix.os }})
+    if: github.event_name == 'workflow_dispatch'
+    needs: lint
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run "setup.sh --basictool"
+        run: ./setup.sh --basictool
+
+      - name: Verify core tools are installed
+        run: |
+          set -eu
+          for c in git zsh curl wget nvim ; do
+            if command -v "$c" > /dev/null 2>&1 ; then
+              echo "ok: $c -> $(command -v "$c")"
+            else
+              echo "::error::missing tool after install: $c"
+              exit 1
+            fi
+          done

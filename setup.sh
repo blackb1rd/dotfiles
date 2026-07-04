@@ -16,10 +16,84 @@ PYTHON3_VERSION="3.12.3"
 PIPoption="install --user --upgrade"
 RUBY_VERSION="3.3.1"
 
+# ---------------------------------------------------------------------------
+# Pretty output helpers.
+# Colours are computed once and disabled automatically when the terminal
+# does not support them (so piping / CI logs stay clean).
+# ---------------------------------------------------------------------------
+if command -v tput > /dev/null 2>&1 && [ -n "$(tput colors 2>/dev/null)" ] ; then
+  TXT_BOLD="$(tput bold)"
+  TXT_RED="$(tput setaf 1)"
+  TXT_BLUE="$(tput setaf 4)"
+  TXT_RESET="$(tput sgr0)"
+else
+  TXT_BOLD="" ; TXT_RED="" ; TXT_BLUE="" ; TXT_RESET=""
+fi
+
+# info <message>  -> red  "[-] <message>"
+info() { echo "${TXT_BOLD}${TXT_RED}[-] $*${TXT_RESET}" ; }
+# ok [<message>]  -> blue "[>] <message>" (defaults to "Install completed")
+ok() { echo "${TXT_BOLD}${TXT_BLUE}[>] ${1:-Install completed}${TXT_RESET}" ; }
+
+# Load Homebrew into the current shell (updates PATH and USRPREFIX) when it is
+# installed, checking both the Apple Silicon and Intel prefixes.
+brew_env() {
+  for _brew in /opt/homebrew/bin/brew /usr/local/bin/brew ; do
+    if [ -x "$_brew" ] ; then
+      USRPREFIX="$(dirname "$(dirname "$_brew")")"
+      eval "$("$_brew" shellenv)"
+      return 0
+    fi
+  done
+  return 1
+}
+
+# True on Debian/Ubuntu-family (apt) systems.
+is_debian_like() { [ "$OStype" = "debian" ] || [ "$OStype" = "ubuntu" ] ; }
+
 case $(uname) in
   Darwin)
     current_dir="$( cd "$( dirname "$0" )" && pwd )"
     OStype=Darwin
+
+    # Load Homebrew if it is already installed (sets USRPREFIX + PATH).
+    brew_env
+
+    PKG_CMD_UPDATE="brew update"
+    PKG_CMD_INSTALL="brew install"
+    PKG_CMD_REMOVE="brew uninstall"
+    PACKAGE="autoconf
+             automake
+             cmake
+             coreutils
+             curl
+             figlet
+             fzf
+             git
+             gnupg
+             htop
+             irssi
+             llvm
+             make
+             neovim
+             pkg-config
+             python
+             ruby
+             the_silver_searcher
+             tmux
+             universal-ctags
+             unzip
+             wget
+             zsh"
+    PIPmodule="jedi
+               matplotlib
+               mycli
+               neovim
+               numpy
+               pandas
+               pynvim
+               Pygments
+               yapf"
     ;;
   CYGWIN_NT-*)
     OStype=CYGWIN_NT
@@ -437,15 +511,22 @@ fi
 
 # Install program
 if [ -n "${all}" ] || [ -n "${basictool}" ] ; then
-  txtbld=$(tput bold)
-  if [ "$OStype" != "android" ] ; then
-    echo "${txtbld}$(tput setaf 1)[-] Install the GPG key$(tput sgr0)"
+  # macOS: make sure Homebrew itself is available before anything else.
+  if [ "$OStype" = "darwin" ] && ! command -v brew > /dev/null 2>&1 ; then
+    info "Install Homebrew"
+    bash -c "$(curl --fail --show-error --silent --location https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    brew_env
+  fi
+
+  # Debian/Ubuntu need extra apt repositories/keys for docker + yarn.
+  if is_debian_like ; then
+    info "Install the GPG key"
     $PKG_CMD_INSTALL curl
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | $ROOT_PERM apt-key add -
     curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | $ROOT_PERM apt-key add -
   fi
 
-  echo "${txtbld}$(tput setaf 1)[-] Install the basic tool$(tput sgr0)"
+  info "Install the basic tool"
   if [ -n "${REPOSITORY[*]}" ] ; then
     for repo in "${REPOSITORY[@]}"
     do
@@ -455,13 +536,17 @@ if [ -n "${all}" ] || [ -n "${basictool}" ] ; then
   $PKG_CMD_UPDATE
   # shellcheck disable=SC2086
   $PKG_CMD_INSTALL $PACKAGE || { echo 'Failed to install program' ; exit 1; }
-  $PKG_CMD_REMOVE cmdtest
+
+  # cmdtest ships a conflicting "yarn"; only relevant on apt-based distros.
+  if is_debian_like ; then
+    $PKG_CMD_REMOVE cmdtest
+  fi
 
   # if did not want to install latest version
   if [ ! "${latest}" ] && [ ! "${all}" ] ; then
     $PKG_CMD_INSTALL vim ctags
   fi
-  echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
+  ok
 fi
 
 ###############################################################################
@@ -473,8 +558,9 @@ fi
 #                                                                             #
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${shell}" ] ; then
-  echo "${txtbld}$(tput setaf 1)[-] Install the shell$(tput sgr0)"
-  if ! [ -x "$(command -v zinit)" ] ; then
+  info "Install the shell"
+  # Install the zinit plugin manager once (shells/zshrc loads it if present).
+  if [ ! -f "$HOME/.local/share/zinit/zinit.git/zinit.zsh" ] ; then
     bash -c "$(curl --fail --show-error --silent --location https://raw.githubusercontent.com/zdharma-continuum/zinit/HEAD/scripts/install.sh)"
   fi
 
@@ -509,7 +595,7 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${shell}" ] ; then
   installfile ".shells/source/path.sh" "shells/source/path.sh"
   installfile ".config/environment.d/env.conf" "systemd/environment.d/env.conf"
 
-  echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
+  ok
 fi
 
 ###############################################################################
@@ -522,17 +608,21 @@ fi
 #                                                                             #
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${latest}" ] ; then
-  echo "${txtbld}$(tput setaf 1)[-] Install the silversearcher-ag$(tput sgr0)"
-  $PKG_CMD_REMOVE silversearcher-ag
+  info "Install the silversearcher-ag"
+  if [ "$OStype" = "darwin" ] ; then
+    brew install the_silver_searcher
+  else
+    $PKG_CMD_REMOVE silversearcher-ag
 
-  # clone silversearcher-ag
-  git clone --depth 1 $GITHUB_URL/ggreer/the_silver_searcher "$TEMP/the_silver_searcher"
-  cd "$TEMP/the_silver_searcher" || exit
-  ./build.sh
-  make
-  $ROOT_PERM make install
-  cd "$current_dir" && rm -rf "$TEMP/the_silver_searcher"
-  echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
+    # clone silversearcher-ag
+    git clone --depth 1 $GITHUB_URL/ggreer/the_silver_searcher "$TEMP/the_silver_searcher"
+    cd "$TEMP/the_silver_searcher" || exit
+    ./build.sh
+    make
+    $ROOT_PERM make install
+    cd "$current_dir" && rm -rf "$TEMP/the_silver_searcher"
+  fi
+  ok
 fi
 
 ###############################################################################
@@ -545,18 +635,22 @@ fi
 #                                                                             #
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${latest}" ] ; then
-  echo "${txtbld}$(tput setaf 1)[-] Install the ctags$(tput sgr0)"
-  $PKG_CMD_REMOVE ctags
+  info "Install the ctags"
+  if [ "$OStype" = "darwin" ] ; then
+    brew install universal-ctags
+  else
+    $PKG_CMD_REMOVE ctags
 
-  # clone ctags
-  git clone --depth 1 $GITHUB_URL/universal-ctags/ctags "$TEMP/ctags"
-  cd "$TEMP/ctags" || exit
-  ./autogen.sh
-  ./configure --prefix="$USRPREFIX" --enable-iconv
-  make
-  $ROOT_PERM make install
-  cd "$current_dir" && rm -rf "$TEMP/ctags"
-  echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
+    # clone ctags
+    git clone --depth 1 $GITHUB_URL/universal-ctags/ctags "$TEMP/ctags"
+    cd "$TEMP/ctags" || exit
+    ./autogen.sh
+    ./configure --prefix="$USRPREFIX" --enable-iconv
+    make
+    $ROOT_PERM make install
+    cd "$current_dir" && rm -rf "$TEMP/ctags"
+  fi
+  ok
 fi
 
 ###############################################################################
@@ -568,19 +662,27 @@ fi
 #                                                                             #
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${dart}" ] ; then
-  echo "${txtbld}$(tput setaf 1)[-] Install the dart$(tput sgr0)"
-  $ROOT_PERM sh -c 'wget -qO- https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -'
-  $ROOT_PERM sh -c 'wget -qO- https://storage.googleapis.com/download.dartlang.org/linux/debian/dart_stable.list > /etc/apt/sources.list.d/dart_stable.list'
+  info "Install the dart"
+  if [ "$OStype" = "darwin" ] ; then
+    brew tap dart-lang/dart
+    brew install dart
+  else
+    $ROOT_PERM sh -c 'wget -qO- https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -'
+    $ROOT_PERM sh -c 'wget -qO- https://storage.googleapis.com/download.dartlang.org/linux/debian/dart_stable.list > /etc/apt/sources.list.d/dart_stable.list'
 
-  $ROOT_PERM apt-get update
-  $PKG_CMD_INSTALL dart
-  echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
+    $ROOT_PERM apt-get update
+    $PKG_CMD_INSTALL dart
+  fi
+  ok
 
-  echo "${txtbld}$(tput setaf 1)[-] Install the flutter$(tput sgr0)"
-  mkdir "$HOME/development"
+  info "Install the flutter"
+  mkdir -p "$HOME/development"
   cd "$HOME/development" || exit
-  git clone https://github.com/flutter/flutter.git -b stable --depth 1
-  echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
+  if [ ! -d "$HOME/development/flutter" ] ; then
+    git clone https://github.com/flutter/flutter.git -b stable --depth 1
+  fi
+  cd "$current_dir" || exit
+  ok
 fi
 
 ###############################################################################
@@ -593,16 +695,16 @@ fi
 #                                                                             #
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${dot}" ] ; then
-  echo "${txtbld}$(tput setaf 1)[-] Install the debugger$(tput sgr0)"
+  info "Install the debugger"
   installfile .gdbrc debugger/gdbrc
 
   mkdirfolder .cgdb
   installfile .cgdb/cgdbrc debugger/cgdbrc
 
   # install gdb-dashboard https://github.com/cyrus-and/gdb-dashboard
-  wget -P ~ git.io/.gdbinit
+  wget -O "$HOME/.gdbinit" https://raw.githubusercontent.com/cyrus-and/gdb-dashboard/master/.gdbinit
 
-  echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
+  ok
 fi
 
 ###############################################################################
@@ -613,10 +715,14 @@ fi
 #                       |____/ \___/ \___|_|\_\___|_|                         #
 #                                                                             #
 ###############################################################################
-if [ -n "${all}" ] || [ "${docker}" ] ; then
-  if [ "$OStype" != "android" ] ; then
+if [ -n "${all}" ] || [ -n "${docker}" ] ; then
+  info "Install the docker"
+  if [ "$OStype" = "darwin" ] ; then
+    brew install --cask docker
+  elif is_debian_like ; then
     $PKG_CMD_INSTALL docker-ce docker-ce-cli containerd.io
   fi
+  ok
 fi
 
 ###############################################################################
@@ -627,14 +733,14 @@ fi
 #                          |_|  \___/|_| |_|\__|___/                          #
 #                                                                             #
 ###############################################################################
-if [ "${fonts}" ] ; then
+if [ -n "${fonts}" ] ; then
   if [ "$OStype" != "android" ] ; then
-    echo "${txtbld}$(tput setaf 1)[-] Install the fonts$(tput sgr0)"
+    info "Install the fonts"
     # Install nerd fonts
     git clone --depth 1 $GITHUB_URL/ryanoasis/nerd-fonts "$TEMP/fonts"
     cd "$TEMP/fonts" && ./install.sh "DejaVuSansMono"
     cd "$current_dir" && rm -rf "$TEMP/fonts"
-    echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
+    ok
     # "DejaVu Sans Mono Nerd Font 12"
   fi
 fi
@@ -647,12 +753,16 @@ fi
 #                                |_|  /___|_|                                  #
 #                                                                              #
 ################################################################################
-if [ -n "${all}" ] || [ "${fzf}" ] ; then
+if [ -n "${all}" ] || [ -n "${fzf}" ] ; then
   if [ "$OStype" != "android" ] ; then
-    echo "${txtbld}$(tput setaf 1)[-] Install the Fzf$(tput sgr0)"
-    git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-    "$HOME/.fzf/install --all"
-    echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
+    info "Install the Fzf"
+    if [ ! -d "$HOME/.fzf" ] ; then
+      git clone --depth 1 https://github.com/junegunn/fzf.git "$HOME/.fzf"
+    else
+      git -C "$HOME/.fzf" pull
+    fi
+    "$HOME/.fzf/install" --all
+    ok
   fi
 fi
 
@@ -665,9 +775,9 @@ fi
 #                                                                             #
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${dot}" ] ; then
-  echo "${txtbld}$(tput setaf 1)[-] Install the git$(tput sgr0)"
+  info "Install the git"
   installfile .gitconfig git/gitconfig
-  echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
+  ok
 fi
 
 ###############################################################################
@@ -679,24 +789,41 @@ fi
 #                                                                             #
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${golang}" ] ; then
-  echo "${txtbld}$(tput setaf 1)[-] Install the go$(tput sgr0)"
-  wget "https://golang.org/dl/go$GOLANG_VERSION.linux-amd64.tar.gz"
-  $ROOT_PERM tar -C /usr/local -xzf "go$GOLANG_VERSION.linux-amd64.tar.gz"
-  rm "go$GOLANG_VERSION.linux-amd64.tar.gz"
-  pathadd "/usr/local/go/bin"
-  go install  github.com/PuerkitoBio/goquery@latest
-  go install  github.com/beevik/ntp@latest
-  go install  github.com/cenkalti/backoff@latest
-  go install  github.com/derekparker/delve/cmd/dlv@latest
-  go install  github.com/FiloSottile/mkcert@latest
-  go install  github.com/go-sql-driver/mysql@latest
-  go install  github.com/golang/dep/cmd/dep@latest
-  go install  github.com/mattn/go-sqlite3@latest
-  go install  github.com/mmcdole/gofeed@latest
-  go install  gonum.org/v1/gonum/...@latest
-  go install  gonum.org/v1/plot/...@latest
+  info "Install the go"
+  if [ "$OStype" = "darwin" ] ; then
+    brew install go
+  else
+    # Build the download name for the running OS/architecture.
+    go_os="$(uname -s | tr '[:upper:]' '[:lower:]')"
+    case "$(uname -m)" in
+      x86_64 | amd64 )  go_arch="amd64" ;;
+      aarch64 | arm64 ) go_arch="arm64" ;;
+      armv6l | armv7l ) go_arch="armv6l" ;;
+      i386 | i686 )     go_arch="386" ;;
+      * )               go_arch="amd64" ;;
+    esac
+    go_tar="go${GOLANG_VERSION}.${go_os}-${go_arch}.tar.gz"
+
+    wget "https://golang.org/dl/${go_tar}"
+    $ROOT_PERM rm -rf /usr/local/go
+    $ROOT_PERM tar -C /usr/local -xzf "${go_tar}"
+    rm "${go_tar}"
+    pathadd "/usr/local/go/bin"
+  fi
+
+  go install github.com/PuerkitoBio/goquery@latest
+  go install github.com/beevik/ntp@latest
+  go install github.com/cenkalti/backoff@latest
+  go install github.com/derekparker/delve/cmd/dlv@latest
+  go install github.com/FiloSottile/mkcert@latest
+  go install github.com/go-sql-driver/mysql@latest
+  go install github.com/golang/dep/cmd/dep@latest
+  go install github.com/mattn/go-sqlite3@latest
+  go install github.com/mmcdole/gofeed@latest
+  go install gonum.org/v1/gonum/...@latest
+  go install gonum.org/v1/plot/...@latest
   go install gonum.org/v1/hdf5/...@latest
-  echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
+  ok
 fi
 
 ###############################################################################
@@ -709,9 +836,9 @@ fi
 #                                                                             #
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${dot}" ] ; then
-  echo "${txtbld}$(tput setaf 1)[-] Install the htop$(tput sgr0)"
+  info "Install the htop"
   installfile .htoprc htop/htoprc
-  echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
+  ok
 fi
 
 ###############################################################################
@@ -723,9 +850,9 @@ fi
 #                                                                             #
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${dot}" ] ; then
-  echo "${txtbld}$(tput setaf 1)[-] Install the irssi$(tput sgr0)"
+  info "Install the irssi"
   installfolder irssi
-  echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
+  ok
 fi
 
 ###############################################################################
@@ -737,7 +864,7 @@ fi
 #                                                                             #
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${kicad}" ] ; then
-  echo "${txtbld}$(tput setaf 1)[-] Install KiCad Plugin$(tput sgr0)"
+  info "Install KiCad Plugin"
   KICAD_GITHUB_PLUGIN_FOLDER="KiCad/plugins"
   mkdir -p "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER"
   git clone "$GITHUB_URL/NilujePerchut/kicad_scripts.git" "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER/teardrops"
@@ -758,7 +885,12 @@ if [ -n "${all}" ] || [ -n "${kicad}" ] ; then
     cp -r "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER/WireIt" "$KICAD_PLUGIN_FOLDER/"
 
   else
-    KICAD_PLUGIN_FOLDER="$HOME/.kicad/scripting/plugins"
+    if [ "$OStype" = "darwin" ] ; then
+      KICAD_PLUGIN_FOLDER="$HOME/Documents/KiCad/scripting/plugins"
+    else
+      KICAD_PLUGIN_FOLDER="$HOME/.kicad/scripting/plugins"
+    fi
+    mkdir -p "$KICAD_PLUGIN_FOLDER"
     ln -snf "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER/teardrops/teardrops" "$KICAD_PLUGIN_FOLDER/teardrops"
     ln -snf "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER/RF-tools-KiCAD" "$KICAD_PLUGIN_FOLDER/RF-tools-KiCAD"
     ln -snf "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER/easyw-kicad-action-tools" "$KICAD_PLUGIN_FOLDER/easyw-kicad-action-tools"
@@ -767,7 +899,7 @@ if [ -n "${all}" ] || [ -n "${kicad}" ] ; then
     ln -snf "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER/WireIt" "$KICAD_PLUGIN_FOLDER/WireIt"
   fi
 
-  echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
+  ok
 fi
 
 ###############################################################################
@@ -780,12 +912,17 @@ fi
 #                                                                             #
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${nodejs}" ] ; then
-  if [ "$OStype" != "android" ] ; then
+  info "Install nodejs"
+  if [ "$OStype" = "darwin" ] ; then
+    brew install node yarn
+  elif [ "$OStype" != "android" ] ; then
     $PKG_CMD_REMOVE cmdtest
     $ROOT_PERM snap install node --classic
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | $ROOT_PERM tee /etc/apt/sources.list.d/yarn.list
     $PKG_CMD_INSTALL -y yarn
+  fi
 
+  if command -v yarn > /dev/null 2>&1 ; then
     $ROOT_PERM yarn global add async            \
                                expo-cli         \
                                react-native-cli \
@@ -796,6 +933,7 @@ if [ -n "${all}" ] || [ -n "${nodejs}" ] ; then
                                neovim           \
                                prettier
   fi
+  ok
 fi
 
 ###############################################################################
@@ -808,7 +946,7 @@ fi
 #                                                                             #
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${python}" ] ; then
-  echo "${txtbld}$(tput setaf 1)[-] Install the python$(tput sgr0)"
+  info "Install the python"
   installfile .pythonrc python/pythonrc
 
   if [ "$OStype" != "android" ] ; then
@@ -834,9 +972,11 @@ if [ -n "${all}" ] || [ -n "${python}" ] ; then
   pyenv global $PYTHON3_VERSION
 
   pip install --upgrade pip
-  # shellcheck disable=SC2086
-  pip $PIPoption $PIPmodule
-  echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
+  if [ -n "${PIPmodule}" ] ; then
+    # shellcheck disable=SC2086
+    pip $PIPoption $PIPmodule
+  fi
+  ok
 fi
 
 ###############################################################################
@@ -849,6 +989,7 @@ fi
 #                                                                             #
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${ruby}" ] ; then
+  info "Install the ruby"
   git clone "$GITHUB_URL/rbenv/rbenv" "$HOME/.rbenv"
   cd "$HOME/.rbenv" && src/configure && make -C src
   cd "$current_dir" || exit
@@ -863,6 +1004,7 @@ if [ -n "${all}" ] || [ -n "${ruby}" ] ; then
   gem install neovim bundler
   gem environment
   rbenv rehash
+  ok
 fi
 
 ###############################################################################
@@ -874,7 +1016,9 @@ fi
 #                                                                             #
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${rust}" ] ; then
+  info "Install the rust"
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+  ok
 fi
 
 ###############################################################################
@@ -887,9 +1031,9 @@ fi
 #                                                                             #
 ###############################################################################
 if [ -n "${is_wsl}" ] && [ -n "${all}" ] || [ -n "${scoop}" ] ; then
-  echo "${txtbld}$(tput setaf 1)[-] Install the snap package$(tput sgr0)"
+  info "Install the scoop package"
   scoop install "$SCOOP_PACKAGE"
-  echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
+  ok
 fi
 
 ###############################################################################
@@ -902,11 +1046,14 @@ fi
 #                                                                             #
 ###############################################################################
 if [ -z "${is_wsl}" ] && [ -n "${all}" ] || [ -n "${snap}" ] ; then
-  echo "${txtbld}$(tput setaf 1)[-] Install the snap package$(tput sgr0)"
-  $ROOT_PERM snap install --channel=extended hugo
-  $ROOT_PERM snap install --channel=edge shellcheck
-  $ROOT_PERM snap install nvim --classic
-  echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
+  # snap is Linux only; skip silently on platforms without it (e.g. macOS).
+  if command -v snap > /dev/null 2>&1 ; then
+    info "Install the snap package"
+    $ROOT_PERM snap install --channel=extended hugo
+    $ROOT_PERM snap install --channel=edge shellcheck
+    $ROOT_PERM snap install nvim --classic
+    ok
+  fi
 fi
 
 
@@ -919,11 +1066,11 @@ fi
 #                                                                             #
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${dot}" ] ; then
-  if [ "${OStype}" != "MSYS_NT" ] ; then
-    echo "${txtbld}$(tput setaf 1)[-] Install the ssh$(tput sgr0)"
+  if [ "${OStype}" != "msys_nt" ] ; then
+    info "Install the ssh"
     mkdirfolder .ssh/control
     installfile .ssh/config ssh/config
-    echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
+    ok
   fi
 fi
 
@@ -936,7 +1083,7 @@ fi
 #                                                                             #
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${tmux}" ] ; then
-  echo "${txtbld}$(tput setaf 1)[-] Install the tmux$(tput sgr0)"
+  info "Install the tmux"
   if [ ! -d "$HOME/.tmux" ] ; then
     git clone "$GITHUB_URL/gpakosz/.tmux.git" "$HOME/.tmux"
   else
@@ -944,7 +1091,9 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${tmux}" ] ; then
   fi
 
   if [ -n "${all}" ] || [ -n "${latest}" ] || [ -n "${tmux}" ] ; then
-    if [ "$OStype" != "android" ] ; then
+    if [ "$OStype" = "darwin" ] ; then
+      brew install tmux
+    elif [ "$OStype" != "android" ] ; then
       # clone tmux
       git clone --depth 1 "$GITHUB_URL/tmux/tmux" "$TEMP/tmux"
       cd "$TEMP/tmux" || exit
@@ -958,7 +1107,7 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${tmux}" ] ; then
 
   installfile .tmux.conf tmux/tmux.conf
   installfile .tmux.conf.local tmux/tmux.conf.local
-  echo "${txtbld}$(tput setaf 4)[>] Install completed$(tput sgr0)"
+  ok
 fi
 
 ###############################################################################
@@ -974,13 +1123,15 @@ if [ -n "${all}" ] \
    || [ -n "${neovim}" ] \
    || [ -n "${ycmd}" ] \
    || [ -n "${dot}" ] ; then
-  echo "${txtbld}$(tput setaf 1)[-] Install the vim$(tput sgr0)"
+  info "Install the vim"
   if [ -n "${all}" ] || [ -n "${latest}" ] || [ -n "${neovim}" ] ; then
-    if [ "$OStype" != "android" ] && [ -n "${latest}" ] ; then
+    if [ "$OStype" = "darwin" ] ; then
+      brew install neovim
+    elif [ "$OStype" != "android" ] && [ -n "${latest}" ] ; then
       # Install latest vim version
       $PKG_CMD_REMOVE vim
 
-      echo "${txtbld}$(tput setaf 1)[-] Install the latest VIM$(tput sgr0)"
+      info "Install the latest VIM"
 
       if [ ! -d "$HOME/github/neovim/" ] ; then
         git clone --depth 1 $GITHUB_URL/neovim/neovim "$HOME/github/neovim/"
@@ -998,14 +1149,13 @@ if [ -n "${all}" ] \
   fi
   if [ -n "${all}" ] || [ -n "${dot}" ] ; then
     mkdirfolder .vim
-    mkdirfolder .vim/
     mkdirfolder .vim/backups
     mkdirfolder .vim/tmp
     mkdirfolder .vim/undo
 
     mkdirfolder .config/nvim
 
-    if [ ! -d "$HOME/.config/nvim/autoload/plug.vim" ] ; then
+    if [ ! -f "$HOME/.config/nvim/autoload/plug.vim" ] ; then
       curl -fLo "$HOME/.config/nvim/autoload/plug.vim" --create-dirs \
         https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     fi
@@ -1030,4 +1180,5 @@ if [ -n "${all}" ] \
     nvim +PlugInstall +qall
     nvim +PlugUpdate +qall
   fi
+  ok
 fi

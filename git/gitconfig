@@ -56,3 +56,9 @@
 # vim: set ft=gitconfig noet:
 [url "git@github.com:"]
 	insteadOf = git://github.com/
+
+# Machine-local overrides (signing key + gpgsign) live in an untracked file so
+# commits are signed only on machines that actually hold the key. Keeps this
+# shared/public config from breaking commits on boxes without the GPG key.
+[include]
+	path = ~/.gitconfig.local

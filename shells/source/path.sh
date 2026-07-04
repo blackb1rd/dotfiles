@@ -1,5 +1,30 @@
 #!/bin/sh
 
+# ---------------------------------------------------------------------------
+# Shared environment for every shell that sources this file (bash, zsh, ...).
+# Centralised here so the individual rc files (bashrc/zshrc) don't repeat it.
+# ---------------------------------------------------------------------------
+export FLUTTER_GIT_URL="ssh://git@github.com/flutter/flutter.git"
+[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
+
+# Prepend personal bin dirs once (idempotent -> no PATH bloat on nested shells);
+# ~/.cabal/bin is appended as a fallback.
+for _dir in "$HOME/bin" "$HOME/.local/bin" ; do
+  [ -d "$_dir" ] || continue
+  case ":$PATH:" in
+    *":$_dir:"*) ;;
+    *) PATH="$_dir:$PATH" ;;
+  esac
+done
+if [ -d "$HOME/.cabal/bin" ] ; then
+  case ":$PATH:" in
+    *":$HOME/.cabal/bin:"*) ;;
+    *) PATH="$PATH:$HOME/.cabal/bin" ;;
+  esac
+fi
+unset _dir
+export PATH
+
 AddCurrentUserPath() {
   # Static paths/vars are already set via environment.d/env.conf (sourced by
   # environment.sh and read directly by systemd). Only dynamic/conditional
@@ -30,7 +55,10 @@ AddCurrentUserPath() {
       if [ -d "$HOME/.pyenv" ] ; then
         if command -v pyenv > /dev/null 2>&1; then
           eval "$(pyenv init - --no-rehash)"
-          eval "$(pyenv virtualenv-init -)"
+          # pyenv-virtualenv is a separate plugin; only init it when installed.
+          if pyenv commands 2>/dev/null | grep -qx virtualenv-init ; then
+            eval "$(pyenv virtualenv-init -)"
+          fi
         fi
         pyenv activate py3nvim 2> /dev/null
         if [ -n "$VIRTUAL_ENV" ] && [ -e "${VIRTUAL_ENV}/bin/activate" ]; then
@@ -41,7 +69,8 @@ AddCurrentUserPath() {
 
       # rbenv: init hook must be eval'd in the shell
       if [ -d "$HOME/.rbenv" ] ; then
-        eval "$(rbenv init -)"
+        [ -d "$HOME/.rbenv/bin" ] && pathadd "$HOME/.rbenv/bin"
+        command -v rbenv > /dev/null 2>&1 && eval "$(rbenv init -)"
       fi
 
       # nvim aliases (shell-only)
