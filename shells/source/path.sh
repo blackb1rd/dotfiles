@@ -61,6 +61,8 @@ AddCurrentUserPath() {
         [ -d "$PYENV_ROOT/bin" ]   && case ":$PATH:" in *":$PYENV_ROOT/bin:"*)   ;; *) PATH="$PYENV_ROOT/bin:$PATH"   ;; esac
         [ -d "$PYENV_ROOT/shims" ] && case ":$PATH:" in *":$PYENV_ROOT/shims:"*) ;; *) PATH="$PYENV_ROOT/shims:$PATH" ;; esac
         if command -v pyenv > /dev/null 2>&1 ; then
+          # self-replacing lazy shim; body runs on first call (SC2317/SC2329 false positive)
+          # shellcheck disable=SC2317,SC2329
           pyenv() {
             unset -f pyenv
             eval "$(command pyenv init - 2>/dev/null)"
@@ -76,6 +78,8 @@ AddCurrentUserPath() {
         [ -d "$HOME/.rbenv/bin" ]   && case ":$PATH:" in *":$HOME/.rbenv/bin:"*)   ;; *) PATH="$HOME/.rbenv/bin:$PATH"   ;; esac
         [ -d "$HOME/.rbenv/shims" ] && case ":$PATH:" in *":$HOME/.rbenv/shims:"*) ;; *) PATH="$HOME/.rbenv/shims:$PATH" ;; esac
         if command -v rbenv > /dev/null 2>&1 ; then
+          # self-replacing lazy shim; body runs on first call (SC2317/SC2329 false positive)
+          # shellcheck disable=SC2317,SC2329
           rbenv() { unset -f rbenv; eval "$(command rbenv init - 2>/dev/null)"; rbenv "$@"; }
         fi
       fi
