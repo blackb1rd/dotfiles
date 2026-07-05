@@ -413,14 +413,20 @@ mkdirfolder () {
   fi
 }
 
+# Symlink $HOME/$1 -> repo file $2.
+# (Re)creates the link when the destination is missing OR is a broken/dangling
+# symlink (its target no longer exists). `-e` is false in both of those cases
+# but true for a real file or an already-valid symlink, so existing user files
+# and correct links are left untouched.
 installfile () {
-  if [ ! -f "$HOME/$1" ] ; then
+  if [ ! -e "$HOME/$1" ] ; then
     ln -snf "$current_dir/$2" "$HOME/$1"
   fi
 }
 
+# Symlink $HOME/.$1 -> repo folder $1, with the same missing/broken handling.
 installfolder () {
-  if [ ! -d "$HOME/.$1" ] ; then
+  if [ ! -e "$HOME/.$1" ] ; then
     ln -snf "$current_dir/$1" "$HOME/.$1"
   fi
 }
