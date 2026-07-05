@@ -33,6 +33,7 @@ fi
 # info <message>  -> red  "[-] <message>"
 info() { echo "${TXT_BOLD}${TXT_RED}[-] $*${TXT_RESET}" ; }
 # ok [<message>]  -> blue "[>] <message>" (defaults to "Install completed")
+# shellcheck disable=SC2120  # message arg is optional by design; callers may omit it
 ok() { echo "${TXT_BOLD}${TXT_BLUE}[>] ${1:-Install completed}${TXT_RESET}" ; }
 
 # Load Homebrew into the current shell (updates PATH and USRPREFIX) when it is
