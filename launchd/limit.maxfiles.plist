@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Raise the system-wide open-files limit at boot.
+
+  Without this, GUI-launched apps (IDEs, Docker Desktop, browsers) and any
+  process not descended from a login shell inherit launchd's tiny default of
+  soft=256, which causes "Too many open files" (EMFILE) under heavy dev load.
+
+  This sets the launchd default to soft=61440 — the kernel's per-process ceiling
+  (kern.maxfilesperproc) on this class of machine, so it is the real maximum;
+  going higher is clamped by the kernel and can slow programs that size loops to
+  RLIMIT_NOFILE. Login shells set the same value themselves via ~/.zprofile.
+
+  Install: /Library/LaunchDaemons/limit.maxfiles.plist, root:wheel, 0644
+  (setup.sh --shell does this). Verify: `launchctl limit maxfiles`.
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>limit.maxfiles</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>launchctl</string>
+    <string>limit</string>
+    <string>maxfiles</string>
+    <string>61440</string>
+    <string>200000</string>
+  </array>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>ServiceIPC</key>
+  <false/>
+</dict>
+</plist>

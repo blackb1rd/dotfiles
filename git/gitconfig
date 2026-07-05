@@ -1,30 +1,69 @@
 [user]
 	name = blackb1rd
 	email = blackb1rd.mov@gmail.com
-[code]
-	editor = vim
 [core]
+	editor = vim
 	autocrlf = input
+	# Built-in filesystem monitor + untracked cache: much faster `git status`
+	# and `git diff` on large repos (Git 2.37+, macOS & Linux).
+	fsmonitor = true
+	untrackedCache = true
 [color]
 	ui = true
 [diff]
-	rename = copies
+	renames = copies
+	algorithm = histogram
+	colorMoved = default
+	mnemonicPrefix = true
 	tool = vimdiff
 [difftool]
 	prompt = false
 [merge]
 	tool = vimdiff
 	log = true
+	# 3-way conflict markers showing the common ancestor — far easier to resolve.
+	conflictStyle = zdiff3
 [mergetool]
 	prompt = true
 [mergetool "vimdiff"]
 	cmd = nvim -d $BASE $LOCAL $REMOTE $MERGED -c '$wincmd w' -c 'wincmd J'
 [push]
 	default = simple
+	# First push of a new branch auto-creates its upstream; tags ride along.
+	autoSetupRemote = true
+	followTags = true
 [help]
 	autocorrect = 1
-[http]
-	sslverify = false
+# NOTE: `[http] sslverify = false` was removed — disabling TLS verification
+# globally exposes every fetch/push to MITM. If one host genuinely needs it
+# (self-signed cert), scope it instead of turning it off everywhere:
+#   [http "https://host.example.com"]
+#       sslVerify = false
+[init]
+	defaultBranch = main
+[pull]
+	# Refuse to auto-merge on a divergent pull; rebase explicitly (`git purr`)
+	# or merge deliberately. Prevents accidental merge commits.
+	ff = only
+[fetch]
+	prune = true
+	pruneTags = true
+[rebase]
+	autoStash = true
+	autoSquash = true
+	updateRefs = true
+[rerere]
+	# Remember how you resolved a conflict and replay it next time.
+	enabled = true
+	autoUpdate = true
+[commit]
+	verbose = true
+[column]
+	ui = auto
+[branch]
+	sort = -committerdate
+[tag]
+	sort = version:refname
 [log]
 	decorate = full
 [alias]

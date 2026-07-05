@@ -1,0 +1,11 @@
+# Local sudo PAM config. Installed to /etc/pam.d/sudo_local, which
+# /etc/pam.d/sudo includes via `auth include sudo_local`. Unlike editing
+# /etc/pam.d/sudo directly, this file SURVIVES macOS updates.
+#
+# Enables Touch ID (and Apple Watch) for `sudo`, including inside this IDE's
+# terminal. pam_reattach (brew install pam-reattach) reattaches the auth prompt
+# to the GUI session so Touch ID also works inside tmux/screen; it is `optional`,
+# so sudo still works normally if that module is absent. On Intel Macs change the
+# path to /usr/local/lib/pam/pam_reattach.so.
+auth       optional       /opt/homebrew/lib/pam/pam_reattach.so
+auth       sufficient     pam_tid.so

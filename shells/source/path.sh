@@ -51,27 +51,35 @@ AddCurrentUserPath() {
           ;;
       esac
 
-      # pyenv: init hooks must be eval'd in the shell
-      if [ -d "$HOME/.pyenv" ] ; then
-        if command -v pyenv > /dev/null 2>&1; then
-          eval "$(pyenv init - --no-rehash)"
-          # pyenv-virtualenv is a separate plugin; only init it when installed.
-          if pyenv commands 2>/dev/null | grep -qx virtualenv-init ; then
-            eval "$(pyenv virtualenv-init -)"
-          fi
-        fi
-        pyenv activate py3nvim 2> /dev/null
-        if [ -n "$VIRTUAL_ENV" ] && [ -e "${VIRTUAL_ENV}/bin/activate" ]; then
-          # shellcheck disable=SC1090
-          . "${VIRTUAL_ENV}/bin/activate"
+      # pyenv: put bin + shims on PATH now (so python/pip resolve), but DEFER the
+      # costly `pyenv init` (shell function, rehash, completion, ~75ms) to the
+      # first `pyenv` call via a lazy shim function. (The old `pyenv activate
+      # py3nvim` was already a no-op — that virtualenv does not exist — so it is
+      # dropped.) Shims are prepended so pyenv versions take precedence.
+      : "${PYENV_ROOT:=$HOME/.pyenv}"
+      if [ -d "$PYENV_ROOT" ] ; then
+        [ -d "$PYENV_ROOT/bin" ]   && case ":$PATH:" in *":$PYENV_ROOT/bin:"*)   ;; *) PATH="$PYENV_ROOT/bin:$PATH"   ;; esac
+        [ -d "$PYENV_ROOT/shims" ] && case ":$PATH:" in *":$PYENV_ROOT/shims:"*) ;; *) PATH="$PYENV_ROOT/shims:$PATH" ;; esac
+        if command -v pyenv > /dev/null 2>&1 ; then
+          pyenv() {
+            unset -f pyenv
+            eval "$(command pyenv init - 2>/dev/null)"
+            command pyenv commands 2>/dev/null | grep -qx virtualenv-init \
+              && eval "$(command pyenv virtualenv-init - 2>/dev/null)"
+            pyenv "$@"
+          }
         fi
       fi
 
-      # rbenv: init hook must be eval'd in the shell
+      # rbenv: same lazy treatment — its init is the single biggest cost (~140ms).
       if [ -d "$HOME/.rbenv" ] ; then
-        [ -d "$HOME/.rbenv/bin" ] && pathadd "$HOME/.rbenv/bin"
-        command -v rbenv > /dev/null 2>&1 && eval "$(rbenv init -)"
+        [ -d "$HOME/.rbenv/bin" ]   && case ":$PATH:" in *":$HOME/.rbenv/bin:"*)   ;; *) PATH="$HOME/.rbenv/bin:$PATH"   ;; esac
+        [ -d "$HOME/.rbenv/shims" ] && case ":$PATH:" in *":$HOME/.rbenv/shims:"*) ;; *) PATH="$HOME/.rbenv/shims:$PATH" ;; esac
+        if command -v rbenv > /dev/null 2>&1 ; then
+          rbenv() { unset -f rbenv; eval "$(command rbenv init - 2>/dev/null)"; rbenv "$@"; }
+        fi
       fi
+      export PATH
 
       # nvim aliases (shell-only)
       if [ -x "$(command -v nvim)" ] ; then

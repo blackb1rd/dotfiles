@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Raise the per-user process limit at boot.
+
+  macOS defaults are low for a heavy dev machine: kern.maxprocperuid=2666.
+  With many watchers, language servers, test runners and container helpers,
+  hitting the per-uid cap yields "fork: resource temporarily unavailable"
+  (EAGAIN). kern.maxproc (the system-wide ceiling, 4000 here) is NOT writable at
+  runtime on current macOS, so we cannot lift it — instead we raise the per-user
+  cap up to just under it, leaving a reserve for root/system daemons.
+
+  Computed dynamically: peruid = kern.maxproc - 512; launchd maxproc soft=peruid
+  hard=kern.maxproc. On a 4000-ceiling machine that is 2666 -> 3488. This is a
+  headroom bump within the fixed system ceiling, not "unlimited".
+
+  Install: /Library/LaunchDaemons/limit.maxproc.plist, root:wheel, 0644
+  (setup.sh --shell does this). Verify: `sysctl kern.maxprocperuid` and
+  `launchctl limit maxproc`. Revert: raise/lower the numbers or remove the file.
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>limit.maxproc</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/sh</string>
+    <string>-c</string>
+    <string>max=$(/usr/sbin/sysctl -n kern.maxproc); peruid=$((max - 512)); /usr/sbin/sysctl -w kern.maxprocperuid=$peruid; /bin/launchctl limit maxproc $peruid $max</string>
+  </array>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>ServiceIPC</key>
+  <false/>
+</dict>
+</plist>

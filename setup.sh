@@ -424,6 +424,17 @@ installfolder () {
   fi
 }
 
+# Install a macOS LaunchDaemon (root-owned, copied — launchd rejects symlinks to
+# user-writable files). $1 = repo-relative plist path. Loads it immediately.
+installLaunchDaemon () {
+  src="$current_dir/$1"
+  dst="/Library/LaunchDaemons/$(basename "$1")"
+  sudo cp "$src" "$dst" \
+    && sudo chown root:wheel "$dst" \
+    && sudo chmod 0644 "$dst" \
+    && sudo launchctl load -w "$dst" 2>/dev/null
+}
+
 checkOStype () {
   case $1 in
     debian|ubuntu ) return 1 ;;
@@ -571,6 +582,7 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${shell}" ] ; then
 
   installfile .profile shells/profile
   installfile .bashrc shells/bashrc
+  installfile .zshenv shells/zshenv
   installfile .zshrc shells/zshrc
   installfile .zprofile shells/zprofile
 
@@ -594,6 +606,23 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${shell}" ] ; then
   installfile ".shells/source/environment.sh" "shells/source/environment.sh"
   installfile ".shells/source/path.sh" "shells/source/path.sh"
   installfile ".config/environment.d/env.conf" "systemd/environment.d/env.conf"
+
+  # Per-OS developer-machine system tuning.
+  if [ "$OStype" = "darwin" ] ; then
+    # Raise system-wide file/process limits (needs sudo).
+    installLaunchDaemon launchd/limit.maxfiles.plist
+    installLaunchDaemon launchd/limit.maxproc.plist
+
+    # Touch ID for sudo (survives OS updates). pam-reattach makes it work in tmux.
+    brew install pam-reattach 2>/dev/null || true
+    sudo install -o root -g wheel -m 0444 "$current_dir/pam/sudo_local" /etc/pam.d/sudo_local
+
+    # macOS system preferences (Finder, keyboard, Dock, screenshots, ...).
+    sh "$current_dir/system/macos.sh"
+  elif [ "$(uname)" = "Linux" ] ; then
+    # GNOME desktop tweaks + system dev limits (inotify, nofile/nproc).
+    sh "$current_dir/system/linux.sh"
+  fi
 
   ok
 fi

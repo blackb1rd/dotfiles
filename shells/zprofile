@@ -1,3 +1,69 @@
-emulate sh
-. ~/.profile
-emulate zsh
+# ~/.zprofile — sourced for LOGIN shells: interactive terminals, SSH sessions,
+# AND the login shell an AI/agent uses to run tools (agents run `zsh -l`). It is
+# NOT sourced by plain `#!/bin/zsh` scripts, which makes it the right home for
+# shell-environment setup that needs a live shell (version-manager init that
+# spawns subprocesses) but should not slow down every script invocation.
+#
+# Environment that EVERY shell needs (static PATH, locale) lives in ~/.zshenv.
+# Interactive UI (prompt, plugins, completion, aliases) lives in ~/.zshrc.
+
+# --- Homebrew (Apple Silicon / Intel / Linuxbrew) --------------------------
+for _brew in /opt/homebrew/bin/brew /usr/local/bin/brew /home/linuxbrew/.linuxbrew/bin/brew; do
+  if [ -x "$_brew" ]; then
+    eval "$("$_brew" shellenv)"
+    break
+  fi
+done
+unset _brew
+
+# --- OrbStack (containers/VMs CLI integration) -----------------------------
+[ -f "$HOME/.orbstack/shell/init.zsh" ] && source "$HOME/.orbstack/shell/init.zsh" 2>/dev/null
+
+# --- Dynamic PATH + version managers (pyenv, rbenv, yarn, Android, Go) ------
+# Defined in path.sh (sourced from ~/.zshenv); its init hooks must be eval'd in
+# a live shell, so it runs here rather than in ~/.zshenv.
+command -v AddCurrentUserPath >/dev/null 2>&1 && AddCurrentUserPath
+
+# --- Node Version Manager --------------------------------------------------
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
+# --- macOS-only developer environment (Java, mozjpeg, Antigravity, fd limit)-
+if [ "$(uname)" = "Darwin" ]; then
+  if [ -x /usr/libexec/java_home ]; then
+    JAVA_HOME="$(/usr/libexec/java_home -v 17 2>/dev/null)"
+    [ -n "$JAVA_HOME" ] && export JAVA_HOME
+  fi
+
+  # Raise the SOFT open-file limit to the kernel's real per-process cap. Going
+  # higher (e.g. 1048576) is pointless — the kernel caps actual descriptors at
+  # kern.maxfilesperproc — and inflating RLIMIT_NOFILE can slow programs that
+  # size loops/arrays to it. Only the soft limit is touched (raising the hard
+  # limit needs root). The limit is inherited by every child process, so setting
+  # it once per login shell here is enough; no need to repeat it elsewhere.
+  # (GUI apps launched from Finder use launchd's limit, not this one.)
+  _maxfd=$(sysctl -n kern.maxfilesperproc 2>/dev/null)
+  [ -n "$_maxfd" ] && ulimit -Sn "$_maxfd" 2>/dev/null
+  unset _maxfd
+
+  # Same for processes: raise the soft limit to the kernel per-user cap
+  # (kern.maxprocperuid). The limit.maxproc LaunchDaemon raises that cap system
+  # wide; without it this is a no-op at the current default. Inherited by children.
+  _maxproc=$(sysctl -n kern.maxprocperuid 2>/dev/null)
+  [ -n "$_maxproc" ] && ulimit -Su "$_maxproc" 2>/dev/null
+  unset _maxproc
+
+  export DART_VM_OPTIONS="--max-old-space-size=4096"
+
+  [ -d "/opt/homebrew/opt/mozjpeg/bin" ] && export PATH="/opt/homebrew/opt/mozjpeg/bin:$PATH"
+
+  # Added by Antigravity / Antigravity IDE
+  for _ag in "$HOME/.antigravity/antigravity/bin" \
+             "$HOME/.antigravity-ide/antigravity-ide/bin"; do
+    [ -d "$_ag" ] && export PATH="$_ag:$PATH"
+  done
+  unset _ag
+fi
+
+# Marker: lets a non-login interactive shell load this env once via ~/.zshrc.
+__DOTFILES_ENV_LOADED=1
