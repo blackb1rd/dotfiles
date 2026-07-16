@@ -30,11 +30,6 @@ AddCurrentUserPath() {
   # environment.sh and read directly by systemd). Only dynamic/conditional
   # logic that requires a running shell belongs here.
 
-  # yarn global bin (runtime command)
-  if [ -x "$(command -v yarn)" ] ; then
-    pathadd "$(yarn global bin)"
-  fi
-
   case $(uname) in
     CYGWIN_NT-* | MSYS_NT-* )
       export ANDROID_HOME="$HOME/Android/Sdk"

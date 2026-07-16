@@ -1,7 +1,16 @@
 #!/bin/bash
 
+# Fail on unset variables: this script runs sudo/rm with interpolated paths, so
+# a typo'd name must be an error, not an empty string. Every optional variable
+# is given an explicit default below. `set -e` is deliberately NOT used --
+# plenty of steps here are expected to fail and be recovered from.
+set -u
+
+# Resolve the repo root from $0 so the script can be run from anywhere.
+current_dir="$( cd "$( dirname "$0" )" && pwd )"
+
 # shellcheck disable=SC1091
-. "shells/source/utility.sh"
+. "$current_dir/shells/source/utility.sh"
 
 GITHUB_RAW_URL='https://raw.githubusercontent.com'
 GITHUB_FOLDER="$HOME/git/github"
@@ -10,18 +19,51 @@ TEMP="/tmp"
 ROOT_PERM=""
 USRPREFIX="/usr/local"
 
+# Per-OS settings. Declared here so `set -u` has a defined value on every
+# platform; the case statement below fills in the ones it supports.
+OStype=""
+PACKAGE=""
+PIPmodule=""
+SCOOP_PACKAGE=""
+PKG_CMD_UPDATE=""
+PKG_CMD_INSTALL=""
+PKG_CMD_REMOVE=""
+PKG_CMD_ADD_REPO=""
+REPOSITORY=()
+is_wsl=""
+os_codename=""
+DOCKER_KEYRING=""
+DOCKER_REPO_URL=""
+
+# Command-line switches, all off until parsed.
+all="" ; basictool="" ; dart="" ; docker="" ; dot="" ; fonts="" ; fzf=""
+golang="" ; kicad="" ; latest="" ; neovim="" ; nodejs="" ; perl="" ; python=""
+ruby="" ; rust="" ; scoop="" ; shell="" ; snap="" ; tmux="" ; ycmd=""
+
 # version
-GOLANG_VERSION="1.22.2"
-PYTHON3_VERSION="3.12.3"
+# Versions are resolved to the latest stable release at install time.
+# Export any of these to pin a specific version, e.g. GOLANG_VERSION=1.22.2 ./setup.sh
+GOLANG_VERSION="${GOLANG_VERSION:-}"
+PYTHON3_VERSION="${PYTHON3_VERSION:-}"
+RUBY_VERSION="${RUBY_VERSION:-}"
+NERD_FONTS_VERSION="${NERD_FONTS_VERSION:-}"
 PIPoption="install --user --upgrade"
-RUBY_VERSION="3.3.1"
+
+# Used only when the upstream lookup fails (no network, upstream change, ...).
+GOLANG_VERSION_FALLBACK="1.22.2"
+PYTHON3_VERSION_FALLBACK="3.12.3"
+RUBY_VERSION_FALLBACK="3.3.1"
+NERD_FONTS_VERSION_FALLBACK="3.4.0"
 
 # ---------------------------------------------------------------------------
 # Pretty output helpers.
-# Colours are computed once and disabled automatically when the terminal
-# does not support them (so piping / CI logs stay clean).
+# Colours are computed once, and used only when stdout is a terminal that
+# advertises at least 8 colours. `tput colors` reads $TERM and knows nothing
+# about redirection, so the `-t 1` check is what keeps escape codes out of
+# piped output and CI logs.
 # ---------------------------------------------------------------------------
-if command -v tput > /dev/null 2>&1 && [ -n "$(tput colors 2>/dev/null)" ] ; then
+if [ -t 1 ] && command -v tput > /dev/null 2>&1 \
+   && [ "$(tput colors 2>/dev/null || echo 0)" -ge 8 ] 2>/dev/null ; then
   TXT_BOLD="$(tput bold)"
   TXT_RED="$(tput setaf 1)"
   TXT_BLUE="$(tput setaf 4)"
@@ -35,6 +77,67 @@ info() { echo "${TXT_BOLD}${TXT_RED}[-] $*${TXT_RESET}" ; }
 # ok [<message>]  -> blue "[>] <message>" (defaults to "Install completed")
 # shellcheck disable=SC2120  # message arg is optional by design; callers may omit it
 ok() { echo "${TXT_BOLD}${TXT_BLUE}[>] ${1:-Install completed}${TXT_RESET}" ; }
+
+# ---------------------------------------------------------------------------
+# Version resolution.
+# Each resolver prints the latest stable version of a toolchain, or nothing
+# when the lookup fails. resolve_version() wraps them so a failed lookup falls
+# back to a known-good pin instead of aborting the install.
+# ---------------------------------------------------------------------------
+
+# resolve_version <name> <fallback> <resolver-fn>
+# Prints the resolved version and reports which source it came from.
+resolve_version() {
+  _rv_name="$1" ; _rv_fallback="$2" ; _rv_resolver="$3"
+  _rv_version="$("$_rv_resolver" 2> /dev/null)"
+  if [ -z "$_rv_version" ] ; then
+    _rv_version="$_rv_fallback"
+    info "Could not resolve the latest ${_rv_name}, using ${_rv_version}" >&2
+  else
+    info "Latest ${_rv_name} is ${_rv_version}" >&2
+  fi
+  echo "$_rv_version"
+}
+
+# Latest stable Go, from the endpoint the official installer uses.
+# "https://go.dev/VERSION?m=text" -> "go1.26.5\ntime 2026-..." -> "1.26.5"
+latest_golang_version() {
+  curl -fsSL --max-time 15 'https://go.dev/VERSION?m=text' \
+    | head -n 1 \
+    | sed -n 's/^go\([0-9][0-9.]*\)$/\1/p'
+}
+
+# Latest stable CPython 3.x that pyenv can build. Requires pyenv on PATH.
+# Prereleases (3.14.0rc1, 3.15-dev, ...) are excluded by the X.Y.Z match.
+latest_python3_version() {
+  command -v pyenv > /dev/null 2>&1 || return 1
+  pyenv install --list \
+    | tr -d '[:blank:]' \
+    | grep -E '^3\.[0-9]+\.[0-9]+$' \
+    | sort -V \
+    | tail -n 1
+}
+
+# Latest Nerd Fonts release, without the tag's leading "v".
+# "v3.4.0" -> "3.4.0"
+latest_nerd_fonts_version() {
+  curl -fsSL --max-time 15 \
+    'https://api.github.com/repos/ryanoasis/nerd-fonts/releases/latest' \
+    | sed -n 's/.*"tag_name"[[:space:]]*:[[:space:]]*"v\{0,1\}\([0-9][^"]*\)".*/\1/p' \
+    | head -n 1
+}
+
+# Latest stable MRI Ruby that rbenv can build. Requires rbenv on PATH.
+# "rbenv install --list" is already stable-only; the X.Y.Z match drops the
+# jruby/truffleruby entries.
+latest_ruby_version() {
+  command -v rbenv > /dev/null 2>&1 || return 1
+  rbenv install --list \
+    | tr -d '[:blank:]' \
+    | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' \
+    | sort -V \
+    | tail -n 1
+}
 
 # Load Homebrew into the current shell (updates PATH and USRPREFIX) when it is
 # installed, checking both the Apple Silicon and Intel prefixes.
@@ -54,7 +157,6 @@ is_debian_like() { [ "$OStype" = "debian" ] || [ "$OStype" = "ubuntu" ] ; }
 
 case $(uname) in
   Darwin)
-    current_dir="$( cd "$( dirname "$0" )" && pwd )"
     OStype=Darwin
 
     # Load Homebrew if it is already installed (sets USRPREFIX + PATH).
@@ -103,7 +205,8 @@ case $(uname) in
     OStype=MSYS_NT
     ;;
   MSYS_NT-*)
-    current_dir="$(cygpath -a .)"
+    # Re-express the repo root as a Windows-visible path for the symlinks below.
+    current_dir="$(cygpath -a "$current_dir")"
     OStype=MSYS_NT
     PKG_CMD_UPDATE="pacman -Syy"
     PKG_CMD_INSTALL="pacman --needed -Su --noconfirm"
@@ -156,8 +259,8 @@ case $(uname) in
              wget
              zsh"
     pathadd "/mingw64/bin"
-    [ -z "$GOROOT" ] && export GOROOT=/mingw64/lib/go
-    [ -z "$GOPATH" ] && export GOPATH=/mingw64
+    [ -z "${GOROOT:-}" ] && export GOROOT=/mingw64/lib/go
+    [ -z "${GOPATH:-}" ] && export GOPATH=/mingw64
     ;;
   FreeBSD)
     OStype=FreeBSD
@@ -169,10 +272,14 @@ case $(uname) in
     OStype=DragonFly
     ;;
   Linux)
-    current_dir="$( cd "$( dirname "$0" )" && pwd )"
     if [ -f "/etc/os-release" ] ; then
       os_release_id="$(grep -E '^ID=([a-zA-Z]*)' /etc/os-release | cut -d '=' -f 2)"
       os_version_id="$(grep -E '^VERSION_ID="([0-9\.]*)"' /etc/os-release | cut -d '=' -f 2 | tr -d '"')"
+      # Release codename ("noble", "bookworm", ...) for the apt repo lines.
+      # /etc/os-release is authoritative and always present; lsb_release is an
+      # optional package, so it is only the fallback.
+      os_codename="$(grep -E '^VERSION_CODENAME=' /etc/os-release | cut -d '=' -f 2 | tr -d '"')"
+      [ -z "$os_codename" ] && os_codename="$(lsb_release -cs 2>/dev/null)"
       is_wsl="$(uname -a | grep -E 'Microsoft')"
       echo "os version : $os_version_id"
       PIPmodule="bottleneck
@@ -200,9 +307,6 @@ case $(uname) in
       fi
 
       case "$os_release_id" in
-        "arch")
-          OStype=arch
-          ;;
         "debian" | "ubuntu")
           ROOT_PERM="sudo"
           PKG_CMD_UPDATE="$ROOT_PERM apt-get update"
@@ -242,8 +346,8 @@ case $(uname) in
                    neovim
                    net-tools
                    ninja-build
-                   openjdk-11-jre
-                   openjdk-11-jdk
+                   default-jre
+                   default-jdk
                    pkg-config
                    python3-dev
                    ruby-dev
@@ -258,6 +362,12 @@ case $(uname) in
                    xz-utils
                    zlib1g-dev
                    zsh"
+          # Docker's apt repository is per-distro; both the URL path and the
+          # signing key differ between debian and ubuntu.
+          DOCKER_KEYRING="/etc/apt/keyrings/docker.gpg"
+          DOCKER_REPO_URL="https://download.docker.com/linux/$os_release_id"
+          REPOSITORY=("deb [arch=$(dpkg --print-architecture) signed-by=$DOCKER_KEYRING] $DOCKER_REPO_URL $os_codename stable")
+
           case "$os_release_id" in
             "debian")
               OStype=debian
@@ -268,53 +378,8 @@ case $(uname) in
                        libmysqlclient-dev
                        nmap
                        qemu-kvm"
-              REPOSITORY=("deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable")
               ;;
           esac
-          ;;
-        "elementary")
-          OStype=elementary
-          ;;
-        "fedora")
-          OStype=fedora
-          ROOT_PERM="sudo"
-          PKG_CMD_UPDATE="$ROOT_PERM yum update"
-          PKG_CMD_INSTALL="$ROOT_PERM yum install -y"
-          PKG_CMD_REMOVE="$ROOT_PERM yum remove -y"
-          PACKAGE="mysql-devel"
-          ;;
-        "coreos")
-          OStype=coreos
-          ;;
-        "gentoo")
-          OStype=gentoo
-          ;;
-        "mageia")
-          OStype=mageia
-          ;;
-        "centos")
-          OStype=centos
-          ROOT_PERM="sudo"
-          PKG_CMD_UPDATE="$ROOT_PERM yum update"
-          PKG_CMD_INSTALL="$ROOT_PERM yum install -y"
-          PKG_CMD_REMOVE="$ROOT_PERM yum remove -y"
-          PACKAGE="mysql-devel"
-          ;;
-        "opensuse"|"tumbleweed")
-          OStype=opensuse
-          ;;
-        "sabayon")
-          OStype=sabayon
-          ;;
-        "slackware")
-          OStype=slackware
-          ;;
-        "linuxmint")
-          OStype=linuxmint
-          ROOT_PERM="sudo"
-          PKG_CMD_UPDATE="$ROOT_PERM apt-get update"
-          PKG_CMD_INSTALL="$ROOT_PERM apt-get install -y"
-          PKG_CMD_REMOVE="$ROOT_PERM apt-get remove -y"
           ;;
         *)
           ;;
@@ -367,8 +432,9 @@ case $(uname) in
                    pandas
                    python-language-server
                    yapf"
-        TEMP=$TMPDIR
-        USRPREFIX=$PREFIX
+        # Termux sets both; fall back to the defaults above if it did not.
+        TEMP="${TMPDIR:-$TEMP}"
+        USRPREFIX="${PREFIX:-$USRPREFIX}"
         ;;
     esac
     ;;
@@ -410,6 +476,18 @@ usage() {
 mkdirfolder () {
   if [ ! -d "$HOME/$1" ] ; then
     mkdir -p "$HOME/$1"
+  fi
+}
+
+# clone_or_pull <url> <dest> [extra git-clone args...]
+# Keeps re-runs of setup.sh working: a plain `git clone` into an existing
+# directory is a hard error, so update instead of failing.
+clone_or_pull () {
+  _cp_url="$1" ; _cp_dest="$2" ; shift 2
+  if [ -d "$_cp_dest/.git" ] ; then
+    git -C "$_cp_dest" pull --ff-only
+  else
+    git clone "$@" "$_cp_url" "$_cp_dest"
   fi
 }
 
@@ -488,7 +566,8 @@ OStype=$(echo "$OStype" | awk '{print tolower($0)}')
 
 # Check the input of OStype
 if checkOStype "$OStype" ; then
-  echo "$OStype OS is not supported"
+  # OStype is empty when uname/os-release matched nothing at all.
+  echo "${OStype:-This} OS is not supported"
   echo ""
   usage
   exit 1
@@ -524,7 +603,7 @@ fi
 
 if [ "$OStype" = "msys_nt" ] ; then
   export MSYS=winsymlinks:nativestrict
-  export HOME=$USERPROFILE
+  export HOME="${USERPROFILE:-$HOME}"
 fi
 
 # Install program
@@ -536,16 +615,21 @@ if [ -n "${all}" ] || [ -n "${basictool}" ] ; then
     brew_env
   fi
 
-  # Debian/Ubuntu need extra apt repositories/keys for docker + yarn.
+  # Debian/Ubuntu need an extra apt repository/key for docker.
+  # apt-key was removed in Ubuntu 22.04 / Debian 12, so the key goes into its
+  # own keyring under /etc/apt/keyrings and is bound to the docker repo alone
+  # via the `signed-by=` option in $REPOSITORY (rather than trusted archive-wide).
   if is_debian_like ; then
     info "Install the GPG key"
-    $PKG_CMD_INSTALL curl
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | $ROOT_PERM apt-key add -
-    curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | $ROOT_PERM apt-key add -
+    $PKG_CMD_INSTALL curl ca-certificates gnupg
+    $ROOT_PERM install -m 0755 -d "$(dirname "$DOCKER_KEYRING")"
+    curl -fsSL "$DOCKER_REPO_URL/gpg" \
+      | $ROOT_PERM gpg --batch --yes --dearmor -o "$DOCKER_KEYRING"
+    $ROOT_PERM chmod a+r "$DOCKER_KEYRING"
   fi
 
   info "Install the basic tool"
-  if [ -n "${REPOSITORY[*]}" ] ; then
+  if [ "${#REPOSITORY[@]}" -gt 0 ] ; then
     for repo in "${REPOSITORY[@]}"
     do
       $PKG_CMD_ADD_REPO "$repo"
@@ -555,13 +639,8 @@ if [ -n "${all}" ] || [ -n "${basictool}" ] ; then
   # shellcheck disable=SC2086
   $PKG_CMD_INSTALL $PACKAGE || { echo 'Failed to install program' ; exit 1; }
 
-  # cmdtest ships a conflicting "yarn"; only relevant on apt-based distros.
-  if is_debian_like ; then
-    $PKG_CMD_REMOVE cmdtest
-  fi
-
   # if did not want to install latest version
-  if [ ! "${latest}" ] && [ ! "${all}" ] ; then
+  if [ -z "${latest}" ] && [ -z "${all}" ] ; then
     $PKG_CMD_INSTALL vim ctags
   fi
   ok
@@ -583,7 +662,7 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${shell}" ] ; then
   fi
 
   # for dircolor
-  wget "https://raw.github.com/trapd00r/LS_COLORS/master/lscolors.sh" -O "$HOME/.lscolors.sh"
+  wget "$GITHUB_RAW_URL/trapd00r/LS_COLORS/master/lscolors.sh" -O "$HOME/.lscolors.sh"
 
   installfile .p10k.zsh shells/p10k.zsh
 
@@ -597,12 +676,13 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${shell}" ] ; then
   mkdirfolder .shells
   mkdirfolder .shells/git
 
-  for shell in bash zsh
+  # NB: not `shell` -- that is the --shell option variable checked above.
+  for sh_name in bash zsh
   do
-    mkdirfolder ".shells/$shell"
+    mkdirfolder ".shells/$sh_name"
 
-    wget "$GITHUB_RAW_URL/git/git/master/contrib/completion/git-completion.$shell" \
-         -O "$HOME/.shells/git/git-completion.$shell"
+    wget "$GITHUB_RAW_URL/git/git/master/contrib/completion/git-completion.$sh_name" \
+         -O "$HOME/.shells/git/git-completion.$sh_name"
   done
 
   mkdirfolder ".shells/source"
@@ -703,8 +783,15 @@ if [ -n "${all}" ] || [ -n "${dart}" ] ; then
     brew tap dart-lang/dart
     brew install dart
   else
-    $ROOT_PERM sh -c 'wget -qO- https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -'
-    $ROOT_PERM sh -c 'wget -qO- https://storage.googleapis.com/download.dartlang.org/linux/debian/dart_stable.list > /etc/apt/sources.list.d/dart_stable.list'
+    # Same keyring treatment as docker: apt-key no longer exists, so the
+    # Dart archive key is scoped to the Dart repo via signed-by=.
+    dart_keyring="/etc/apt/keyrings/dart.gpg"
+    $ROOT_PERM install -m 0755 -d /etc/apt/keyrings
+    curl -fsSL https://dl-ssl.google.com/linux/linux_signing_key.pub \
+      | $ROOT_PERM gpg --batch --yes --dearmor -o "$dart_keyring"
+    $ROOT_PERM chmod a+r "$dart_keyring"
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=$dart_keyring] https://storage.googleapis.com/download.dartlang.org/linux/debian stable main" \
+      | $ROOT_PERM tee /etc/apt/sources.list.d/dart_stable.list > /dev/null
 
     $ROOT_PERM apt-get update
     $PKG_CMD_INSTALL dart
@@ -772,12 +859,32 @@ fi
 if [ -n "${fonts}" ] ; then
   if [ "$OStype" != "android" ] ; then
     info "Install the fonts"
-    # Install nerd fonts
-    git clone --depth 1 $GITHUB_URL/ryanoasis/nerd-fonts "$TEMP/fonts"
-    cd "$TEMP/fonts" && ./install.sh "DejaVuSansMono"
-    cd "$current_dir" && rm -rf "$TEMP/fonts"
+    # Pull the single patched family from the release instead of cloning
+    # ryanoasis/nerd-fonts: the archive is ~6MB, the repo is tens of GB.
+    if [ "$OStype" = "darwin" ] ; then
+      brew install --cask font-jetbrains-mono-nerd-font
+    else
+      NERD_FONTS_VERSION="${NERD_FONTS_VERSION:-$(resolve_version "Nerd Fonts" "$NERD_FONTS_VERSION_FALLBACK" latest_nerd_fonts_version)}"
+
+      # Per-user font dir; fontconfig scans it with no root needed.
+      font_dir="$HOME/.local/share/fonts/JetBrainsMonoNerdFont"
+      mkdir -p "$font_dir"
+      # The archive is flat (*.ttf at the root), so it unpacks straight in.
+      if curl -fsSL --max-time 180 \
+           "$GITHUB_URL/ryanoasis/nerd-fonts/releases/download/v${NERD_FONTS_VERSION}/JetBrainsMono.tar.xz" \
+           | tar -xJ -C "$font_dir" ; then
+        fc-cache -f "$font_dir"
+      else
+        info "Failed to install JetBrainsMono Nerd Font"
+      fi
+    fi
+
+    # fontconfig: makes "monospace" resolve to the font installed above.
+    mkdirfolder .config
+    mkdirfolder .config/fontconfig
+    installfile .config/fontconfig/fonts.conf fontconfig/fonts.conf
     ok
-    # "DejaVu Sans Mono Nerd Font 12"
+    # "JetBrainsMono Nerd Font 12"
   fi
 fi
 
@@ -829,6 +936,8 @@ if [ -n "${all}" ] || [ -n "${golang}" ] ; then
   if [ "$OStype" = "darwin" ] ; then
     brew install go
   else
+    GOLANG_VERSION="${GOLANG_VERSION:-$(resolve_version "Go" "$GOLANG_VERSION_FALLBACK" latest_golang_version)}"
+
     # Build the download name for the running OS/architecture.
     go_os="$(uname -s | tr '[:upper:]' '[:lower:]')"
     case "$(uname -m)" in
@@ -847,18 +956,29 @@ if [ -n "${all}" ] || [ -n "${golang}" ] ; then
     pathadd "/usr/local/go/bin"
   fi
 
-  go install github.com/PuerkitoBio/goquery@latest
-  go install github.com/beevik/ntp@latest
-  go install github.com/cenkalti/backoff@latest
-  go install github.com/derekparker/delve/cmd/dlv@latest
+  # Only executables belong here. `go install` has refused non-main packages
+  # since Go 1.16, and rejects `...` wildcards with a @version -- libraries
+  # (goquery, ntp, backoff, mysql, go-sqlite3, gofeed, gonum, ...) are per-project
+  # dependencies, added with `go get` from inside the module that needs them.
   go install github.com/FiloSottile/mkcert@latest
-  go install github.com/go-sql-driver/mysql@latest
-  go install github.com/golang/dep/cmd/dep@latest
-  go install github.com/mattn/go-sqlite3@latest
-  go install github.com/mmcdole/gofeed@latest
-  go install gonum.org/v1/gonum/...@latest
-  go install gonum.org/v1/plot/...@latest
-  go install gonum.org/v1/hdf5/...@latest
+  go install github.com/go-delve/delve/cmd/dlv@latest
+  ok
+fi
+
+###############################################################################
+#                                 ____ _   _                                  #
+#                                / ___| |_| | __                              #
+#                               | |  _| __| |/ /                              #
+#                               | |_| | |_|   <                               #
+#                                \____|\__|_|\_\                              #
+#                                                                             #
+###############################################################################
+if [ -n "${all}" ] || [ -n "${dot}" ] ; then
+  info "Install the gtk"
+  installfile .gtkrc-2.0 gtk-2.0/gtkrc-2.0
+  mkdirfolder .config
+  mkdirfolder .config/gtk-3.0
+  installfile .config/gtk-3.0/settings.ini gtk-3.0/settings.ini
   ok
 fi
 
@@ -903,12 +1023,12 @@ if [ -n "${all}" ] || [ -n "${kicad}" ] ; then
   info "Install KiCad Plugin"
   KICAD_GITHUB_PLUGIN_FOLDER="KiCad/plugins"
   mkdir -p "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER"
-  git clone "$GITHUB_URL/NilujePerchut/kicad_scripts.git" "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER/teardrops"
-  git clone "$GITHUB_URL/easyw/RF-tools-KiCAD.git" "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER/RF-tools-KiCAD"
-  git clone "$GITHUB_URL/easyw/kicad-action-tools.git" "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER/easyw-kicad-action-tools"
-  git clone "$GITHUB_URL/stimulu/kicad-round-tracks.git" "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER/kicad-round-tracks"
-  git clone "$GITHUB_URL/jsreynaud/kicad-action-scripts.git" "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER/jsreynaud-kicad-action-scripts"
-  git clone "$GITHUB_URL/xesscorp/WireIt.git" "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER/WireIt"
+  clone_or_pull "$GITHUB_URL/NilujePerchut/kicad_scripts.git" "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER/teardrops"
+  clone_or_pull "$GITHUB_URL/easyw/RF-tools-KiCAD.git" "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER/RF-tools-KiCAD"
+  clone_or_pull "$GITHUB_URL/easyw/kicad-action-tools.git" "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER/easyw-kicad-action-tools"
+  clone_or_pull "$GITHUB_URL/stimulu/kicad-round-tracks.git" "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER/kicad-round-tracks"
+  clone_or_pull "$GITHUB_URL/jsreynaud/kicad-action-scripts.git" "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER/jsreynaud-kicad-action-scripts"
+  clone_or_pull "$GITHUB_URL/xesscorp/WireIt.git" "$GITHUB_FOLDER/$KICAD_GITHUB_PLUGIN_FOLDER/WireIt"
 
   if [ -n "${is_wsl}" ] ; then
     # cannot create symlink
@@ -950,24 +1070,21 @@ fi
 if [ -n "${all}" ] || [ -n "${nodejs}" ] ; then
   info "Install nodejs"
   if [ "$OStype" = "darwin" ] ; then
-    brew install node yarn
+    brew install node
   elif [ "$OStype" != "android" ] ; then
-    $PKG_CMD_REMOVE cmdtest
     $ROOT_PERM snap install node --classic
-    echo "deb https://dl.yarnpkg.com/debian/ stable main" | $ROOT_PERM tee /etc/apt/sources.list.d/yarn.list
-    $PKG_CMD_INSTALL -y yarn
   fi
 
-  if command -v yarn > /dev/null 2>&1 ; then
-    $ROOT_PERM yarn global add async            \
-                               expo-cli         \
-                               react-native-cli \
-                               react            \
-                               redux            \
-                               mobx             \
-                               netlify-cms      \
-                               neovim           \
-                               prettier
+  if command -v npm > /dev/null 2>&1 ; then
+    $ROOT_PERM npm install -g async            \
+                              expo-cli         \
+                              react-native-cli \
+                              react            \
+                              redux            \
+                              mobx             \
+                              netlify-cms      \
+                              neovim           \
+                              prettier
   fi
   ok
 fi
@@ -985,6 +1102,7 @@ if [ -n "${all}" ] || [ -n "${python}" ] ; then
   info "Install the python"
   installfile .pythonrc python/pythonrc
 
+  # Android/Termux has no pyenv; it uses the pkg-provided python and pip.
   if [ "$OStype" != "android" ] ; then
     # install pyenv
     curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash
@@ -993,19 +1111,24 @@ if [ -n "${all}" ] || [ -n "${python}" ] ; then
     pathadd "$HOME/.pyenv/bin"
     pyenv update
 
+    # Resolved only now: latest_python3_version needs pyenv on PATH.
+    PYTHON3_VERSION="${PYTHON3_VERSION:-$(resolve_version "Python 3" "$PYTHON3_VERSION_FALLBACK" latest_python3_version)}"
+
+    # neovim's python3 provider dlopen()s libpython, which needs a shared build.
     export PYTHON_CONFIGURE_OPTS="--enable-shared"
-    pyenv install -s $PYTHON3_VERSION
+    pyenv install -s "$PYTHON3_VERSION"
 
     eval "$(pyenv init -)"
-    eval "$(pyenv virtualenv-init -)"
-    pyenv virtualenv-delete -f py3nvim
-    pyenv virtualenv $PYTHON3_VERSION py3nvim
-    pyenv activate py3nvim
+
+    # Make this the default interpreter, for this shell and for later ones.
+    # The modules below deliberately go here rather than into a virtualenv:
+    # vim/vimrc sets g:python3_host_prog to ~/.pyenv/shims/python, which
+    # resolves to the *global* version. (`pyenv local` is not used -- it would
+    # drop a .python-version file into whatever directory setup.sh ran from.)
+    pyenv shell "$PYTHON3_VERSION"
+    pyenv global "$PYTHON3_VERSION"
+    pyenv rehash
   fi
-  # set pyenv to system
-  pyenv shell $PYTHON3_VERSION
-  pyenv local $PYTHON3_VERSION
-  pyenv global $PYTHON3_VERSION
 
   pip install --upgrade pip
   if [ -n "${PIPmodule}" ] ; then
@@ -1026,17 +1149,19 @@ fi
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${ruby}" ] ; then
   info "Install the ruby"
-  git clone "$GITHUB_URL/rbenv/rbenv" "$HOME/.rbenv"
+  clone_or_pull "$GITHUB_URL/rbenv/rbenv" "$HOME/.rbenv"
   cd "$HOME/.rbenv" && src/configure && make -C src
   cd "$current_dir" || exit
   pathadd "$HOME/.rbenv/bin"
   curl -fsSL $GITHUB_URL/rbenv/rbenv-installer/raw/master/bin/rbenv-doctor | bash
   mkdir -p "$(rbenv root)"/plugins
-  git clone $GITHUB_URL/rbenv/ruby-build.git "$(rbenv root)"/plugins/ruby-build
-  git clone $GITHUB_URL/carsomyr/rbenv-bundler.git "$(rbenv root)"/plugins/bundler
-  rbenv install $RUBY_VERSION
-  rbenv shell $RUBY_VERSION
-  rbenv global $RUBY_VERSION
+  clone_or_pull "$GITHUB_URL/rbenv/ruby-build.git" "$(rbenv root)/plugins/ruby-build"
+  clone_or_pull "$GITHUB_URL/carsomyr/rbenv-bundler.git" "$(rbenv root)/plugins/bundler"
+  # Resolved after ruby-build is cloned, since it supplies the version list.
+  RUBY_VERSION="${RUBY_VERSION:-$(resolve_version "Ruby" "$RUBY_VERSION_FALLBACK" latest_ruby_version)}"
+  rbenv install -s "$RUBY_VERSION"
+  rbenv shell "$RUBY_VERSION"
+  rbenv global "$RUBY_VERSION"
   gem install neovim bundler
   gem environment
   rbenv rehash
@@ -1066,7 +1191,8 @@ fi
 #                                              |_|                            #
 #                                                                             #
 ###############################################################################
-if [ -n "${is_wsl}" ] && [ -n "${all}" ] || [ -n "${scoop}" ] ; then
+# Grouped explicitly: scoop is WSL-only under --all, but --scoop forces it.
+if { [ -n "${is_wsl}" ] && [ -n "${all}" ] ; } || [ -n "${scoop}" ] ; then
   info "Install the scoop package"
   scoop install "$SCOOP_PACKAGE"
   ok
@@ -1081,7 +1207,8 @@ fi
 #                                            |_|                              #
 #                                                                             #
 ###############################################################################
-if [ -z "${is_wsl}" ] && [ -n "${all}" ] || [ -n "${snap}" ] ; then
+# Grouped explicitly: snap is skipped on WSL under --all, but --snap forces it.
+if { [ -z "${is_wsl}" ] && [ -n "${all}" ] ; } || [ -n "${snap}" ] ; then
   # snap is Linux only; skip silently on platforms without it (e.g. macOS).
   if command -v snap > /dev/null 2>&1 ; then
     info "Install the snap package"
@@ -1108,6 +1235,22 @@ if [ -n "${all}" ] || [ -n "${dot}" ] ; then
     installfile .ssh/config ssh/config
     ok
   fi
+fi
+
+###############################################################################
+#                      _____                   _ _                            #
+#                     |_   _|__ _ __ _ __ ___ (_) |_ ___                      #
+#                       | |/ _ \ '__| '_ ` _ \| | __/ _ \                     #
+#                       | |  __/ |  | | | | | | | ||  __/                     #
+#                       |_|\___|_|  |_| |_| |_|_|\__\___|                     #
+#                                                                             #
+###############################################################################
+if [ -n "${all}" ] || [ -n "${dot}" ] ; then
+  info "Install the termite"
+  mkdirfolder .config
+  mkdirfolder .config/termite
+  installfile .config/termite/config termite/config
+  ok
 fi
 
 ###############################################################################
@@ -1216,5 +1359,19 @@ if [ -n "${all}" ] \
     nvim +PlugInstall +qall
     nvim +PlugUpdate +qall
   fi
+  ok
+fi
+
+###############################################################################
+#              __  __                                                         #
+#              \ \/ /_ __ ___  ___  ___  _   _ _ __ ___ ___  ___              #
+#               \  /| '__/ _ \/ __|/ _ \| | | | '__/ __/ _ \/ __|             #
+#               /  \| | |  __/\__ \ (_) | |_| | | | (_|  __/\__ \             #
+#              /_/\_\_|  \___||___/\___/ \__,_|_|  \___\___||___/             #
+#                                                                             #
+###############################################################################
+if [ -n "${all}" ] || [ -n "${dot}" ] ; then
+  info "Install the Xresources"
+  installfile .Xresources X/Xresources
   ok
 fi

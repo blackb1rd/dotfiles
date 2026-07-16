@@ -89,7 +89,7 @@ Plug 'majutsushi/tagbar'
 Plug 'mbbill/undotree'
 Plug 'mhinz/vim-signify'
 Plug 'petRUShka/vim-opencl'
-Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
+Plug 'prettier/vim-prettier', { 'do': 'npm install' }
 Plug 'rking/ag.vim'
 Plug 'robertbasic/vim-hugo-helper'
 Plug 'ryanoasis/vim-devicons'
@@ -385,9 +385,9 @@ let g:NERDTreeQuitOnOpen    = 1
 " Airline
 if has("gui_running")
     if has ("win64") || has("win32")
-        set guifont=DejaVu\ Sans\ Mono\ for\ Powerline:h10
+        set guifont=JetBrainsMono\ Nerd\ Font:h10
     else
-        set guifont=DejaVu\ Sans\ Mono\ for\ Powerline\ 10
+        set guifont=JetBrainsMono\ Nerd\ Font\ 10
     endif
 endif
 let g:airline_powerline_fonts = 1

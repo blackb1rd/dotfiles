@@ -19,7 +19,7 @@ unset _brew
 # --- OrbStack (containers/VMs CLI integration) -----------------------------
 [ -f "$HOME/.orbstack/shell/init.zsh" ] && source "$HOME/.orbstack/shell/init.zsh" 2>/dev/null
 
-# --- Dynamic PATH + version managers (pyenv, rbenv, yarn, Android, Go) ------
+# --- Dynamic PATH + version managers (pyenv, rbenv, Android, Go) ------------
 # Defined in path.sh (sourced from ~/.zshenv); its init hooks must be eval'd in
 # a live shell, so it runs here rather than in ~/.zshenv.
 command -v AddCurrentUserPath >/dev/null 2>&1 && AddCurrentUserPath
