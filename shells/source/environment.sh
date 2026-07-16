@@ -55,4 +55,16 @@ unset _dedup_path _old_IFS _dir
 if [ -t 0 ] ; then
   GPG_TTY="$(tty)"
   export GPG_TTY
+
+  # gpg-agent is a per-user singleton shared by every terminal, and it remembers
+  # only the tty it last attached to. Opening another terminal -- a new VS Code
+  # integrated terminal, a tmux pane, an ssh session -- leaves the agent pointed
+  # at the old one, so a tty pinentry prompts on the wrong terminal (or times out
+  # once that terminal is gone). This hands the running agent the current tty so
+  # its next prompt lands here. Harmless with a GUI pinentry; skipped when the
+  # agent is not already up, so it does not get auto-started in throwaway shells.
+  if command -v gpg-connect-agent > /dev/null 2>&1 \
+     && [ -S "$(gpgconf --list-dirs agent-socket 2>/dev/null)" ] ; then
+    gpg-connect-agent updatestartuptty /bye > /dev/null 2>&1
+  fi
 fi
