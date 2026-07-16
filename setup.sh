@@ -24,15 +24,19 @@ USRPREFIX="/usr/local"
 OStype=""
 PACKAGE=""
 PIPmodule=""
+# Package providing universal-ctags. MSYS2 and Termux ship it as plain "ctags"
+# (MSYS2's is universal-ctags 6.x under that name); apt and brew both call it
+# universal-ctags, where a bare "ctags" is only a virtual package that apt
+# refuses to resolve. Never install "ctags" on those.
+CTAGS_PKG="ctags"
 SCOOP_PACKAGE=""
 PKG_CMD_UPDATE=""
 PKG_CMD_INSTALL=""
 PKG_CMD_REMOVE=""
-PKG_CMD_ADD_REPO=""
-REPOSITORY=()
 is_wsl=""
 os_codename=""
 DOCKER_KEYRING=""
+DOCKER_LIST=""
 DOCKER_REPO_URL=""
 
 # Command-line switches, all off until parsed.
@@ -165,6 +169,7 @@ case $(uname) in
     PKG_CMD_UPDATE="brew update"
     PKG_CMD_INSTALL="brew install"
     PKG_CMD_REMOVE="brew uninstall"
+    CTAGS_PKG="universal-ctags"
     PACKAGE="autoconf
              automake
              cmake
@@ -217,6 +222,7 @@ case $(uname) in
              curl
              gcc
              git
+             gnupg
              gperf
              irssi
              libbz2
@@ -312,7 +318,7 @@ case $(uname) in
           PKG_CMD_UPDATE="$ROOT_PERM apt-get update"
           PKG_CMD_INSTALL="$ROOT_PERM apt-get install -y"
           PKG_CMD_REMOVE="$ROOT_PERM apt-get remove -y"
-          PKG_CMD_ADD_REPO="$ROOT_PERM add-apt-repository -y"
+          CTAGS_PKG="universal-ctags"
           PACKAGE="apt-transport-https
                    autoconf
                    automake
@@ -325,15 +331,15 @@ case $(uname) in
                    g++
                    gettext
                    git
-                   gnupg-agent
+                   gnupg
                    htop
                    irssi
                    libbz2-dev
                    libevent-dev
                    libffi-dev
                    liblzma-dev
-                   libncurses5-dev
-                   libpcre3-dev
+                   libncurses-dev
+                   libpcre2-dev
                    libreadline-dev
                    libsqlite3-dev
                    libssl-dev
@@ -365,8 +371,8 @@ case $(uname) in
           # Docker's apt repository is per-distro; both the URL path and the
           # signing key differ between debian and ubuntu.
           DOCKER_KEYRING="/etc/apt/keyrings/docker.gpg"
+          DOCKER_LIST="/etc/apt/sources.list.d/docker.list"
           DOCKER_REPO_URL="https://download.docker.com/linux/$os_release_id"
-          REPOSITORY=("deb [arch=$(dpkg --print-architecture) signed-by=$DOCKER_KEYRING] $DOCKER_REPO_URL $os_codename stable")
 
           case "$os_release_id" in
             "debian")
@@ -374,10 +380,12 @@ case $(uname) in
               ;;
             "ubuntu")
               OStype=ubuntu
+              # qemu-kvm is a virtual package with several providers, so apt
+              # refuses to pick one; name the x86 emulator explicitly.
               PACKAGE="$PACKAGE
                        libmysqlclient-dev
                        nmap
-                       qemu-kvm"
+                       qemu-system-x86"
               ;;
           esac
           ;;
@@ -400,6 +408,7 @@ case $(uname) in
                  figlet
                  fzf
                  git
+                 gnupg
                  htop
                  irssi
                  libbz2
@@ -617,8 +626,11 @@ if [ -n "${all}" ] || [ -n "${basictool}" ] ; then
 
   # Debian/Ubuntu need an extra apt repository/key for docker.
   # apt-key was removed in Ubuntu 22.04 / Debian 12, so the key goes into its
-  # own keyring under /etc/apt/keyrings and is bound to the docker repo alone
-  # via the `signed-by=` option in $REPOSITORY (rather than trusted archive-wide).
+  # own keyring under /etc/apt/keyrings and the repo is bound to that keyring
+  # alone via `signed-by=` (rather than being trusted archive-wide).
+  # The sources file is written directly rather than via add-apt-repository:
+  # that only understands PPA shortcuts now and rejects a deb line carrying
+  # options with "Unable to handle repository shortcut".
   if is_debian_like ; then
     info "Install the GPG key"
     $PKG_CMD_INSTALL curl ca-certificates gnupg
@@ -626,22 +638,20 @@ if [ -n "${all}" ] || [ -n "${basictool}" ] ; then
     curl -fsSL "$DOCKER_REPO_URL/gpg" \
       | $ROOT_PERM gpg --batch --yes --dearmor -o "$DOCKER_KEYRING"
     $ROOT_PERM chmod a+r "$DOCKER_KEYRING"
+
+    info "Add the docker repository"
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=$DOCKER_KEYRING] $DOCKER_REPO_URL $os_codename stable" \
+      | $ROOT_PERM tee "$DOCKER_LIST" > /dev/null
   fi
 
   info "Install the basic tool"
-  if [ "${#REPOSITORY[@]}" -gt 0 ] ; then
-    for repo in "${REPOSITORY[@]}"
-    do
-      $PKG_CMD_ADD_REPO "$repo"
-    done
-  fi
   $PKG_CMD_UPDATE
   # shellcheck disable=SC2086
   $PKG_CMD_INSTALL $PACKAGE || { echo 'Failed to install program' ; exit 1; }
 
   # if did not want to install latest version
   if [ -z "${latest}" ] && [ -z "${all}" ] ; then
-    $PKG_CMD_INSTALL vim ctags
+    $PKG_CMD_INSTALL vim "$CTAGS_PKG"
   fi
   ok
 fi
@@ -753,12 +763,15 @@ fi
 if [ -n "${all}" ] || [ -n "${latest}" ] ; then
   info "Install the ctags"
   if [ "$OStype" = "darwin" ] ; then
-    brew install universal-ctags
+    brew install "$CTAGS_PKG"
   else
-    $PKG_CMD_REMOVE ctags
+    # Drop the packaged ctags before building from source. This must name the
+    # real package: "ctags" is virtual on apt, so removing it silently did
+    # nothing and left the distro binary in place.
+    $PKG_CMD_REMOVE "$CTAGS_PKG"
 
     # clone ctags
-    git clone --depth 1 $GITHUB_URL/universal-ctags/ctags "$TEMP/ctags"
+    clone_or_pull "$GITHUB_URL/universal-ctags/ctags" "$TEMP/ctags" --depth 1
     cd "$TEMP/ctags" || exit
     ./autogen.sh
     ./configure --prefix="$USRPREFIX" --enable-iconv

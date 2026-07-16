@@ -42,3 +42,17 @@ done
 IFS="$_old_IFS"
 PATH="$_dedup_path"
 unset _dedup_path _old_IFS _dir
+
+# GPG_TTY: gpg hands this to pinentry so it knows which terminal to prompt on.
+# Without it, signing fails with "Inappropriate ioctl for device" / "gpg failed
+# to sign the data" -- most often inside tmux, where the agent outlives the
+# terminal that started it. It cannot live in environment.d/*.conf like the
+# static vars above: systemd .conf files take literal values, and this one
+# differs per terminal.
+#
+# Guarded on stdin being a terminal because .zshenv sources this file for every
+# zsh, including non-interactive ones, where `tty` prints "not a tty".
+if [ -t 0 ] ; then
+  GPG_TTY="$(tty)"
+  export GPG_TTY
+fi
