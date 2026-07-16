@@ -51,6 +51,40 @@ if command -v gsettings >/dev/null 2>&1; then
   # Ubuntu dock: click a running app's icon to minimize it
   gset org.gnome.shell.extensions.dash-to-dock click-action "'minimize'"
 
+  # Terminal font: the Powerlevel10k prompt (POWERLEVEL9K_MODE=nerdfont-v3)
+  # needs a Nerd Font to render its glyphs. setup.sh installs JetBrainsMono
+  # Nerd Font; this points the GNOME side at it. Keep it in sync with the
+  # termite/Xresources font and shells/p10k.zsh.
+  TERMINAL_FONT="JetBrainsMono Nerd Font 12"
+
+  # 1. System monospace font. GNOME apps that follow it -- GNOME Terminal and
+  #    GNOME Console (kgx) with "use system font" on (the default), plus gedit,
+  #    Builder, ... -- pick up the Nerd Font from here. This also realigns GNOME
+  #    with fontconfig/fonts.conf, which already maps monospace to this family;
+  #    the gsettings key overrides fontconfig for GTK apps, so without this the
+  #    two disagree and the shipped fonts.conf has no effect in the terminal.
+  gset org.gnome.desktop.interface monospace-font-name "'$TERMINAL_FONT'"
+
+  # 2. GNOME Terminal profiles that opted out of the system font (Preferences ->
+  #    unticked "Use the system fixed width font") ignore the key above, so set
+  #    the font on each profile directly. Relocatable schema keyed by profile
+  #    UUID, so it can't go through gset(); guard on the schema and the list.
+  _gt_schema="org.gnome.Terminal.Legacy.Profile"
+  if gsettings list-schemas 2>/dev/null | grep -qx "$_gt_schema" ; then
+    _gt_list="$(gsettings get org.gnome.Terminal.ProfilesList list 2>/dev/null)"
+    # "['uuid-a', 'uuid-b']" -> "uuid-a uuid-b"
+    _gt_list="$(printf '%s' "$_gt_list" | tr -d "[]',")"
+    for _gt_uuid in $_gt_list ; do
+      # An empty list prints "@as []"; the "@as" type tag survives the tr above.
+      # Skip it: a relocatable schema does not validate the UUID, so a bogus
+      # path would still write a stray key into dconf.
+      [ "$_gt_uuid" = "@as" ] && continue
+      _gt_path="$_gt_schema:/org/gnome/terminal/legacy/profiles:/:$_gt_uuid/"
+      gsettings set "$_gt_path" font "$TERMINAL_FONT" 2>/dev/null || continue
+      gsettings set "$_gt_path" use-system-font false 2>/dev/null
+    done
+  fi
+
   echo "linux.sh: GNOME gsettings applied."
 else
   echo "linux.sh: gsettings not found — skipping GNOME desktop tweaks."

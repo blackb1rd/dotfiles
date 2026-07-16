@@ -68,7 +68,10 @@ jobs:
           # this job verifies setup.sh's own symlink logic, not zinit's installer.
           mkdir -p "$SANDBOX/.local/share/zinit/zinit.git"
           : > "$SANDBOX/.local/share/zinit/zinit.git/zinit.zsh"
-          HOME="$SANDBOX" ./setup.sh --shell
+          # DOTFILES_SKIP_CHSH: this job verifies symlink logic against a
+          # throwaway HOME. The login-shell change is the one step that would
+          # escape that sandbox and mutate the runner's passwd database + /root.
+          HOME="$SANDBOX" DOTFILES_SKIP_CHSH=1 ./setup.sh --shell
           echo "SANDBOX=$SANDBOX" >> "$GITHUB_ENV"
 
       - name: Verify dotfiles were symlinked

@@ -15,9 +15,16 @@ current_dir="$( cd "$( dirname "$0" )" && pwd )"
 GITHUB_RAW_URL='https://raw.githubusercontent.com'
 GITHUB_FOLDER="$HOME/git/github"
 GITHUB_URL='https://github.com'
+ZINIT_INSTALL_URL="$GITHUB_RAW_URL/zdharma-continuum/zinit/HEAD/scripts/install.sh"
 TEMP="/tmp"
 ROOT_PERM=""
 USRPREFIX="/usr/local"
+
+# Set to any non-empty value to skip the login-shell change (chsh) and the root
+# zsh install. Those are the only steps here that touch the passwd database and
+# another account's home, so they are the ones a sandboxed/throwaway run (CI,
+# a container image build, testing against an overridden $HOME) wants to avoid.
+DOTFILES_SKIP_CHSH="${DOTFILES_SKIP_CHSH:-}"
 
 # Per-OS settings. Declared here so `set -u` has a defined value on every
 # platform; the case statement below fills in the ones it supports.
@@ -539,6 +546,163 @@ checkOStype () {
   esac
 }
 
+# ---------------------------------------------------------------------------
+# zsh as the login shell.
+# The configs in shells/ are zsh-first (Powerlevel10k prompt, zinit plugins)
+# and tmux already launches zsh, but none of that changes what the passwd
+# database hands you on a new terminal or SSH session -- only chsh does.
+# ---------------------------------------------------------------------------
+
+# install_zinit <home> [sudo-prefix]
+# Installs the plugin manager for the account owning <home>, once.
+install_zinit () {
+  _iz_home="$1" ; _iz_sudo="${2:-}"
+  # Must match the ZINIT_HOME that shells/zshrc hardcodes: left to itself the
+  # installer honours XDG_DATA_HOME and can land somewhere zshrc never looks.
+  _iz_zinit="$_iz_home/.local/share/zinit"
+  # shellcheck disable=SC2086  # unquoted on purpose: a command prefix, empty for the local user
+  if $_iz_sudo test -f "$_iz_zinit/zinit.git/zinit.zsh" ; then
+    return 0
+  fi
+
+  info "Install zinit into $_iz_zinit"
+  # NO_EDIT/NO_INPUT/NO_TUTORIAL are what keep this safe, not just quiet.
+  # Without them the installer appends its own bootstrap chunk to .zshrc and
+  # then stops to ask about annexes -- and .zshrc is a symlink into this repo,
+  # so anything appended lands in shells/zshrc and gets committed. shells/zshrc
+  # already sources zinit and loads the annexes itself.
+  # shellcheck disable=SC2086  # see above
+  $_iz_sudo env HOME="$_iz_home" ZINIT_HOME="$_iz_zinit" \
+                NO_EDIT=1 NO_INPUT=1 NO_TUTORIAL=1 \
+    bash -c "$(curl --fail --show-error --silent --location "$ZINIT_INSTALL_URL")"
+}
+
+# True when the JetBrainsMono Nerd Font is already installed. fontconfig is the
+# authority wherever it exists; macOS has no fc-list unless fontconfig was
+# brewed, so fall back to the directory the cask installs into.
+have_nerd_font () {
+  if command -v fc-list > /dev/null 2>&1 ; then
+    fc-list 2> /dev/null | grep -qi "JetBrainsMono Nerd Font"
+  else
+    ls "$HOME/Library/Fonts"/JetBrainsMonoNerdFont*.ttf > /dev/null 2>&1
+  fi
+}
+
+# Root's home, or nothing when the platform has no root login shell to set up
+# (Termux is single-user; MSYS2 has no passwd database).
+root_home () {
+  case "$OStype" in
+    debian | ubuntu ) echo "/root" ;;
+    darwin )          echo "/var/root" ;;
+  esac
+}
+
+# The zsh to give root. Deliberately NOT `command -v zsh`: that can point into
+# a Homebrew or /usr/local prefix that a non-root user owns, and a root login
+# shell living under a user-writable path is both a privilege-escalation route
+# and a way to lock root out if the prefix is ever removed. Prefer a
+# system-owned zsh; fall back to the one on PATH only if there is none.
+root_zsh_path () {
+  for _rzp in /bin/zsh /usr/bin/zsh ; do
+    if [ -x "$_rzp" ] ; then echo "$_rzp" ; return 0 ; fi
+  done
+  command -v zsh 2> /dev/null
+}
+
+# The login shell recorded for <user>. getent is absent on macOS and Termux.
+current_login_shell () {
+  if [ "$OStype" = "darwin" ] ; then
+    dscl . -read "/Users/$1" UserShell 2> /dev/null | awk '{print $2}'
+  elif command -v getent > /dev/null 2>&1 ; then
+    getent passwd "$1" 2> /dev/null | cut -d: -f7
+  fi
+}
+
+# chsh refuses a shell that is not listed in /etc/shells, and login(1) and some
+# terminals consult the file too. A brew-installed or source-built zsh is never
+# listed by default.
+register_shell () {
+  _rs_shell="$1"
+  # Termux has no /etc/shells and no sudo; its chsh does not consult one.
+  [ "$OStype" = "android" ] && return 0
+  [ -f /etc/shells ] || return 0
+  grep -qxF "$_rs_shell" /etc/shells 2> /dev/null && return 0
+  info "Add $_rs_shell to /etc/shells"
+  echo "$_rs_shell" | sudo tee -a /etc/shells > /dev/null
+}
+
+# set_login_shell <shell> <user>
+# No-op when the account already uses that shell: chsh is a password prompt on
+# some PAM configs, and re-running setup.sh should stay quiet.
+set_login_shell () {
+  _sl_shell="$1" ; _sl_user="$2"
+  if [ "$(current_login_shell "$_sl_user")" = "$_sl_shell" ] ; then
+    info "$_sl_user already logs in with $_sl_shell"
+    return 0
+  fi
+
+  info "Change the login shell of $_sl_user to $_sl_shell"
+  if [ "$OStype" = "android" ] ; then
+    # Termux has no sudo and no passwd database; its chsh takes no user.
+    chsh -s "$_sl_shell"
+  else
+    sudo chsh -s "$_sl_shell" "$_sl_user"
+  fi
+}
+
+# Give root the same zsh + Powerlevel10k prompt as the user.
+# The dotfiles are symlinked into this repo rather than copied, so `git pull`
+# updates root's shell too. That does mean root sources files the repo owner
+# can edit -- acceptable only because that owner already has sudo here, so it
+# grants nothing they did not already have.
+install_root_zsh () {
+  _rz_home="$(root_home)"
+  if [ -z "$_rz_home" ] ; then
+    info "$OStype has no root login shell to configure, skipping"
+    return 0
+  fi
+
+  _rz_shell="$(root_zsh_path)"
+  if [ -z "$_rz_shell" ] ; then
+    info "zsh is not installed, skipping the root shell"
+    return 0
+  fi
+
+  info "Install the zsh config for root"
+  sudo install -d -m 0755 "$_rz_home/.shells/source" "$_rz_home/.shells/git"
+
+  # Same "only if missing" rule as installfile(), but via sudo.
+  for _rz_pair in \
+    ".zshenv:shells/zshenv" \
+    ".zshrc:shells/zshrc" \
+    ".zprofile:shells/zprofile" \
+    ".p10k.zsh:shells/p10k.zsh" \
+    ".shells/source/utility.sh:shells/source/utility.sh" \
+    ".shells/source/environment.sh:shells/source/environment.sh" \
+    ".shells/source/path.sh:shells/source/path.sh" \
+    ".shells/source/transmission.sh:shells/source/transmission.sh"
+  do
+    _rz_dst="$_rz_home/${_rz_pair%%:*}"
+    sudo test -e "$_rz_dst" || sudo ln -snf "$current_dir/${_rz_pair#*:}" "$_rz_dst"
+  done
+
+  # shells/zshrc and shells/zshenv source these unconditionally, so root needs
+  # its own copies rather than reaching into the user's home.
+  sudo wget -q "$GITHUB_RAW_URL/trapd00r/LS_COLORS/master/lscolors.sh" \
+       -O "$_rz_home/.lscolors.sh"
+  for _rz_sh in bash zsh ; do
+    sudo wget -q "$GITHUB_RAW_URL/git/git/master/contrib/completion/git-completion.$_rz_sh" \
+         -O "$_rz_home/.shells/git/git-completion.$_rz_sh"
+  done
+
+  # Without this root's zshrc skips its whole plugin block -- including
+  # powerlevel10k, which is the point of the exercise.
+  install_zinit "$_rz_home" sudo
+
+  register_shell "$_rz_shell"
+  set_login_shell "$_rz_shell" root
+}
+
 # Check argument
 while [ $# != 0 ]
 do
@@ -666,10 +830,18 @@ fi
 ###############################################################################
 if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${shell}" ] ; then
   info "Install the shell"
-  # Install the zinit plugin manager once (shells/zshrc loads it if present).
-  if [ ! -f "$HOME/.local/share/zinit/zinit.git/zinit.zsh" ] ; then
-    bash -c "$(curl --fail --show-error --silent --location https://raw.githubusercontent.com/zdharma-continuum/zinit/HEAD/scripts/install.sh)"
+
+  # shells/zshrc loads OMZP::tmux, which warns on every single shell start when
+  # tmux is missing. This step is what installs that zshrc, so it owns the
+  # dependency: --tmux builds tmux from source (minutes) and is not something
+  # --shell should imply, so take the packaged build if there is no tmux at all.
+  if ! command -v tmux > /dev/null 2>&1 ; then
+    info "Install tmux (the zsh tmux plugin needs it)"
+    $PKG_CMD_INSTALL tmux || info "Could not install tmux; the plugin stays off"
   fi
+
+  # Install the zinit plugin manager once (shells/zshrc loads it if present).
+  install_zinit "$HOME"
 
   # for dircolor
   wget "$GITHUB_RAW_URL/trapd00r/LS_COLORS/master/lscolors.sh" -O "$HOME/.lscolors.sh"
@@ -703,6 +875,26 @@ if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${shell}" ] ; then
   installfile ".shells/source/environment.sh" "shells/source/environment.sh"
   installfile ".shells/source/path.sh" "shells/source/path.sh"
   installfile ".config/environment.d/env.conf" "systemd/environment.d/env.conf"
+
+  # Make zsh the login shell, for this user and for root. Everything above is
+  # zsh-first, but the passwd database still hands out bash on every new
+  # terminal and SSH session until chsh says otherwise.
+  if [ -n "${DOTFILES_SKIP_CHSH}" ] ; then
+    info "DOTFILES_SKIP_CHSH is set, leaving the login shell alone"
+  elif [ "$OStype" = "msys_nt" ] ; then
+    # MSYS2 has no chsh: the shell comes from the terminal launcher (the mintty
+    # shortcut / msys2.ini), which this script has no business rewriting.
+    info "MSYS2 has no chsh; point your mintty shortcut at zsh instead"
+  else
+    zsh_bin="$(command -v zsh 2> /dev/null || true)"
+    if [ -z "$zsh_bin" ] ; then
+      info "zsh is not installed; run './setup.sh --basictool' first"
+    else
+      register_shell "$zsh_bin"
+      set_login_shell "$zsh_bin" "$(id -un)"
+      install_root_zsh
+    fi
+  fi
 
   # Per-OS developer-machine system tuning.
   if [ "$OStype" = "darwin" ] ; then
@@ -869,14 +1061,25 @@ fi
 #                          |_|  \___/|_| |_|\__|___/                          #
 #                                                                             #
 ###############################################################################
-if [ -n "${fonts}" ] ; then
+# Also runs for the steps that install the shell config, not just --fonts:
+# p10k.zsh sets POWERLEVEL9K_MODE=nerdfont-v3, and termite/Xresources ask for
+# "JetBrainsMono Nerd Font" by name, so that config renders as tofu boxes
+# instead of icons until this font exists. --all covers it too; it claims to
+# install everything and silently skipped fonts before.
+if [ -n "${all}" ] || [ -n "${dot}" ] || [ -n "${shell}" ] || [ -n "${fonts}" ] ; then
   if [ "$OStype" != "android" ] ; then
-    info "Install the fonts"
-    # Pull the single patched family from the release instead of cloning
-    # ryanoasis/nerd-fonts: the archive is ~6MB, the repo is tens of GB.
-    if [ "$OStype" = "darwin" ] ; then
+    # An explicit --fonts always (re)installs, so it stays a way to repair or
+    # upgrade the font. When it is only implied by --shell/--dot/--all, skip the
+    # ~6MB download once the font is already there, so re-runs stay cheap.
+    if [ -z "${fonts}" ] && have_nerd_font ; then
+      info "JetBrainsMono Nerd Font is already installed"
+    elif [ "$OStype" = "darwin" ] ; then
+      info "Install the fonts"
+      # Pull the single patched family from the release instead of cloning
+      # ryanoasis/nerd-fonts: the archive is ~6MB, the repo is tens of GB.
       brew install --cask font-jetbrains-mono-nerd-font
     else
+      info "Install the fonts"
       NERD_FONTS_VERSION="${NERD_FONTS_VERSION:-$(resolve_version "Nerd Fonts" "$NERD_FONTS_VERSION_FALLBACK" latest_nerd_fonts_version)}"
 
       # Per-user font dir; fontconfig scans it with no root needed.

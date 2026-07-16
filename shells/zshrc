@@ -158,8 +158,16 @@ if [[ -f "$ZINIT_HOME/zinit.zsh" ]]; then
     OMZP::rsync \
     OMZP::rust \
     OMZP::screen \
-    OMZP::systemd \
-    OMZP::tmux
+    OMZP::systemd
+
+  # OMZP::tmux prints "tmux not found. Please install tmux before using this
+  # plugin." on every shell start when tmux is missing, and its aliases (ta, ts,
+  # tl, ...) do nothing without it. setup.sh --shell installs tmux, but that can
+  # fail or be skipped, and this file is symlinked onto machines (and root)
+  # where it never ran.
+  if (( $+commands[tmux] )); then
+    zinit wait lucid for OMZP::tmux
+  fi
 fi
 
 # Load Angular CLI autocompletion (only if the CLI is installed).
